@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>PHP 8 Programming Tips Tricks and Best Practices</title>
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom styles for this template -->
+  <link href="css/scrolling-nav.css" rel="stylesheet">
+  <style>
+	li a, .dropbtn {
+	  display: inline-block;
+	  color: white;
+	  text-align: center;
+	  text-decoration: none;
+	  vertical-align: top;
+	}
+	li a:hover, .dropdown:hover .dropbtn {
+	  background-color: blue;
+	}
+	li.dropdown {
+	  display: inline-block;
+	}
+	.dropdown-content {
+	  display: none;
+	  position: absolute;
+	  background-color: blue;
+	  min-width: 160px;
+	  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	  z-index: 1;
+	}
+	.dropdown-content a {
+	  color: black;
+	  padding: 12px 16px;
+	  text-decoration: none;
+	  display: block;
+	  text-align: left;
+	}
+	.dropdown-content a:hover {
+		background-color: gray;
+	}
+	.dropdown:hover .dropdown-content {
+	  display: block;
+	}
+	</style>
+</head>
+
+<body id="page-top">
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+    <div class="container">
+      <a href="/"><img src="/images/course_logo_50px.png" /></a>
+      <span style="color:white;margin-left:100px;font-size:24pt;font-weight:bold;">PHP 8 Programming Tips Tricks and Best Practices</span>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="/index.php">Home</a>
+          </li>
+          <li class="nav-item dropdown">
+			<a class="nav-link dropbtn" href="javascript:void(0)">php.ini</a>
+			<div class="dropdown-content">
+				<a class="nav-link js-scroll-trigger" href="/enable_assertions.php">+Assert</a>
+				<a class="nav-link js-scroll-trigger" href="/enable_overload.php">+Overload</a>
+				<a class="nav-link js-scroll-trigger" href="/enable_opcache.php">+OPcache</a>
+            	<a class="nav-link js-scroll-trigger" href="/disable_password_hash.php">-Disable Func</a>
+            	<a class="nav-link js-scroll-trigger" href="/restore_php_ini.php">+PHP.INI</a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="/refresh.php">Refresh</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <header class="bg-primary text-white" style="height: 50px;">
+    <div class="container">
+      <div style="float:right;"><img src="/images/course_logo_200px.png" /></div>
+    </div>
+  </header>
+
+ <?php if ($chapters) : ?>
+ <section id="about">
+    <div class="container">
+		<?= ($message) ? $message : ''; ?>
+		<table>
+		<?php 
+		// organize into chapters
+		foreach ($chapters as $key => $files) {
+			echo '<tr>'
+				 . '<th colspan=' . (COLS + 2) . ' style="background-color:#F2F2F2;">' 
+				 . 'Chapter ' . substr($key, 2)
+				 . '</th>'
+				 . '</tr>' . PHP_EOL;
+			$iter = new ArrayIterator($files);
+			while ($iter->valid()) {
+				echo '<tr>' . PHP_EOL;
+				$check = COLS - 1;
+				for ($x = 0; $x < COLS; $x++) {
+					if ($iter->valid()) {
+						$name = $iter->current();
+						$iter->next();
+					} else {
+						$name = '&nbsp;';
+					}
+					printf(FORMAT, $key, $name, $name);
+					echo ($x < $check) ? (SPACER) : '';
+				}
+				echo '</tr>' . PHP_EOL;
+			}
+		}
+		?>
+		</table>
+    </div>
+  </section>
+  <?php endif; ?>
+
+  <!-- Footer -->
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">Copyright &copy; <a href="https://unlikelysource.com/">unlikelysource.com</a> 2020</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom JavaScript for this theme -->
+  <script src="js/scrolling-nav.js"></script>
+
+</body>
+
+</html>
