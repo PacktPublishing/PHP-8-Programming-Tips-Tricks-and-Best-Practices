@@ -8,7 +8,7 @@ services:
      - .:/repo
     ports:
      - 8888:80
-    build: ./docker
+    build: .
     restart: always
     command: lfphp --mysql --apache --phpfpm
     networks:
