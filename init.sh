@@ -29,9 +29,9 @@ if [[ "$INIT" = 1 ]]; then
 	docker exec $CONTAINER /bin/bash -c "/etc/init.d/php-fpm start"
 	docker exec $CONTAINER /bin/bash -c "/etc/init.d/httpd start"
 	docker exec $CONTAINER /bin/bash -c "mv -fv /srv/www /srv/www.OLD"
-	docker exec $CONTAINER /bin/bash -c "ln -sfv /srv/tempo/repo /srv/www"
+	docker exec $CONTAINER /bin/bash -c "ln -sfv /repo /srv/www"
 	docker exec $CONTAINER /bin/bash -c "chgrp apache /srv/www"
-	docker exec $CONTAINER /bin/bash -c "chgrp -R apache /srv/tempo/repo"
-	docker exec $CONTAINER /bin/bash -c "chmod -R 775 /srv/tempo/repo"
+	docker exec $CONTAINER /bin/bash -c "chgrp -R apache /repo"
+	docker exec $CONTAINER /bin/bash -c "chmod -R 775 /repo"
 fi
 exit 0
