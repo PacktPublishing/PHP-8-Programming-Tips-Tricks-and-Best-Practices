@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title><?= basename($file); ?></title>
+</head>
+<body>
+	<?php foreach ($images as $fn) : ?>
+	<img src="/images/<?= $fn ?>" />
+	<?php endforeach; ?>
+</body>
+</html>

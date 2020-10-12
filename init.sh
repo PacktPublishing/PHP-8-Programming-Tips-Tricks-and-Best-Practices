@@ -10,7 +10,7 @@ if [[ -z "$1" ]]; then
 	echo $USAGE
 	exit 1
 elif [[ "$1" = "up" ]]; then
-	docker-compose up $2
+	docker-compose up -d $2
 	INIT=1
 elif [[ "$1" = "down" ]]; then
 	docker-compose down

@@ -1,15 +1,15 @@
 <?php
-namespace Php7\Autoload;
-// https://www.php.net/manual/en/function.imagettftext.php
+namespace Server\Autoload;
 /**
- * Creates a single image, by default black on white
+ * Loads source code for this branch
  */
 class Loader
 {
+	const DEFAULT_SRC = __DIR__ . '/../..';
 	public $src_dir = '';
-	public function __construct(string $src_dir)
+	public function __construct(string $src_dir = NULL)
 	{
-		$this->src_dir = $src_dir;
+		$this->src_dir = $src_dir ?? realpath(self::DEFAULT_SRC);
 		spl_autoload_register([$this, 'autoload']);
 	}
 	public function autoload($class)

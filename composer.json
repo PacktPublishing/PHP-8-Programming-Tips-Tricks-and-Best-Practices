@@ -1,11 +1,12 @@
 {
     "require": {
-        "composer/composer": "^1.10"
+        "composer/composer": "*"
     },
     "autoload" : {
 		"psr-4" : {
 			"Php7\\" : "src/Php7",
-			"Php8\\" : "src/Php8"
+			"Php8\\" : "src/Php8",
+			"Display\\" : "src/Display"
 		}
 	}
 }
