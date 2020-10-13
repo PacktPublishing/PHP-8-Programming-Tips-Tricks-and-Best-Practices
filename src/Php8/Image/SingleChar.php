@@ -1,69 +1,72 @@
 <?php
 namespace Php8\Image;
-// https://www.php.net/manual/en/function.imagettftext.php
+use Php8\Image\Strategy\ {PlainText,PlainFill};
 #[description("Creates a single image, by default black on white")]
 class SingleChar
 {
+	const MARGIN     = 3;
 	const DEFAULT_FG = [0x00, 0x00, 0x00];
 	const DEFAULT_BG = [0xFF, 0xFF, 0xFF];
+	const DEFAULT_TX_X = 25;
+	const DEFAULT_TX_Y = 75;
+	const DEFAULT_TX_SIZE  = 60;
+	const DEFAULT_TX_ANGLE = 0;
 	public $image    = NULL;
 	public $fgColor  = NULL;
 	public $bgColor  = NULL;
 	#[description("Builds an image based on config specs")]
+	#[string("text")]
 	#[string("fileFile")]
 	#[int("width")]
 	#[int("height")]
-	#[string("char")]
+	#[int("size")]
+	#[float("angle")]
+	#[int("textX")]
+	#[int("textY")]
 	public function __construct(
+		public string $text     = '',
 		public string $fontFile = '',
 		public int    $width    = 100,
-		public int    $height   = 100)
+		public int    $height   = 100,
+	    public int    $size     = self::DEFAULT_TX_SIZE,
+	    public float  $angle    = self::DEFAULT_TX_ANGLE,
+	    public int    $textX    = self::DEFAULT_TX_X,
+	    public int    $textY    = self::DEFAULT_TX_Y)
 	{
 		$this->image    = \imagecreate($width, $height);
 		$this->fgColor  = $this->colorAlloc(self::DEFAULT_FG);
 		$this->bgColor  = $this->colorAlloc(self::DEFAULT_BG);
 	}
-	#[description("Sets foreground/background color")]
-	#[string("fg|bg")]
-	#[int("red")]
-	#[int("green")]
-	#[int("blue")]
-	#[returns("int")]
-	public function setFgBgColor(string $what, int $red, int $green, int $blue)
-	{
-		$color = $this->colorAlloc($red, $green, $blue);
-		$var   = $what . 'Color';
-		$this->$var = $color;
-		return $color;
-	}
 	#[description("Allocates a color resource")]
-	#[param("array rbg : [red, green, blue]")]
+	#[param("int|array r")]
+	#[int("g")]
+	#[int("b")]
 	#[returns("int")]
-	public function colorAlloc(...$rgb)
+	public function colorAlloc(int|array $r, int $g = 0, int $b = 0)
 	{
-		if (is_array($rgb[0])) {
-			[$r, $g, $b] = $rgb[0];
-		} else {
-			[$r, $g, $b] = $rgb;
+		if (is_array($r)) {
+			[$r, $g, $b] = $r;
 		}
 		return \imagecolorallocate($this->image, $r, $g, $b);
 	}
-	#[description("Writes text onto image")]
-	#[description("Returns array representing 4 pairs x,y coords representing bounds of text")]
-	#[float("size")]
-	#[float("angle")]
-	#[int("x")]
-	#[int("y")]
-	#[string("text")]
-	#[returns("array")]
-	public function writeText(float $size, float $angle, int $x, int $y, string $text)
+	#[description("Fills image background")]
+	#[description("see: https://www.php.net/manual/en/function.imagettftext.php")]
+	public function writeFill()
 	{
-		\imagefilledrectangle($this->image, 0, 0, $this->width, $this->height, $this->fgColor);
-		\imagefilledrectangle($this->image, 1, 1, $this->width - 3, $this->height - 3, $this->bgColor);
-		return \imagettftext($this->image, $size, $angle, $x, $y, $this->fgColor, $this->fontFile , $text); 
+		PlainFill::writeFill($this, 0, 0, $this->width, $this->height, $this->fgColor);
+		PlainFill::writeFill($this, 1, 1, $this->width - self::MARGIN, $this->height - self::MARGIN, $this->bgColor);
+	}
+	#[description("Writes text onto image")]
+	#[description("See: https://www.php.net/manual/en/function.imagettftext.php")]
+	#[string("text")]
+	public function writeText()
+	{
+		return PlainText::writeText(
+			$this, $this->size, $this->angle, $this->textX,
+			$this->textY, $this->fgColor, $this->fontFile, $this->text);
 	}
 	#[description("Renders image as PNG")]
-	#[string("fn")]
+	#[string("fn : filename where to write image")]
 	#[returns("bool")]
 	public function save(string $fn)
 	{

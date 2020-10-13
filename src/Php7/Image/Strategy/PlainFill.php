@@ -4,11 +4,13 @@ namespace Php7\Image\Strategy;
 /**
  * Fills image
  */
+use Php7\Image\SingleChar;
 class PlainFill
 {
 	/**
 	 * Writes text onto image following this strategy
 	 *
+	 * @param SingleChar $char
 	 * @param int $x1
 	 * @param int $y1
 	 * @param int $x2
@@ -17,13 +19,13 @@ class PlainFill
 	 * @return bool
 	 */
 	public static function writeFill(
-		&$image,
+		SingleChar $char,
 		int $x1,
 		int $y1,
 		int $x2,
 		int $y2,
 		int $color) : bool
 	{
-		return \imagefilledrectangle($image, $x1, $y1, $x2, $y2, $color);
+		return \imagefilledrectangle($char->image, $x1, $y1, $x2, $y2, $color);
 	}
 }

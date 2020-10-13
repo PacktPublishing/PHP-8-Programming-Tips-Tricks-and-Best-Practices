@@ -1,6 +1,5 @@
 <?php
 namespace Php7\Image;
-// https://www.php.net/manual/en/function.imagettftext.php
 /**
  * Creates a single image, by default black on white
  */
@@ -14,17 +13,17 @@ class SingleChar
 	const DEFAULT_TX_Y = 75;
 	const DEFAULT_TX_SIZE  = 60;
 	const DEFAULT_TX_ANGLE = 0;
-	public $image    = NULL;
+	public $text     = '';
+	public $fontFile = '';
 	public $width    = 100;
 	public $height   = 100;
-	public $fontFile = '';
-	public $fgColor  = NULL;
-	public $bgColor  = NULL;
 	public $size     = 0;
 	public $angle    = 0.00;
 	public $textX    = 0;
 	public $textY    = 0;
-	use FgBgTrait;
+	public $fgColor  = NULL;
+	public $bgColor  = NULL;
+	public $image    = NULL;
 	/**
 	 * Builds an image based on config specs
 	 *
@@ -62,15 +61,15 @@ class SingleChar
 	/**
 	 * Allocates a color resource
 	 *
-	 * @param array $rbg : [red, green, blue]
+	 * @param array|int $r,
+	 * @param int $g
+	 * @param int $b]
 	 * @return int $color
 	 */
-	public function colorAlloc(...$rgb)
+	public function colorAlloc($r, $g = 0, $b = 0)
 	{
-		if (is_array($rgb[0])) {
-			[$r, $g, $b] = $rgb[0];
-		} else {
-			[$r, $g, $b] = $rgb;
+		if (is_array($r)) {
+			[$r, $g, $b] = $r;
 		}
 		return \imagecolorallocate($this->image, $r, $g, $b);
 	}
@@ -80,13 +79,12 @@ class SingleChar
 	 */
 	public function writeFill()
 	{
-		PlainFill::writeFill($this->image, 0, 0, $this->width, $this->height, $this->fgColor);
-		PlainFill::writeFill($this->image, 1, 1, $this->width - self::MARGIN, $this->height - self::MARGIN, $this->bgColor);
+		PlainFill::writeFill($this, 0, 0, $this->width, $this->height, $this->fgColor);
+		PlainFill::writeFill($this, 1, 1, $this->width - self::MARGIN, $this->height - self::MARGIN, $this->bgColor);
 	}
 	/**
 	 * Writes text onto image
-	 *
-	 * @param string $text
+	 * See: https://www.php.net/manual/en/function.imagettftext.php
 	 */
 	public function writeText()
 	{

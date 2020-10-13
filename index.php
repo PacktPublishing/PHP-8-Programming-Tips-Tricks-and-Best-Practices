@@ -8,6 +8,7 @@ $flag = TRUE;
 $iter = NULL;
 $filt = NULL;
 $phpMyAdmin = TRUE;
+$pattern = '!/ch\d{2}/php!S';
 // output file list
 if (empty($message)) $message = '';
 if (empty($output)) {
@@ -20,7 +21,7 @@ if (empty($output)) {
 		public function accept() : bool
 		{
 			$fn = parent::current();
-			$key = '/' . $this->cat . '/';
+			$key = '/' . $this->cat . '/php';
 			return (strpos($fn, $key) && $fn->isFile());
 		}
 	};
