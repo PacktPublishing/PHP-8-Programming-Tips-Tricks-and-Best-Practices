@@ -15,14 +15,16 @@ class SingleChar
 	public $fgColor  = NULL;
 	public $bgColor  = NULL;
 	#[description("Builds an image based on config specs")]
-	#[string("text")]
-	#[string("fileFile")]
-	#[int("width")]
-	#[int("height")]
-	#[int("size")]
-	#[float("angle")]
-	#[int("textX")]
-	#[int("textY")]
+	#[
+		string("text"),
+		string("fileFile"),
+		int("width"),
+		int("height"),
+		int("size"),
+		float("angle"),
+		int("textX"),
+		int("textY")
+	]
 	public function __construct(
 		public string $text     = '',
 		public string $fontFile = '',
