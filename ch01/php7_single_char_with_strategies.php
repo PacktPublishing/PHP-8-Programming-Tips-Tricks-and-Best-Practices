@@ -7,15 +7,10 @@ require_once __DIR__ . '/../src/Server/Autoload/Loader.php';
 $loader = new \Server\Autoload\Loader();
 use Php7\Image\SingleChar;
 use Php7\Image\Strategy\ {LineFill,DotFill,Shadow,RotateText};
-// load strategies
+// define strategies
 $strategies = [
-	'rotate',
-	'line',
-	'dot',
-	'shadow',
-	'dot',
-	'shadow',
-	'default'
+	'rotate', 'line', 'line',
+	'dot', 'dot', 'shadow'
 ];
 // generate random hex number for CAPTCHA
 $phrase = strtoupper(bin2hex(random_bytes(NUM_BYTES)));
@@ -24,6 +19,7 @@ $images = [];
 for ($x = 0; $x < $length; $x++) {
 	$char = new SingleChar($phrase[$x], FONT_FILE);
 	$char->writeFill();
+	shuffle($strategies);
 	foreach ($strategies as $item) {
 		switch ($item) {
 			case 'rotate' :

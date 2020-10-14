@@ -13,10 +13,12 @@ class SingleChar
 	const DEFAULT_TX_Y = 75;
 	const DEFAULT_TX_SIZE  = 60;
 	const DEFAULT_TX_ANGLE = 0;
+	const DEFAULT_WIDTH = 100;
+	const DEFAULT_HEIGHT = 100;
 	public $text     = '';
 	public $fontFile = '';
-	public $width    = 100;
-	public $height   = 100;
+	public $width    = 0;
+	public $height   = 0;
 	public $size     = 0;
 	public $angle    = 0.00;
 	public $textX    = 0;
@@ -39,8 +41,8 @@ class SingleChar
 	public function __construct(
 		string $text,
 		string $fontFile,
-		int    $width    = 100,
-		int    $height   = 100,
+		int    $width    = self::DEFAULT_WIDTH,
+		int    $height   = self::DEFAULT_HEIGHT,
 		int    $size     = self::DEFAULT_TX_SIZE,
 		float  $angle    = self::DEFAULT_TX_ANGLE,
 		int    $textX    = self::DEFAULT_TX_X,

@@ -7,15 +7,10 @@ require_once __DIR__ . '/../src/Server/Autoload/Loader.php';
 $loader = new \Server\Autoload\Loader();
 use Php8\Image\SingleChar;
 use Php8\Image\Strategy\ {LineFill,DotFill,Shadow,RotateText};
-// load strategies
+// define strategies
 $strategies = [
-	'rotate',
-	'line',
-	'dot',
-	'shadow',
-	'dot',
-	'shadow',
-	'default'
+	'rotate', 'line', 'line',
+	'dot', 'dot', 'shadow'
 ];
 // generate random hex number for CAPTCHA
 $phrase = strtoupper(bin2hex(random_bytes(NUM_BYTES)));
@@ -24,27 +19,22 @@ $images = [];
 for ($x = 0; $x < $length; $x++) {
 	$char = new SingleChar($phrase[$x], FONT_FILE);
 	$char->writeFill();
+	shuffle($strategies);
 	foreach ($strategies as $item) {
 		$func = match ($item) {
-			'rotate' => function ($char) { return RotateText::writeText($char); },
-			'line'   => function ($char) {
-				$num = rand(1, 10);
-				return LineFill::writeFill($char, $num);
-			},
-			'dot' => function ($char) {
-				$num = rand(10, 20);
-				return DotFill::writeFill($char, $num);
-			},
+			'rotate' => RotateText::writeText($char),
+			'line'   => LineFill::writeFill($char, rand(1, 10)),
+			'dot'    => DotFill::writeFill($char, rand(10, 20)),
 			'shadow' => function ($char) {
 				$num = rand(1, 8);
-				$red = rand(0x70, 0xEF);
-				$green = rand(0x70, 0xEF);
-				$blue = rand(0x70, 0xEF);
-				return Shadow::writeText($char, $num, $red, $green, $blue);
+				$r   = rand(0x70, 0xEF);
+				$g   = rand(0x70, 0xEF);
+				$b   = rand(0x70, 0xEF);
+				return Shadow::writeText($char, $num, $r, $g, $b);
 			},
-			'default' => function ($char) { return TRUE; }
+			'default' => TRUE
 		};
-		$func($char);
+		if (is_callable($func)) $func($char);
 	}
 	$char->writeText();
 	$fn = $x . '_' . substr(basename(__FILE__), 0, -4) . '.png';

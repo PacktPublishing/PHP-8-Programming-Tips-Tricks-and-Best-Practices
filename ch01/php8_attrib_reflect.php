@@ -8,16 +8,23 @@ use Php8\Image\SingleChar;
 $char    = new SingleChar('A', FONT_FILE);
 $reflect = new ReflectionObject($char);
 $attribs = $reflect->getAttributes();
+echo "Class Attributes\n";
 echo '<pre>';
 foreach ($attribs as $obj) {
 	var_dump($obj->getName());
 	var_dump($obj->getArguments());
 }
-foreach (get_class_methods($char) as $name) {
-	$reflect = new ReflectionMethod($char, $name);
-	foreach ($reflect->getAttributes() as $obj) {
-		var_dump($obj->getName());
-		var_dump($obj->getArguments());
-	}
-}
 echo '</pre>';
+echo "Method Attributes for colorAlloc()\n";
+echo '<div class="row">';
+$reflect = new ReflectionMethod($char, 'colorAlloc');
+$attribs = $reflect->getAttributes();
+foreach ($attribs as $obj) {
+	echo '<div class="col-md-4">';
+	echo '<pre>';
+	var_dump($obj->getName());
+	var_dump($obj->getArguments());
+	echo '</pre>';
+	echo '</div>';
+}
+echo '</div>';

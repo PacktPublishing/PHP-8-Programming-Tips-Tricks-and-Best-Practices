@@ -11,6 +11,8 @@ class SingleChar
 	const DEFAULT_TX_Y = 75;
 	const DEFAULT_TX_SIZE  = 60;
 	const DEFAULT_TX_ANGLE = 0;
+	const DEFAULT_WIDTH = 100;
+	const DEFAULT_HEIGHT = 100;
 	public $image    = NULL;
 	public $fgColor  = NULL;
 	public $bgColor  = NULL;
@@ -28,8 +30,8 @@ class SingleChar
 	public function __construct(
 		public string $text     = '',
 		public string $fontFile = '',
-		public int    $width    = 100,
-		public int    $height   = 100,
+		public int    $width    = self::DEFAULT_WIDTH,
+		public int    $height   = self::DEFAULT_HEIGHT,
 	    public int    $size     = self::DEFAULT_TX_SIZE,
 	    public float  $angle    = self::DEFAULT_TX_ANGLE,
 	    public int    $textX    = self::DEFAULT_TX_X,
