@@ -8,19 +8,21 @@ class Shadow
 	#[description("Parameters must be coordinates of original image")]
 	#[SingleChar("char")]
 	#[int("offset : shadow offset from original coordinates")]
-	#[int("red")]
+	#[param("int|array red")]
 	#[int("green")]
 	#[int("blue")]
 	#[returns("array : 4 x,y pairs representing bounds of text written")]
 	public static function writeText(
 		SingleChar $char,
 		int $offset,
-		int $red   = 0xCC,
+		int|array $red   = 0xCC,
 		int $green = 0xCC,
 		int $blue  = 0xCC) : array
 	{
 		$x = $char->textX + $offset;
 		$y = $char->textY + $offset;
+		if (is_array($red))
+			[$red, $green, $blue] = $red;
 		$color = $char->colorAlloc($red, $green, $blue);
 		return \imagettftext($char->image, $char->size, $char->angle, $x, $y, $color, $char->fontFile , $char->text); 
 	}

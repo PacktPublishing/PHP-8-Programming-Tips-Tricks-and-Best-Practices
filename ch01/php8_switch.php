@@ -1,6 +1,6 @@
 <?php
 // /repo/ch01/php8_switch.php
-function get_symbol($iso) {
+function get_symbol(string $iso) {
 	return match ($iso) {
 	    'EGP','GBP' => '£',
 	    'CNY'       => '¥',
