@@ -56,12 +56,13 @@
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
     <div class="container">
-      <a href="https://unlikelysource.com/"><img src="/img/unlikelysource_logo.png"/></a>
-      <span style="color:white;margin-left:100px;font-size:24pt;font-weight:bold;">PHP 8 Tips, Tricks, Best Practices</span>
+	  <a href="/">
+      <span style="color:white;font-size:24pt;font-weight:bold;">PHP 8 Tips, Tricks, Best Practices</span>
+      </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
+      <div class="collapse navbar-collapse" id="navbarResponsive" style="float:left;">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="/index.php">Home</a>
@@ -81,12 +82,13 @@
           </li>
         </ul>
       </div>
+      <div style="margin-left:100px;"><a href="https://unlikelysource.com/"><img src="/img/unlikelysource_logo.png"/></a></div>
     </div>
   </nav>
 
   <header class="bg-primary text-white" style="height: 50px;">
     <div class="container">
-      <div style="float:right;"><a href="/"><img src="/img/php8_logo.png" style="width:200px;height:200px;"/></a></div>
+      <div style="float:right;"><a href="/"><img src="/img/php8_logo.png" style="width:150px;height:150px;"/></a></div>
     </div>
   </header>
 
@@ -94,36 +96,36 @@
  <section id="about">
     <div class="container">
 		<?= ($message) ? $message : ''; ?>
-		<table>
 		<?php 
 		// organize into chapters
-		for ($ch = 1; $ch <= 10; $ch++) {
+		for ($ch = 1; $ch <= 10; $ch++) :
 			$key = sprintf('ch%02d', $ch);
-			echo '<tr>'
-				 . '<th colspan=' . (COLS + 2) . ' style="background-color:#F2F2F2;">' 
-				 . '<h4>' . sprintf('Chapter %02d', $ch) . '</h4>'
-				 . '</th>'
-				 . '</tr>' . PHP_EOL;
+		?>
+		<div class="row">
+		  <div class="col-md-12" style="background-color:#F2F2F2;">
+			<h5><?= sprintf('Chapter %02d', $ch)?></h5>
+		  </div>
+		</div>
+		<?php
 			$filt->cat = $key;
 			$filt->rewind();
 			while ($filt->valid()) {
-				echo '<tr>' . PHP_EOL;
 				$check = COLS - 1;
+				echo '<div class="row">';
 				for ($x = 0; $x < COLS; $x++) {
 					if ($filt->valid()) {
 						$name = basename($filt->current());
 						$filt->next();
+						$href = sprintf('<a href="run.php?file=ch%02d/%s">%s</a>', $ch, $name, $name);
 					} else {
-						$name = '&nbsp;';
+						$href = '';
 					}
-					printf(FORMAT, $ch, $name, $name);
-					echo ($x < $check) ? (SPACER) : '';
+					echo '<div class="' . $col_class . '">' . $href . '</div>' . PHP_EOL;
 				}
-				echo '</tr>' . PHP_EOL;
+				echo '</div>' . PHP_EOL;
 			}
-		}
 		?>
-		</table>
+		<?php endfor; ?>
     </div>
   </section>
   <?php endif; ?>

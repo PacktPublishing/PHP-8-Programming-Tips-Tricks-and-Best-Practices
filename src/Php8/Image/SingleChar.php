@@ -19,7 +19,7 @@ class SingleChar
 	#[description("Builds an image based on config specs")]
 	#[
 		string("text"),
-		string("fileFile"),
+		string("fontFile"),
 		int("width"),
 		int("height"),
 		int("size"),
@@ -28,8 +28,8 @@ class SingleChar
 		int("textY")
 	]
 	public function __construct(
-		public string $text     = '',
-		public string $fontFile = '',
+		public string $text,
+		public string $fontFile,
 		public int    $width    = self::DEFAULT_WIDTH,
 		public int    $height   = self::DEFAULT_HEIGHT,
 	    public int    $size     = self::DEFAULT_TX_SIZE,
