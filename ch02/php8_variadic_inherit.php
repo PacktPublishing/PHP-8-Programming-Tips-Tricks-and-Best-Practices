@@ -1,5 +1,5 @@
 <?php
-// /repo/ch02/php8_ops_variadic.php
+// /repo/ch02/php8_variadic_inherit.php
 class Upper {
     public function test(
 		$here,

@@ -2,9 +2,9 @@
 // /repo/ch02/php7_ops_variadic.php
 class Upper {
     public function test(
+		$here,
 		int $id,
-		string $name,
-		$here)
+		string $name)
 	{
 		echo "ID: $id\n"
 			 . "Name: $name\n"
@@ -19,5 +19,5 @@ class Lower extends Upper {
 }
 $lower = new Lower();
 echo '<pre>';
-echo $lower->test(999, 'Fred', 'YES');
+echo $lower->test('YES', 999, 'Fred');
 echo '</pre>';
