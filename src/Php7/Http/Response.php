@@ -3,29 +3,36 @@ namespace Php7\Http;
 
 class Response
 {
-	public static function redirectResponse(string $url)
+	public static function redirect(string $url)
 	{
 		self::sendResponse(
 			NULL,
-			'Location: ' . $url,
+			'Location: ' . $url
 		);
 		exit;
 	}
-	public static function htmlResponse(string $body)
+	public static function html(string $body)
 	{
 		self::sendResponse(
 			$body,
 			'Content-Type: text/html'
 		);
 	}
-	public static function jsonResponse(array $body)
+	public static function xml(string $body)
+	{
+		self::sendResponse(
+			$body,
+			'Content-Type: text/xml, application/xml'
+		);
+	}
+	public static function json(array $body)
 	{
 		self::sendResponse(
 			json_encode($body),
 			'Content-Type: application/json'
 		);
 	}
-	public static function pdfResponse($pdf_file)
+	public static function pdf($pdf_file)
 	{
 		self::sendResponse(
 			file_get_contents($pdf_file),

@@ -25,7 +25,7 @@ class Execute
 		} catch (Throwable $t) {
 			$raw = get_class($t) . ':' . $t->getMessage();
 		}
-		$escaped = htmlspecialchars($td);
+		$escaped = htmlspecialchars($raw);
 		return ['th' => $th, 'raw' => $raw, 'esc' => $escaped];
 	}
 
