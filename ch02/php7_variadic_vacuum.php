@@ -6,7 +6,6 @@ use Php7\Http\{Response,TestData};
 $allowed = ['redirect' => 'redirect',
 			'html'     => 'html',
 			'json'     => 'json',
-			'xml'      => 'xml',
 			'pdf'      => 'pdf'];
 if ($_GET) {
 	$type = $_GET['type'] ?? 'json';

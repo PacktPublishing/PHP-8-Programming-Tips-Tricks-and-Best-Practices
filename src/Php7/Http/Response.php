@@ -18,13 +18,6 @@ class Response
 			'Content-Type: text/html'
 		);
 	}
-	public static function xml(string $body)
-	{
-		self::sendResponse(
-			$body,
-			'Content-Type: text/xml, application/xml'
-		);
-	}
 	public static function json(array $body)
 	{
 		self::sendResponse(
