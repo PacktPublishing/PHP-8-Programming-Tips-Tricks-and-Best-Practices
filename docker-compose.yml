@@ -1,19 +1,33 @@
 version: "3"
 services:
-  php8-tips-tricks:
-    container_name: php8_tips
-    hostname: server1
-    image: php8tips/php8_tips_image
+  php8-tips-php7:
+    container_name: php8_tips_php7
+    hostname: php8_tips_php7
+    image: php8tips/php8_tips_image_php7
     volumes:
      - .:/repo
     ports:
-     - 8888:80
-    build: .
+     - 7777:80
+    build: ./docker/php7
     restart: always
     command: lfphp --mysql --apache --phpfpm
     networks:
       app_net:
-        ipv4_address: 172.16.0.22
+        ipv4_address: 172.16.0.77
+  php8-tips-php8:
+    container_name: php8_tips_php8
+    hostname: php8_tips_php8
+    image: php8tips/php8_tips_image_php8
+    volumes:
+     - .:/repo
+    ports:
+     - 8888:80
+    build: ./docker/php8
+    restart: always
+    command: lfphp --mysql --apache --phpfpm
+    networks:
+      app_net:
+        ipv4_address: 172.16.0.88
 
 networks:
   app_net:

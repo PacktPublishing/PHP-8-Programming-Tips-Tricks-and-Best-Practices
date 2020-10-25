@@ -3,40 +3,32 @@ namespace Server\Display;
 
 class Execute
 {
-	public function execPhp7(string $fullName)
-	{
-		$cmdTh = 'php7 --version';
-		$cmdTd = 'php7 ' . $fullName;
-		return $this->doExec($cmdTh, $cmdTd);
-	}
-
-	public function execPhp8(string $fullName)
-	{
-		$cmdTh = 'php8 --version';
-		$cmdTd = 'php8 ' . $fullName;
-		return $this->doExec($cmdTh, $cmdTd);
-	}
-
-	public function doExec(string $cmdTh, string $cmdTd)
-	{
-		try {
-			$th = substr(shell_exec($cmdTh), 0, 9);
-			$raw = shell_exec($cmdTd);
-		} catch (Throwable $t) {
-			$raw = get_class($t) . ':' . $t->getMessage();
-		}
-		$escaped = htmlspecialchars($raw);
-		return ['th' => $th, 'raw' => $raw, 'esc' => $escaped];
-	}
-
 	public function fileWithLineNumbers(string $fullName)
 	{
 		$output = '';
 		$code = highlight_file($fullName, TRUE);
 		$contents = explode('<br />', $code);
-		$pattern = '<span style="color:gray;">%02d</span>   %s<br />';
+		$pattern = '<span style="color:gray;font-size:11pt;font-family:courier;">%02d</span>   %s<br />';
 		foreach ($contents as $index => $line)
 			$output .= sprintf($pattern, $index + 1, $line);
+		return $output;
+	}
+
+	public function reveal_code(string $fullName, string $runFile)
+	{
+		$output = '';
+		if (!file_exists($fullName)) {
+			$output = 'File not found: ' . $fullName;
+		} else {
+			// produce formatted output
+			$code = $this->fileWithLineNumbers($fullName);
+			$output .= '<section id="services" class="bg-light">'
+					 . '<div class="container">'
+					 . '<h2>Execute File: <a target="_blank" href="' . $runFile . '">' . $runFile . '</a></h2>'
+					 . $code
+					 . '</div>'
+					 . '</section>';
+		}
 		return $output;
 	}
 
@@ -46,6 +38,12 @@ class Execute
 		if (!file_exists($fullName)) {
 			$output = 'File not found: ' . $fullName;
 		} else {
+			// execute code
+			ob_start();
+			include $fullName;
+			$contents = ob_get_contents();
+			ob_end_clean();
+			// produce formatted output
 			$code = $this->fileWithLineNumbers($fullName);
 			$output .= '<section id="services" class="bg-light">'
 					 . '<div class="container">'
@@ -53,19 +51,14 @@ class Execute
 					 . $code
 					 . '</div>'
 					 . '</section>';
-			if (strpos($fullName, 'php7') !== FALSE) {
-				$result = $this->execPhp7($fullName);
-			} else {
-				$result = $this->execPhp8($fullName);
-			}
 			$output .= '<section id="contact">'
 					 . '<div class="container">'
 					 . '<div class="row">'
 					 . '<div class="col-md-12">'
-					 . '<h2>' . $result['th'] . '</h2>'
+					 . '<h2>PHP ' . PHP_VERSION . '</h2>'
 					 . '<hr><b>Raw Output</h2></b><hr><br>'
 					 . '<!-- RAW OUTPUT -->'
-					 . $result['raw']
+					 . $contents
 					 . '</div>'
 					 . '</div>'
 					 . '<!-- RAW OUTPUT -->'
@@ -73,7 +66,7 @@ class Execute
 					 . '<div class="col-md-12">'
 					 . '<hr><b>Escaped Output</b><hr><br>'
 					 . '<!-- ESCAPED OUTPUT -->'
-					 . $result['esc']
+					 . htmlspecialchars($contents)
 					 . '<!-- ESCAPED OUTPUT -->'
 					 . '</div>'
 					 . '</div>'

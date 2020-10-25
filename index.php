@@ -19,10 +19,11 @@ if (empty($output)) {
 	// create filter by category
 	$filt = new class ($iterIter) extends FilterIterator {
 		public $cat = 'ch';
+		public $vers = 'php7';
 		public function accept() : bool
 		{
 			$fn = parent::current();
-			$key = '/' . $this->cat . '/php';
+			$key = '/' . $this->cat . '/' . $this->vers;
 			return (strpos($fn, $key) && $fn->isFile());
 		}
 	};

@@ -1,3 +1,4 @@
+<?php $vers = (PHP_VERSION[0] == '8') ? 'php8' : 'php7'; ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -88,7 +89,15 @@
 
   <header class="bg-primary text-white" style="height: 50px;">
     <div class="container">
-      <div style="float:right;"><a href="/"><img src="/img/php8_logo.png" style="width:150px;height:150px;"/></a></div>
+      <div style="float:right;">
+		  <a href="/">
+		  <?php if ($vers === 'php7') : ?>
+		  <img src="/img/php7_logo.png" style="width:150px;height:150px;"/>
+		  <?php else : ?>
+		  <img src="/img/php8_logo.png" style="width:150px;height:150px;"/>
+		  <?php endif; ?>
+		  </a>
+	  </div>
     </div>
   </header>
 
@@ -96,7 +105,7 @@
  <section id="about">
     <div class="container">
 		<?= ($message) ? $message : ''; ?>
-		<?php 
+		<?php
 		// organize into chapters
 		for ($ch = 1; $ch <= 10; $ch++) :
 			$key = sprintf('ch%02d', $ch);
@@ -108,6 +117,7 @@
 		</div>
 		<?php
 			$filt->cat = $key;
+			$filt->vers = $vers;
 			$filt->rewind();
 			while ($filt->valid()) {
 				$check = COLS - 1;
@@ -116,11 +126,12 @@
 					if ($filt->valid()) {
 						$name = basename($filt->current());
 						$filt->next();
-						$href = sprintf('<a href="run.php?file=ch%02d/%s">%s</a>', $ch, $name, $name);
+						$hrefRun = sprintf('<a href="/ch%02d/%s" title="Run Only">*</a>', $ch, $name);
+						$hrefView = sprintf('<a href="/run.php?file=/ch%02d/%s" title="View and Run Code">%s</a>', $ch, $name, $name);
 					} else {
 						$href = '';
 					}
-					echo '<div class="' . $col_class . '">' . $href . '</div>' . PHP_EOL;
+					echo '<div class="' . $col_class . '">' . $hrefView . '&nbsp;' . $hrefRun . '</div>' . PHP_EOL;
 				}
 				echo '</div>' . PHP_EOL;
 			}
