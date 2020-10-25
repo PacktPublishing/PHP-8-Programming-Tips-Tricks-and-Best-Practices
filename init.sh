@@ -13,6 +13,7 @@ elif [[ "$1" = "up" ]]; then
 	docker-compose up -d $2
 	INIT=1
 elif [[ "$1" = "down" ]]; then
+	docker exec $CONTAINER /bin/bash -c 'mysqldump -uroot -e php8_tips > /repo/backup/php8_tips.sql'
 	docker-compose down
 elif [[ "$1" = "build" ]]; then
 	docker-compose build $2
@@ -36,5 +37,6 @@ if [[ "$INIT" = 1 ]]; then
 	docker exec $CONTAINER /bin/bash -c "chgrp apache /srv/www"
 	docker exec $CONTAINER /bin/bash -c "chgrp -R apache /repo"
 	docker exec $CONTAINER /bin/bash -c "chmod -R 775 /repo"
+	docker exec $CONTAINER /bin/bash -c 'mysql -uroot -e "SOURCE /repo/backup/php8_tips.sql;" php8_tips'
 fi
 exit 0

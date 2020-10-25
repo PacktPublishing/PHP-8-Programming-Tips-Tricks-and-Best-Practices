@@ -1,15 +1,13 @@
 <?php
-// /repo/ch02/php7_variadics_sql.php
-require_once __DIR__ . '/includes/php7_sql_lib.php';
-$start = "'2021-01-01'";
-$end   = "'2021-04-01'";
+// /repo/ch02/php8_variadics_sql.php
+require_once __DIR__ . '/includes/php8_sql_lib.php';
+$start = '2021-01-01';
+$end   = '2021-04-01';
 $select = new stdClass();
 from($select, 'events');
 cols($select, ['id', 'event_key', 'event_name', 'event_date']);
 limit($select, 10);
-where($select, 'event_date', '>=', $start);
-where($select, 'AND');
-where($select, 'event_date', '<=', $end);
+where($select, 'event_date', '>=', "'$start'", 'AND', 'event_date', '<', "'$end'");
 $sql = render($select);
 $dsn = 'mysql:host=localhost;dbname=php8_tips';
 $pdo = new PDO($dsn, 'php8', 'password');

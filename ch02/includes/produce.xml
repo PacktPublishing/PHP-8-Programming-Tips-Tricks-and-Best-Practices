@@ -1,0 +1,16 @@
+<?xml version='1.0' standalone='yes'?>
+<produce>
+	<file>/repo/ch02/includes/produce.xml</file>
+	<dept>
+		<fruit>
+			<apple>11</apple>
+			<banana>22</banana>
+			<cherry>33</cherry>
+		</fruit>
+		<vegetable>
+			<artichoke>11</artichoke>
+			<beans>22</beans>
+			<cabbage>33</cabbage>
+		</vegetable>
+	</dept>
+</produce>
