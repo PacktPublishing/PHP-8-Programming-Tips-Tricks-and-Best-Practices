@@ -1,39 +1,43 @@
 <?php
 // /repo/ch02/php8_arrow_func_3.php
 
-function number2words(int $num)
+function textCaptcha($text)
 {
-	$words = '';
-	$range = [
-		10 => ['zero','one','two','three','four','five','six','seven','eight','nine'],
-		20 => ['ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'],
-		100 => [2 => 'twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'],
-	];
-	$str = (string) $num;
-	$len = strlen($str) - 1;
-	for ($x = $len; $x >= 0; $x--) {
-		if ($num < 10) {
-			$words .= $range[10][(int) $str[$x]] ?? '';
-		} elseif ($num < 20 && $num >= 10) {
-			$words .= $range[20][(int) $str[$x]] ?? '';
-		} elseif ($num < 100 && $num >= 20) {
-			$words .= $range[100][(int) $str[$x]] ?? '';
-		} elseif ($num < 1000 && $num >= 100) {
-			$words .= $range[10][(int) $str[$x]] ?? '';
-			$words .= ' ';
-			$words .= 'hundred';
-		} elseif ($num < 1010 && $num >= 1000) {
-			$words .= $range[10][(int) $str[$x]] ?? '';
-			$words .= ' ';
-			$words .= 'thousand';
-		} elseif ($num < 1020 && $num >= 1010) {
-			$words .= $range[20][(int) $str[$x]] ?? '';
-			$words .= ' ';
-			$words .= 'thousand';
-		}
-		$words .= ' ';
-		$num = (int) $num / 10;
+	$algos = ['upper','lower','bold','italics','large','small'];
+	$rand  = rand(1,3);
+	shuffle($algos);
+	$iter = new ArrayIterator($algos);
+	$len = strlen($text);
+	$captcha = '';
+	for ($x = 0; $x < $len; $x++) {
+		$char = $text[$x];
+		$algo = $iter->current();
+		$func = match ($algo) {
+			'upper'   => fn() => strtoupper($char),
+			'lower'   => fn() => strtolower($char),
+			'bold'    => fn() => "<b style='color:red;'>$char</b>",
+			'italics' => fn() => "<i style='color:green;'>$char</i>",
+			'large'   => fn() => '<span style="font-size:16px;">' . $char . '</span>',
+			'small'   => fn() => '<span style="font-size:8px;">' . $char . '</span>',
+			default   => fn() => $char
+		};
+		$captcha .= $func();
+		$iter->next();
+		if (!$iter->valid()) $iter->rewind();
 	}
-	return $words;
+	return $captcha;
 }
-echo number2words(101);
+// generate random text
+$alpha = range('A','Z');
+$numeric = range(0, 9);
+$text =	$alpha[array_rand($alpha)]
+	  . $numeric[array_rand($numeric)]
+	  . $alpha[array_rand($alpha)]
+	  . $numeric[array_rand($numeric)]
+	  . $alpha[array_rand($alpha)]
+	  . $numeric[array_rand($numeric)]
+	  . $alpha[array_rand($alpha)]
+	  . $numeric[array_rand($numeric)];
+
+echo "Original: $text<br />\n";
+echo 'Captcha : ' . textCaptcha($text) . "\n";
