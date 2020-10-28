@@ -1,13 +1,12 @@
-FROM asclinux/linuxforphp-8.2-ultimate:8.0dev-nts
+FROM asclinux/linuxforphp-8.2-ultimate:src
 MAINTAINER doug.bierer@etista.com
 RUN \
 	echo "Compiling PHP 8 ..." && \
 	cp /bin/lfphp-compile /bin/lfphp-compile-php8 && \
 	sed -i 's/phpverscheckout=master/phpverscheckout=PHP-8.0/g' /bin/lfphp-compile-php8 && \
-	sed -i 's/--prefix=\/usr/--prefix=\/usr\/local --with-ffi --with-zip/g' /bin/lfphp-compile-php8 && \	
+	sed -i 's/--prefix=\/usr/--prefix=\/usr --with-ffi --with-zip/g' /bin/lfphp-compile-php8 && \	
 	/bin/lfphp-compile-php8 && \
-	ln -sfv /usr/bin/php /usr/bin/php8 && \
-	ln -sfv /usr/local/bin/php /usr/bin/php8
+	ln -sfv /usr/bin/php /usr/bin/php8
 RUN \
 	echo "Enable display errors and configure php.ini for modifications later ..." && \
 	sed -i 's/display_errors = Off/display_errors = On/g' /etc/php.ini && \
