@@ -7,33 +7,35 @@ function show($matching, $non_match)
 }
 function find_using_if($iter, $searchPath, $searchExt)
 {
-    $matching = [];
+    $matching  = [];
     $non_match = [];
+    $discard   = [];
     foreach ($iter as $name => $obj) {
-        if ($obj->isFile()) {
-            if (strpos($name, $searchPath)) {
-                if ($obj->getExtension() === $searchExt) {
-                    $matching[] = $name;
-                } else {
-                    $non_match[] = $name;
-                }
-            }
+        if (!$obj->isFile()) {
+            $discard[] = $name;
+        } elseif (!strpos($name, $searchPath)) {
+            $discard[] = $name;
+        } elseif ($obj->getExtension() !== $searchExt) {
+            $non_match[] = $name;
+        } else {
+            $matching[] = $name;
         }
     }
     show($matching, $non_match);
 }
 function find_using_ternary($iter, $searchPath, $searchExt)
 {
-    $matching = [];
+    $matching  = [];
     $non_match = [];
+    $discard   = [];
     foreach ($iter as $name => $obj) {
-        $match = $obj->isFile()
-            ? strpos($name, $searchPath)
-                ? $obj->getExtension() === $searchExt
-                    ? $matching[] = $name
-                    : $non_match[] = $name
-                : FALSE
-            : FALSE;
+        $match = !$obj->isFile()
+            ? $discard[] = $name
+            : !strpos($name, $searchPath)
+                ? $discard[] = $name
+                : $obj->getExtension() !== $searchExt
+                    ? $non_match[] = $name
+                    : $matching[] = $name;
     }
     show($matching, $non_match);
 }
