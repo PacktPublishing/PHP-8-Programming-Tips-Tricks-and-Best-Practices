@@ -1,13 +1,17 @@
 <?php
 // /repo/ch02/php8_sqlite_query.php
-define('DB_FILE', __DIR__ . '/../sample_data/geonames.db');
+define('DB_FILE', '/tmp/sqlite.db');
 try {
-    $pdo = new PDO('sqlite:' . DB_FILE);
-    $sql = 'SELECT * FROM geonames WHERE country_code = "IN" AND population > 2000000';
-    $stmt = $pdo->query($sql);
+    $sqlite = new SQLite3(DB_FILE);
+    $sql = 'SELECT * FROM geonames WHERE country_code = :cc AND population > :pop';
+    $stmt = $sqlite->prepare($sql);
+    $stmt->bindValue(':cc', 'IN');
+    $stmt->bindValue(':pop', 2000000);
+    $result = $stmt->execute();
+    echo '<pre>' . PHP_EOL;
     printf("%20s : %2s : %16s\n", 'City','CC', 'Population');
     printf("%20s : %2s : %16s\n", str_repeat('-', 20),'--', str_repeat('-', 16));
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
+    while ($row = $result->fetchArray(SQLITE3_ASSOC))
         printf("%20s : %2s : %16s\n",
             $row['name'],
             $row['country_code'],
@@ -15,7 +19,4 @@ try {
 } catch (Exception $e) {
     echo $e;
 }
-
-
-
-
+echo "\n</pre>";
