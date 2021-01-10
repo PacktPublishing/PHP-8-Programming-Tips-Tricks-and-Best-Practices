@@ -16,7 +16,7 @@ $y_max = count($arr);
 for ($y = 0; $y < $y_max; $y++) {
     $x_max = count($arr[$y]);
     for ($x = 0; $x < $x_max; $x++) {
-        $arr[$y][$x] = $val[$pos++];
+        $arr[$y][$x]->cdata = $val[$pos++];
     }
 }
 var_dump($arr);
