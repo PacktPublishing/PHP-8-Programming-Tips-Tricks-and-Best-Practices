@@ -5,13 +5,22 @@
 $char = FFI::new("char[6]");
 
 // populate with data
-$char = 'ABCDEF';
-$arr  = [1,2,3];
+for ($x = 0; $x < 6; $x++)
+    $char[$x] = chr(65 + $x);
 
-// native PHP info methods don't work
-echo 'Length of $char is ' . strlen($char);
+// Fatal Error: strlen() expects parameter 1 to be string, object given
+try {
+    echo 'Length of $char is ' . strlen($char);
+} catch (Throwable $t) {
+    echo $t::class . ':' . $t->getMessage();
+}
+echo "\n";
 
-// determine their type
-$type[] = FFI::typeOf($char);
-$type[] = FFI::typeOf($arr);
+// native PHP info methods don't give accurate information
+echo '$char is ' .
+    ((ctype_alnum($char)) ? 'alpha' : 'non-alpha');
+echo "\n";
+
+// determine the type
+$type = FFI::typeOf($char);
 var_dump($type);
