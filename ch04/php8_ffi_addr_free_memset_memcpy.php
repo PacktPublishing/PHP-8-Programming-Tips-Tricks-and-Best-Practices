@@ -1,5 +1,5 @@
 <?php
-// ch04/php8_ffi_addr_memset_memcpy.php
+// ch04/php8_ffi_addr_free_memset_memcpy.php.php
 // create C data structure
 
 // define output function
@@ -24,3 +24,6 @@ $ref = FFI::addr($arr);
 FFI::memset($ref[0], 66, 6);
 echo $output($arr, $size);
 var_dump($ref, $arr, $arr2);
+
+// remove the pointer
+FFI::free($ref);
