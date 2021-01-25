@@ -6,6 +6,8 @@ $zend = FFI::cdef("
 
 echo "Original echo command does not output LF:\n";
 echo 'A','B','C';
+echo 'Next line';
+echo "\n";
 
 $orig_zend_write = clone $zend->zend_write;
 $zend->zend_write = function($str, $len) {
