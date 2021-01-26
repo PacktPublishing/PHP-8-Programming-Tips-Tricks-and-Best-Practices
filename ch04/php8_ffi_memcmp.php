@@ -21,7 +21,12 @@ $b = $populate($b, 85, 3, 3);
 $c = $populate($c, 71, 0, 6);
 $d = $populate($d, 71, 0, 6);
 
-var_dump($a,$b,$c,$d);
+// display contents
+$patt = "%2s : %6s\n";
+printf($patt, '$a', FFI::string($a, 6));
+printf($patt, '$b', FFI::string($b, 6));
+printf($patt, '$c', FFI::string($c, 6));
+printf($patt, '$d', FFI::string($d, 6));
 /*
 $a : ABCDEF
 $b : ABCXYZ

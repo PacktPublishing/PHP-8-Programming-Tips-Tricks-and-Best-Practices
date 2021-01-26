@@ -18,8 +18,11 @@ for ($y = 0; $y < $y_max; $y++) {
     for ($x = 0; $x < $x_max; $x++) {
         $arr[$y][$x]->cdata = $val[$pos++];
     }
+    echo FFI::string($arr[$y], 3) . "\n";
 }
-var_dump($arr);
+
+// use FFI::string() to display one of the rows
+echo FFI::string($arr[0], 3) . "\n";
 
 // warning: $arr is *not* an array!
 echo implode(',', $arr);
