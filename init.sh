@@ -16,6 +16,7 @@ elif [[ "$1" = "up" ]]; then
     RESTORE_DB=1
 elif [[ "$1" = "down" ]]; then
     docker-compose down
+    sudo chown -R $USER *
 elif [[ "$1" = "build" ]]; then
     docker-compose build $2
 elif [[ "$1" = "restore_db" ]]; then
