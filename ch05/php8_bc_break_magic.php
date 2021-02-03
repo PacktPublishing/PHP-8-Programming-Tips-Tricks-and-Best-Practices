@@ -13,7 +13,7 @@ class NoTypes
 $no = new NoTypes();
 echo $no->doesNotExist('A','B','C');
 
-class WithTypes
+class MixedTypes
 {
     public function __invoke(array $args) : string
     {
@@ -21,17 +21,5 @@ class WithTypes
              . implode(',', $args) . "'\n";
     }
 }
-$with = new WithTypes();
-echo $with(['A','B','C']);
-
-class WrongTypes
-{
-    public function __isset($var) : string
-    {
-        return (isset($this->var)) ? 'Y' : '';
-    }
-}
-$wrong = new WrongTypes();
-echo (isset($wrong->nothing)) ? 'Set' : 'Not Set';
-echo "\n";
-
+$mixed = new MixedTypes();
+echo $mixed(['A','B','C']);
