@@ -1,4 +1,4 @@
-FROM asclinux/linuxforphp-8.2-ultimate:8.0-nts
+FROM asclinux/linuxforphp-8.2-ultimate:8.1dev-nts
 MAINTAINER doug.bierer@etista.com
 RUN \
     echo "Enable display errors and configure php.ini for modifications later ..." && \
