@@ -11,7 +11,7 @@ abstract class Output
 }
 class Html extends Output
 {
-    public function getStrOut()
+    public function getStrOut() : string
     {
         header('Content-Type: text/html');
         $output = '<ul><li>';
@@ -22,7 +22,7 @@ class Html extends Output
 }
 class Json extends Output
 {
-    public function getStrOut()
+    public function getStrOut() : string
     {
         header('Content-Type: application/json');
         return json_encode($this->data);
