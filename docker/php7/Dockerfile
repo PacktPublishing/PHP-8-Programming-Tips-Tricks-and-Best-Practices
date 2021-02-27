@@ -31,6 +31,7 @@ RUN \
     echo "ServerName php8_tips_php7" >> /etc/httpd/httpd.conf && \
     mv -f /srv/www /srv/www.OLD && \
     ln -sfv /repo /srv/www && \
+    ln -sfv /srv/phpmyadmin /repo/phpmyadmin && \
     chown apache:apache /srv/www && \
     chown -R apache:apache /repo && \
     chmod -R 775 /repo
