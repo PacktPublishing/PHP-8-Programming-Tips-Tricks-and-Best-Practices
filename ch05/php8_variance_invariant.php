@@ -1,16 +1,25 @@
 <?php
 // /repo/ch05/php8_variance_invariant.php
-class Looper
+class Listing
 {
-    public function arr2string(Iterator $a) : string
+    public function list(ArrayIterator $arr) : array
     {
-        $output = '';
-        foreach ($a as $item)
-            $output .= $item . "\n";
-        return $output;
+        return $arr->getArrayCopy();
     }
 }
+class Limiter extends Listing
+{
+    public function list(LimitIterator $arr) : array
+    {
+        return $arr->getArrayCopy();
+    }
+}
+
 $arr = new ArrayIterator(range('A','Z'));
+$list = new Listing();
+var_dump($list->list($arr));
+
 $limit = new LimitIterator($arr, 0, 6);
-$loop = new Looper();
-echo $loop->arr2string($limit);
+$limiter = new Limiter();
+var_dump($limiter->list($limit));
+

@@ -5,7 +5,7 @@ services:
     hostname: php8_tips_php7
     image: php8tips/php8_tips_image_php7
     volumes:
-     - .:/repo
+     - .:/home
     ports:
      - 7777:80
     build: ./docker/php7
@@ -19,7 +19,7 @@ services:
     hostname: php8_tips_php8
     image: php8tips/php8_tips_image_php8
     volumes:
-     - .:/repo
+     - .:/home
     ports:
      - 8888:80
     build: ./docker/php8
