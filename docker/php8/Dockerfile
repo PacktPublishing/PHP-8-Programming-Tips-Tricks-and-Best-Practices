@@ -1,4 +1,4 @@
-FROM asclinux/linuxforphp-8.2-ultimate:8.1dev-nts
+FROM asclinux/linuxforphp-8.2-ultimate:8.0-nts
 MAINTAINER doug.bierer@etista.com
 RUN \
     echo "Restoring code from book repository ..." && \
@@ -25,7 +25,7 @@ RUN \
     mysql -uroot -e "SOURCE /repo/backup/php8_tips_php8.sql;" php8_tips
 RUN \
     echo "Installing phpMyAdmin ..." && \
-    lfphp-get phpmyadmin
+    /repo/docker/php8/phpmyadmin_install.sh
 RUN \
     echo "Setting up Apache ..." && \
     echo "ServerName php8_tips_php8" >> /etc/httpd/httpd.conf && \
