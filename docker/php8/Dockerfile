@@ -25,7 +25,7 @@ RUN \
     mysql -uroot -e "SOURCE /repo/backup/php8_tips_php8.sql;" php8_tips
 RUN \
     echo "Installing phpMyAdmin ..." && \
-    /repo/docker/php8/phpmyadmin_install.sh
+    /repo/docker/php8/phpmyadmin_install.sh 5.1.0
 RUN \
     echo "Setting up Apache ..." && \
     echo "ServerName php8_tips_php8" >> /etc/httpd/httpd.conf && \

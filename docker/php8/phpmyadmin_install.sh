@@ -1,46 +1,28 @@
 #!/usr/bin/env bash
-cd &&
-wget -O phpMyAdmin-5.0.4-all-languages.tar.gz https://files.phpmyadmin.net/phpMyAdmin/5.0.4/phpMyAdmin-5.0.4-all-languages.tar.gz &&
-tar -xvf phpMyAdmin-5.0.4-all-languages.tar.gz &&
-cp -rf phpMyAdmin-5.0.4-all-languages /srv/phpmyadmin &&
-rm -rf phpMyAdmin-5.0.4-all-languages &&
-cat >/etc/httpd/extra/httpd-phpmyadmin.conf << 'EOF' &&
+# Usage: phpmyadmin_install.sh VERSION
+if [[ -z "$1" ]]; then
+    export VER=5.1.0
+else
+    export VER=$1
+fi
+cd /tmp
+wget -O phpMyAdmin-$VER-all-languages.tar.gz https://files.phpmyadmin.net/phpMyAdmin/$VER/phpMyAdmin-$VER-all-languages.tar.gz
+tar -xvf phpMyAdmin-$VER-all-languages.tar.gz
+mkdir -p /srv/phpmyadmin
+cp -rf phpMyAdmin-$VER-all-languages/* /srv/phpmyadmin
+rm -rf phpMyAdmin-$VER-all-languages
+cat >/etc/httpd/extra/httpd-phpmyadmin.conf << 'EOF'
 Alias /phpmyadmin /srv/phpmyadmin
-
 <Directory "/srv/phpmyadmin">
-    #
-    # Possible values for the Options directive are "None", "All",
-    # or any combination of:
-    #   Indexes Includes FollowSymLinks SymLinksifOwnerMatch ExecCGI
-    #   MultiViews
-    #
-    # Note that "MultiViews" must be named *explicitly* --- "Options
-    # All"
-    # doesn't give it to you.
-    #
-    # The Options directive is both complicated and important.  Please
-    # see
     # http://httpd.apache.org/docs/2.4/mod/core.html#options
     # for more information.
-    #
     Options Indexes FollowSymLinks
-
-    #
-    # AllowOverride controls what directives may be placed in .htaccess
-    # files.
-    # It can be "All", "None", or any combination of the keywords:
-    #   AllowOverride FileInfo AuthConfig Limit
-    #
     AllowOverride All
-
-    #
-    # Controls who can get stuff from this server.
-    #
     Require all granted
 </Directory>
 EOF
-echo 'Include /etc/httpd/extra/httpd-phpmyadmin.conf' >> /etc/httpd/httpd.conf &&
-cp /srv/phpmyadmin/config.sample.inc.php /srv/phpmyadmin/config.inc.php &&
+echo 'Include /etc/httpd/extra/httpd-phpmyadmin.conf' >> /etc/httpd/httpd.conf
+cp /srv/phpmyadmin/config.sample.inc.php /srv/phpmyadmin/config.inc.php
 sed -i "s/AllowNoPassword'] = false;/AllowNoPassword'] = true;/" /srv/phpmyadmin/config.inc.php
 echo "Setting apache as owner ..."
 chown -v apache:apache /srv/phpmyadmin
