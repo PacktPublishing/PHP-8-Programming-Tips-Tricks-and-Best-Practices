@@ -22,7 +22,7 @@ RUN \
     mysql -uroot -v -e "CREATE USER 'php8'@'localhost' IDENTIFIED BY 'password';" && \
     mysql -uroot -v -e "GRANT ALL PRIVILEGES ON *.* TO 'php8'@'localhost';" && \
     mysql -uroot -v -e "FLUSH PRIVILEGES;" && \
-    mysql -uroot -e "SOURCE /repo/backup/php8_tips_php7.sql;" php8_tips
+    mysql -uroot -e "SOURCE /repo/sample_data/php8_tips.sql;" php8_tips
 RUN \
     echo "Installing phpMyAdmin ..." && \
     lfphp-get phpmyadmin
@@ -31,7 +31,6 @@ RUN \
     echo "ServerName php8_tips_php7" >> /etc/httpd/httpd.conf && \
     mv -f /srv/www /srv/www.OLD && \
     ln -sfv /repo /srv/www && \
-    ln -sfv /srv/phpmyadmin /repo/phpmyadmin && \
     chown apache:apache /srv/www && \
     chown -R apache:apache /repo && \
     chmod -R 775 /repo

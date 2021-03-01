@@ -1,8 +1,5 @@
 #!/bin/bash
 DIR=`pwd`
-TOOLS_DIR=$DIR/vendor/phpcl/lfc_tools
-LFC_DIR=$DIR/vendor/linuxforphp/linuxforcomposer/bin
-LFC_PID=$DIR/vendor/composer
 export USAGE="Usage: init.sh up|down|build|restore_db|init|shell [7|8]"
 export CONTAINER7="php8_tips_php7"
 export CONTAINER8="php8_tips_php8"
