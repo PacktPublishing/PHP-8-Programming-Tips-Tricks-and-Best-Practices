@@ -4,6 +4,7 @@ RUN \
     echo "Restoring code from book repository ..." && \
     git clone https://github.com/PacktPublishing/PHP-8-Programming-Tips-Tricks-and-Best-Practices.git /repo && \
     cd /repo && \
+    cp sample_data/*.db /tmp && \
     rm -rf /repo/.git
 RUN \
     echo "Enable display errors and configure php.ini for modifications later ..." && \

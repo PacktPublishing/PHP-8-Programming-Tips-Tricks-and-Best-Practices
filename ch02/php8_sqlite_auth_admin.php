@@ -4,7 +4,7 @@ include __DIR__ . '/includes/auth_callback.php';
 // Normally $user would come from $_SESSION information
 // Here we simulate the user using $_GET
 session_start();
-$_SESSION['user'] = $argv[1] ?? 'admin';
+$_SESSION['user'] = $argv[1] ?? $_GET['user'] ?? DEFAULT_USER;
 echo '<pre>' . PHP_EOL;
 $name = ['jclayton','mpaulovich','nrousseau','jporter'];
 $email = ['unlikelysource.com','lfphpcloud.net','phptraining.net'];
@@ -20,7 +20,7 @@ try {
     if ($stmt) {
         $user_name = $name[0];
         $user_email = $name[0] . '@' . $email[0];
-        $id = md5($user_email);
+        $id = md5($user_email . rand(0,999999));
         $stmt->bindValue(':id', $id);
         $stmt->bindValue(':name', $user_name);
         $stmt->bindValue(':email', $user_email);
