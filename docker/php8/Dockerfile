@@ -22,7 +22,7 @@ RUN \
     mysql -uroot -v -e "CREATE USER 'php8'@'localhost' IDENTIFIED BY 'password';" && \
     mysql -uroot -v -e "GRANT ALL PRIVILEGES ON *.* TO 'php8'@'localhost';" && \
     mysql -uroot -v -e "FLUSH PRIVILEGES;" && \
-    mysql -uroot -e "SOURCE /repo/backup/php8_tips_php8.sql;" php8_tips
+    mysql -uroot -e "SOURCE /repo/sample_data/php8_tips.sql;" php8_tips
 RUN \
     echo "Installing phpMyAdmin ..." && \
     /repo/docker/php8/phpmyadmin_install.sh 5.1.0
