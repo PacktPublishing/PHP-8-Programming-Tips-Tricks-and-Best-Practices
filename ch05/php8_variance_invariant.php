@@ -1,25 +1,21 @@
 <?php
 // /repo/ch05/php8_variance_invariant.php
-class Listing
+class User
 {
-    public function list(ArrayIterator $arr) : array
+    public $id    = 0;
+    public $first = '';
+    public $last  = '';
+}
+class Guest extends User {}
+abstract class Base
+{
+    public abstract function __construct(User $user);
+}
+class Signup extends Base
+{
+    public $user = NULL;
+    public function __construct(Guest $user)
     {
-        return $arr->getArrayCopy();
+        $this->user = $user;
     }
 }
-class Limiter extends Listing
-{
-    public function list(LimitIterator $arr) : array
-    {
-        return $arr->getArrayCopy();
-    }
-}
-
-$arr = new ArrayIterator(range('A','Z'));
-$list = new Listing();
-var_dump($list->list($arr));
-
-$limit = new LimitIterator($arr, 0, 6);
-$limiter = new Limiter();
-var_dump($limiter->list($limit));
-

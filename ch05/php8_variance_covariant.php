@@ -1,25 +1,19 @@
 <?php
 // /repo/ch05/php8_variance_covariant.php
-class Listing
-{
-    public $arr = [];
-    public function __construct(array $arr = [])
-    {
-        $this->arr = $arr;
-    }
-    public function list() : ArrayIterator
-    {
-        return new ArrayIterator($this->arr);
+interface FactoryInterface {
+    public function make(array $arr): ArrayObject;
+}
+class ArrTest extends ArrayObject {
+    const DEFAULT_TEST = 'This is a test';
+}
+class ArrFactory implements FactoryInterface {
+    protected $data;
+    public function make(array $data): ArrTest {
+        $this->data = $data;
+        return new ArrTest($this->data);
     }
 }
-class Limiter extends Listing
-{
-    public function list($start, $length) : ArrayIterator
-    {
-        $iter = parent::list();
-        return new I($iter, $start, $length);
-    }
-}
-
-$limit = new Limiter(range('A','Z'), 0, 6);
-foreach ($limit->list as $letter) echo $letter;
+$factory = new ArrFactory();
+$obj1 = $factory->make([1,2,3]);
+$obj2 = $factory->make(['A','B','C']);
+var_dump($obj1, $obj2);

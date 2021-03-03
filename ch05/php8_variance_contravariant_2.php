@@ -6,15 +6,14 @@ class User
     public $first = '';
     public $last  = '';
 }
-class Guest extends User {}
-interface UserInterface
+abstract class Base
 {
-    public function __construct(User $user);
+    public abstract function __construct(object $user);
 }
-class Signup implements UserInterface
+class Signup extends Base
 {
     public $user = NULL;
-    public function __construct(Guest $user)
+    public function __construct(User $user)
     {
         $this->user = $user;
     }
