@@ -1,0 +1,141 @@
+// from https://www.bloomberg.com/billionaires/
+ 1
+Jeff Bezos
+$177B
++$1.29B
+-$13.7B
+United States
+Technology
+2
+Elon Musk
+$157B
+-$5.34B
+-$12.8B
+United States
+Technology
+3
+Bill Gates
+$136B
++$2.07B
++$4.10B
+United States
+Technology
+4
+Bernard Arnault
+$115B
+-$3.24B
++$604M
+France
+Consumer
+5
+Mark Zuckerberg
+$100B
++$2.39B
+-$3.22B
+United States
+Technology
+6
+Warren Buffett
+$96.5B
++$3.28B
++$8.88B
+United States
+Diversified
+7
+Larry Page
+$96.4B
++$2.47B
++$14.0B
+United States
+Technology
+8
+Sergey Brin
+$93.3B
++$2.38B
++$13.5B
+United States
+Technology
+9
+Mukesh Ambani
+$84.0B
++$84.3M
++$7.34B
+India
+Energy
+10
+Steve Ballmer
+$83.6B
++$1.65B
++$3.21B
+United States
+Technology
+11
+Larry Ellison
+$83.0B
++$3.45B
++$3.30B
+United States
+Technology
+12
+Francoise Bettencourt-Meyers
+$73.4B
+-$785M
+-$2.36B
+France
+Consumer
+13
+Zhong Shanshan
+$68.5B
+-$833M
+-$9.76B
+China
+Diversified
+14
+Amancio Ortega
+$68.3B
+-$51.0M
++$1.78B
+Spain
+Retail
+15
+Ma Huateng
+$67.0B
+-$1.04B
++$10.5B
+China
+Technology
+16
+Charles Koch
+$61.1B
++$1.07B
++$4.19B
+United States
+Industrial
+17
+Julia Flesher Koch
+$61.1B
++$1.07B
++$4.19B
+United States
+Industrial
+18
+Rob Walton
+$58.2B
++$684M
+-$4.47B
+United States
+Retail
+19
+Jim Walton
+$58.1B
++$703M
+-$4.42B
+United States
+Retail
+20
+Alice Walton
+$57.6B
++$645M
+-$4.82B
+United States
+Retail
