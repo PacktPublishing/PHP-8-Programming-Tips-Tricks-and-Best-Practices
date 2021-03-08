@@ -7,24 +7,47 @@ use ArrayIterator;
  * Designed to run on PHP 7 or below
  * Looks for things that might break OOP code
  */
-class OopBreakScan
+class OopBreakScan extends Base
 {
-    const ERR_CLASS_CONSTRUCT = 'WARNING: contains method same name as class but no __construct() method defined';
-    const ERR_CONST_EXIT      = 'WARNING: __destruct() might not get called if "die()" or "exit()" used in __construct()';
-    const ERR_MAGIC_SIGNATURE = 'WARNING: need to confirm magic method signature: ';
-    const ERR_MAGIC_SLEEP     = 'WARNING: need to confirm __sleep() return values match properties';
-    const OK_PASSED = 'PASSED this scan: %s';
     /**
+     * Searches for __autoload() function (remove in PHP 8)
      *
      * @param string $contents : PHP file contents
-     * @return string $name    : classname
+     * @param array $message   : return success or failure message
+     * @return bool $found     : TRUE if a break was found
      */
-    public static function getClassName(string $contents) : string
+    public static function scanMagicAutoloadFunction(string $contents, array &$message) : bool
     {
-        preg_match('/class (.+?)\b/', $contents, $matches);
-        return $matches[1] ?? '';
+        // look for __autoload()
+        $found  = 0;
+        $found += (stripos($contents, 'function __autoload(') !== FALSE);
+        $message[] = ($found)
+                   ? Base::ERR_MAGIC_AUTOLOAD
+                   : sprintf(Base::OK_PASSED, __FUNCTION__);
+        return (bool) $found;
     }
     /**
+     * Looks for usage involving SplFileObject::fgetss()
+     *
+     * @param string $contents : PHP file contents
+     * @param array $message   : return success or failure message
+     * @return bool $found     : TRUE if a break was found
+     */
+    public static function scanSplFileObjectFgetss(string $contents, array &$message) : bool
+    {
+        $found  = 0;
+        $name   = self::getClassName($contents);
+        if ($name) {
+            $found += (stripos($contents, 'SplFileObject') !== FALSE);
+            $found += (stripos($contents, 'fgetss()') !== FALSE);
+        }
+        $message[] = ($found === 2)
+                   ? Base::ERR_SPL_FGETSS
+                   : sprintf(Base::OK_PASSED, __FUNCTION__);
+        return (bool) $found;
+    }
+    /**
+     * Case insensitive search for methods the same name as the class
      *
      * @param string $contents : PHP file contents
      * @param array $message   : return success or failure message
@@ -32,7 +55,6 @@ class OopBreakScan
      */
     public static function scanClassnameConstructor(string $contents, array &$message) : bool
     {
-        // look for classname and method of the same name
         $found  = 0;
         $name   = self::getClassName($contents);
         if ($name) {
@@ -41,11 +63,12 @@ class OopBreakScan
             $found -= (stripos($contents, 'function __construct') !== FALSE);
         }
         $message[] = ($found)
-                   ? self::ERR_CLASS_CONSTRUCT
-                   : sprintf(self::OK_PASSED, __FUNCTION__);
+                   ? Base::ERR_CLASS_CONSTRUCT
+                   : sprintf(Base::OK_PASSED, __FUNCTION__);
         return (bool) $found;
     }
     /**
+     * Looks for "die()" or "exit()" in __construct() + __destruct()
      *
      * @param string $contents : PHP file contents
      * @param array $message   : return success or failure message
@@ -53,7 +76,6 @@ class OopBreakScan
      */
     public static function scanConstructorExit(string $contents, array &$message) : bool
     {
-        // look for "die()" or "exit()" in __construct() + __destruct()
         $found    = 0;
         $possible = 2;
         $name     = self::getClassName($contents);
@@ -63,11 +85,12 @@ class OopBreakScan
             $found += (strpos($contents, 'die(') !== FALSE);
         }
         $message[] = ($found >= $possible)
-                   ? self::ERR_CONST_EXIT
-                   : sprintf(self::OK_PASSED, __FUNCTION__);
+                   ? Base::ERR_CONST_EXIT
+                   : sprintf(Base::OK_PASSED, __FUNCTION__);
         return (bool) $found;
     }
     /**
+     * Scan for magic method signatures
      *
      * @param string $contents : PHP file contents
      * @param array $message   : return success or failure message
@@ -114,14 +137,14 @@ class OopBreakScan
                     if (strpos($line, '($') === FALSE
                         && strpos($confirm, '(string')
                         &&strpos($line, '(string') === FALSE) {
-                        $message[] = self::ERR_MAGIC_SIGNATURE . $list[$name];
+                        $message[] = Base::ERR_MAGIC_SIGNATURE . $list[$name];
                         $found++;
                     }
                     // check 2nd arg (if any)
                     if (strpos($confirm, ', array')
                         && strpos($line, ', $') === FALSE
                         && strpos($line, ', array') !== FALSE) {
-                        $message[] = self::ERR_MAGIC_SIGNATURE . $list[$name];
+                        $message[] = Base::ERR_MAGIC_SIGNATURE . $list[$name];
                         $found++;
                     }
                     // check return data type (if any)
@@ -135,7 +158,7 @@ class OopBreakScan
                         $check = str_replace('{', '', $check);
                         $check = trim($check);
                         if ($type !== $check) {
-                            $message[] = self::ERR_MAGIC_SIGNATURE . $list[$name];
+                            $message[] = Base::ERR_MAGIC_SIGNATURE . $list[$name];
                             $found++;
                         }
                     }
@@ -143,10 +166,11 @@ class OopBreakScan
             }
             $iter->next();
         }
-        if (!$found) $message[] = sprintf(self::OK_PASSED, __FUNCTION__);
+        if (!$found) $message[] = sprintf(Base::OK_PASSED, __FUNCTION__);
         return (bool) $found;
     }
     /**
+     * Looks for __sleep()
      *
      * @param string $contents : PHP file contents
      * @param array $message   : return success or failure message
@@ -154,7 +178,6 @@ class OopBreakScan
      */
     public static function scanMagicSleep(string $contents, array &$message) : bool
     {
-        // look for __sleep()
         $found    = 0;
         $possible = 2;
         $name     = self::getClassName($contents);
@@ -162,8 +185,8 @@ class OopBreakScan
             $found += (strpos($contents, 'function __sleep') !== FALSE);
         }
         $message[] = ($found >= $possible)
-                   ? self::ERR_MAGIC_SLEEP
-                   : sprintf(self::OK_PASSED, __FUNCTION__);
+                   ? Base::ERR_MAGIC_SLEEP
+                   : sprintf(Base::OK_PASSED, __FUNCTION__);
         return (bool) $found;
     }
 }
