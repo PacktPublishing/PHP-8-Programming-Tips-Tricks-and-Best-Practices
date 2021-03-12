@@ -1,11 +1,8 @@
 FROM asclinux/linuxforphp-8.2-ultimate:8.1dev-nts
 MAINTAINER doug.bierer@etista.com
-RUN \
-    echo "Restoring code from book repository ..." && \
-    git clone https://github.com/PacktPublishing/PHP-8-Programming-Tips-Tricks-and-Best-Practices.git /repo && \
-    cd /repo && \
-    cp sample_data/*.db /tmp && \
-    rm -rf /repo/.git
+COPY php8_tips.sql /tmp/php8_tips.sql
+COPY phpmyadmin_install.sh /tmp/phpmyadmin_install.sh
+COPY startup.sh /tmp/startup.sh
 RUN \
     echo "Enable display errors and configure php.ini for modifications later ..." && \
     sed -i 's/display_errors = Off/display_errors = On/g' /etc/php.ini && \
@@ -23,16 +20,13 @@ RUN \
     mysql -uroot -v -e "CREATE USER 'php8'@'localhost' IDENTIFIED BY 'password';" && \
     mysql -uroot -v -e "GRANT ALL PRIVILEGES ON *.* TO 'php8'@'localhost';" && \
     mysql -uroot -v -e "FLUSH PRIVILEGES;" && \
-    mysql -uroot -e "SOURCE /repo/sample_data/php8_tips.sql;" php8_tips
+    mysql -uroot -e "SOURCE /tmp/php8_tips.sql;" php8_tips
 RUN \
     echo "Installing phpMyAdmin ..." && \
-    /repo/docker/php8/phpmyadmin_install.sh 5.1.0
+    chmod +x /tmp/*.sh && \
+    /tmp/phpmyadmin_install.sh 5.1.0
 RUN \
     echo "Setting up Apache ..." && \
     echo "ServerName php8_tips_php8" >> /etc/httpd/httpd.conf && \
-    mv -f /srv/www /srv/www.OLD && \
-    ln -sfv /repo /srv/www && \
-    chown apache:apache /srv/www && \
-    chown -R apache:apache /repo && \
-    chmod -R 775 /repo
-CMD lfphp --mysql --phpfpm --apache
+    chmod +x /tmp/*.sh
+CMD /tmp/startup.sh

@@ -1,25 +1,16 @@
 <?php
 // /repo/ch05/php8_variance_contravariant.php
-class Listing
-{
-    public $arr = [];
-    public function __construct(array $arr = [])
-    {
-        $this->arr = $arr;
-    }
-    public function list() : ArrayIterator
-    {
-        return new ArrayIterator($this->arr);
+class IterObj extends ArrayIterator {}
+abstract class Base {
+    public abstract function stringify(IterObj $it);
+}
+class IterTest extends Base  {
+    public function stringify(iterable $it) {
+        return implode(',', iterator_to_array($it)) . "\n";
     }
 }
-class Limiter extends Listing
-{
-    public function list($start, $length) : ArrayIterator
-    {
-        $iter = parent::list();
-        return new I($iter, $start, $length);
-    }
-}
-
-$limit = new Limiter(range('A','Z'), 0, 6);
-foreach ($limit->list as $letter) echo $letter;
+$test  = new IterTest();
+$objIt = new IterObj([1,2,3]);
+$arrIt = new ArrayIterator(['A','B','C']);
+echo $test->stringify($objIt);
+echo $test->stringify($arrIt);

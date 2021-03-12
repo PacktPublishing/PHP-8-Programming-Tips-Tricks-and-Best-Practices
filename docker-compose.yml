@@ -5,12 +5,12 @@ services:
     hostname: php8_tips_php7
     image: php8tips/php8_tips_image_php7
     volumes:
-     - .:/home
+     - .:/repo
     ports:
      - 7777:80
     build: ./docker/php7
     restart: always
-    command: lfphp --mysql --apache --phpfpm
+    command: /tmp/startup.sh
     networks:
       app_net:
         ipv4_address: 172.16.0.77
@@ -19,12 +19,12 @@ services:
     hostname: php8_tips_php8
     image: php8tips/php8_tips_image_php8
     volumes:
-     - .:/home
+     - .:/repo
     ports:
      - 8888:80
     build: ./docker/php8
     restart: always
-    command: lfphp --mysql --apache --phpfpm
+    command: /tmp/startup.sh
     networks:
       app_net:
         ipv4_address: 172.16.0.88
