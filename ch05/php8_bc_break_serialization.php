@@ -7,6 +7,14 @@ class Test extends ArrayObject {
     public function __construct() {
         $this->key = base64_encode(random_bytes(16));
     }
+    public function __wakeup()
+    {
+        echo __METHOD__ . "\n";
+    }
+    public function __sleep()
+    {
+        echo __METHOD__ . "\n";
+    }
     public function __serialize() {
         return ['id' => $this->id, 'name' => $this->name];
     }

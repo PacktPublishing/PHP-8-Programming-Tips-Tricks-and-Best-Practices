@@ -23,14 +23,14 @@ foreach ($item as $key => $value)
         throw new Exception('ERROR');
 
 // display results forward
+echo "**************** Foward ********************\n";
 $forward = SplDoublyLinkedList::IT_MODE_FIFO
          | SplDoublyLinkedList::IT_MODE_KEEP;
-echo "**************** Foward ********************\n";
 $double->show($forward);
 
 // display results in reverse
+echo "\n\n**************** Reverse ********************\n";
 $reverse = SplDoublyLinkedList::IT_MODE_LIFO
          | SplDoublyLinkedList::IT_MODE_KEEP;
-echo "\n\n**************** Reverse ********************\n";
 $double->show($reverse);
 echo "\n";
