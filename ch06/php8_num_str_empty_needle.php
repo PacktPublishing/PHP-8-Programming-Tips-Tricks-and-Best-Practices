@@ -1,5 +1,5 @@
 <?php
-// php8_num_str_empty_needle.php
+// /repo/ch06/php8_num_str_empty_needle.php
 function test($haystack, $search) {
     $pattern = '%15s | %15s | %10s' . "\n";
     $result  = (str_contains($search, $haystack) !== FALSE)
@@ -7,7 +7,7 @@ function test($haystack, $search) {
              : 'NOT FOUND';
     return sprintf($pattern,
            var_export($search, TRUE),
-           var_export(str_contains($search, $haystack), TRUE),
+           var_export(strpos($haystack, $search), TRUE),
            $result);
 };
 
