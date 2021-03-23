@@ -18,7 +18,3 @@ $mixed  = '42abc88';
 $result = ($mixed == 42) ? 'is' : 'is not';
 echo "The value $mixed $result the same as 42\n";
 
-// comparing a numeric value against a string using "E" notation
-$expo   = '4.2E+1';
-$result = ($expo == 42) ? 'is' : 'is not';
-echo "The value $expo $result the same as 42\n";
