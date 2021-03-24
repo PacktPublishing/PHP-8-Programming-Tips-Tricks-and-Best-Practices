@@ -1,13 +1,9 @@
 <?php
 // /repo/ch06/php8_locale_independent.php
 
-// don't run if setlocale() unavailable
-if (!setlocale(LC_ALL, 'en_GB'))
-    exit("\nLocale Functionality Not Available\n");
-
 // init vars
 $list = ['en_GB', 'fr_FR', 'de_DE'];
-$patt = '%15s | %15s ' . PHP_EOL;
+$patt = "%15s | %15s \n";
 
 // float-string-float for test locales
 foreach ($list as $locale) {

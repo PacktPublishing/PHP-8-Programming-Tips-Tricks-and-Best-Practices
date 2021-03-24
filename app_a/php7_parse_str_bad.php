@@ -1,5 +1,5 @@
 <?php
-// /repo/ch06/php7_parse_str_bad.php
+// /repo/app_a/php7_parse_str_bad.php
 
 // init vars
 $redirect= 'https://unlikelysource.com/';
