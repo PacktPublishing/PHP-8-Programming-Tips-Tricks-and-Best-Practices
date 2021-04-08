@@ -3,6 +3,8 @@
 namespace Http;
 class Request
 {
+    public $url      = '';
+    public $method   = 'GET';
     public $scheme   = '';
     public $host     = '';
     public $port     = '';
@@ -11,6 +13,7 @@ class Request
     public $path     = '';
     public $query    = '';
     public $fragment = '';
+    public $debug    = FALSE;
     public function __construct(string $url)
     {
         $result = [];
@@ -21,5 +24,6 @@ class Request
         if (!empty($this->query))
             parse_str($this->query, $result);
         $this->query = $result;
+        $this->url   = $url;
     }
 }
