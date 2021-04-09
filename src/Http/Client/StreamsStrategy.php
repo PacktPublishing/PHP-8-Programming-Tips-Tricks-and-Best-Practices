@@ -1,5 +1,5 @@
 <?php
-// /repo/src/Http/Client/SocketStrategy.php
+// /repo/src/Http/Client/StreamsStrategy.php
 namespace Http\Client;
 use SplFileObject;
 use Exception;
