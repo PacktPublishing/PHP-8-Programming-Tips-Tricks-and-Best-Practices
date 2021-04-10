@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- /repo/ch07/tree.xml -->
+<family>
+    <branch name="Windsor">
+        <descendent gender="M">George V</descendent>
+        <spouse gender="F">Mary of Treck</spouse>
+        <branch name="George V">
+            <descendent gender="M">George VI</descendent>
+            <spouse gender="F">Elizabeth Bowes-Lyon</spouse>
+            <branch name="George VI">
+                <descendent gender="F">Queen Elizabeth II</descendent>
+                <spouse gender="M">Prince Philip</spouse>
+                <branch name="Elizabeth II">
+                    <descendent gender="M">Prince Charles</descendent>
+                    <spouse gender="F">Diana Spencer</spouse>
+                    <spouse gender="F">Camilla Parker Bowles</spouse>
+                    <branch name="Prince Charles">
+                        <descendent gender="M">William</descendent>
+                        <spouse gender="F">Kate Middleton</spouse>
+                    </branch>
+                    <branch name="Prince Charles">
+                        <descendent gender="M">Harry</descendent>
+                        <spouse gender="F">Meghan Markle</spouse>
+                    </branch>
+                </branch>
+                <branch name="Elizabeth II">
+                    <descendent gender="F">Princess Anne</descendent>
+                    <spouse gender="M">Mark Phillips</spouse>
+                </branch>
+            </branch>
+            <branch name="George VI">
+                <descendent gender="F">Princess Margaret</descendent>
+                <spouse gender="M">Anthony Jones</spouse>
+            </branch>
+        </branch>
+        <branch name="George V">
+            <descendent gender="M">Edward VIII</descendent>
+            <spouse gender="F">Wallis Simpson</spouse>
+        </branch>
+        <branch name="George V">
+            <descendent gender="F">Princess Mary</descendent>
+            <spouse gender="M">Henry Lascelles</spouse>
+        </branch>
+        <branch name="George V">
+            <descendent gender="M">Prince Henry</descendent>
+            <spouse gender="F">Lady Alice Montegu</spouse>
+        </branch>
+        <branch name="George V">
+            <descendent gender="M">Prince George</descendent>
+            <spouse gender="F">Princess Marina</spouse>
+        </branch>
+        <branch name="George V">
+            <descendent gender="M">Prince John</descendent>
+        </branch>
+    </branch>
+</family>
