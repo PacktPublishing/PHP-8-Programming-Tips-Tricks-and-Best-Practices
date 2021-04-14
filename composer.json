@@ -7,7 +7,8 @@
             "Php7\\" : "src/Php7",
             "Php8\\" : "src/Php8",
             "Migration\\" : "src/Migration",
-            "Display\\" : "src/Display"
+            "Display\\" : "src/Display",
+            "Http\\" : "src/Http"
         }
     }
 }
