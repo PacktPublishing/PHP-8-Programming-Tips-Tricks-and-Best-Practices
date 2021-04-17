@@ -1,5 +1,5 @@
 <?php
-// /repo/ch067/php8_gd_is_resource.php
+// /repo/ch07/php8_gd_is_resource.php
 
 $fn  = __DIR__ . '/includes/kitten.jpg';
 $new = __DIR__ . '/includes/test.png';

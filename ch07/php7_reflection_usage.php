@@ -1,5 +1,5 @@
 <?php
-// /repo/ch067/php7_reflection_usage.php
+// /repo/ch07/php7_reflection_usage.php
 
 $target = 'Php7\Reflection\Test';
 require_once __DIR__ . '/../src/Server/Autoload/Loader.php';

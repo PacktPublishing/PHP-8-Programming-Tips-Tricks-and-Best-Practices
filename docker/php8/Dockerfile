@@ -2,6 +2,7 @@ FROM asclinux/linuxforphp-8.2-ultimate:8.1dev-nts
 MAINTAINER doug.bierer@etista.com
 COPY php8_tips.sql /tmp/php8_tips.sql
 COPY phpmyadmin_install.sh /tmp/phpmyadmin_install.sh
+COPY zip_install.sh /tmp/zip_install.sh
 COPY startup.sh /tmp/startup.sh
 RUN \
     echo "Enable display errors and configure php.ini for modifications later ..." && \
@@ -25,6 +26,10 @@ RUN \
     echo "Installing phpMyAdmin ..." && \
     chmod +x /tmp/*.sh && \
     /tmp/phpmyadmin_install.sh 5.1.0
+RUN \
+    echo "Installing Zip Extension ..." && \
+    chmod +x /tmp/*.sh && \
+    /tmp/zip_install.sh 1.19.2
 RUN \
     echo "Setting up Apache ..." && \
     echo "ServerName php8_tips_php8" >> /etc/httpd/httpd.conf && \

@@ -1,5 +1,5 @@
 <?php
-// /repo/ch067/php7_simple_xml.php
+// /repo/ch07/php7_simple_xml.php
 
 function recurse($branch) {
     foreach ($branch as $node) {

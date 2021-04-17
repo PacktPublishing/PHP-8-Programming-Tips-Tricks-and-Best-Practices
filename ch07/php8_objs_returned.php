@@ -1,5 +1,5 @@
 <?php
-// /repo/ch067/php8_objs_returned.php
+// /repo/ch07/php8_objs_returned.php
 require_once __DIR__ . '/../src/Server/Autoload/Loader.php';
 use Server\Autoload\Loader;
 $autoload = new Loader();

@@ -1,5 +1,5 @@
 <?php
-// /repo/ch067/php8_simple_xml.php
+// /repo/ch07/php8_simple_xml.php
 
 $fn = __DIR__ . '/includes/tree.xml';
 $xml = simplexml_load_file($fn);
