@@ -25,22 +25,25 @@ timezone          : the iana timezone id (see file timeZone.txt) varchar(40)
 modification date : date of last modification in yyyy-MM-dd format
 */
 // scans geonames database cities with > 1M in population
-$target   = 1000000;
-$data_src = __DIR__ . '/../sample_data/cities15000.txt';
+$data_src = __DIR__ . '/../sample_data/cities15000_min.txt';
 $fileObj  = new SplFileObject($data_src, 'r');
+$pattern1 = "%30s : %9s : %9s\n";
+$pattern2 = "%30s : %9.4f : %9.4f\n";
+$target   = 1000000;
 $data     = [];
 while ($line = $fileObj->fgetcsv("\t")) {
     $popNum = $line[14] ?? 0;
-    $city   = $line[1]  ?? 'Unknown';
-    if ($popNum > $target)
+    if ($popNum > $target) {
         // add lat/lon info to city
+        $city = $line[1]  ?? 'Unknown';
         $data[$city] = [$line[4] => $line[5]];
+    }
 }
-echo "<table>\n";
-printf('<tr><th>%s</th><th>%s</th><th>%s</th></tr>', 'City', 'Latitude', 'Longitude');
+ksort($data);
+printf($pattern1, 'City', 'Latitude', 'Longitude');
+printf($pattern1, '----', '---------', '---------');
 foreach ($data as $city => $latLon) {
+    $city = str_pad($city, 30, ' ', STR_PAD_LEFT);
     [$lat, $lon] = each($latLon);
-    printf('<tr><td>%s</td><td>%s</td><td>%s</td></tr>',
-        $city, (string) $lat, (string) $lon);
+    printf($pattern2, $city, $lat, $lon);
 }
-echo "</table>\n";
