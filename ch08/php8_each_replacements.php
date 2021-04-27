@@ -1,5 +1,5 @@
 <?php
-// /repo/ch08/php7_each.php
+// /repo/ch08/php8_each_replacements.php
 // see: https://download.geonames.org/export/dump/
 /*
 The main 'geoname' table has the following fields :
@@ -26,23 +26,24 @@ modification date : date of last modification in yyyy-MM-dd format
 */
 // scans geonames database cities with > 1M in population
 $data_src = __DIR__ . '/../sample_data/cities15000_min.txt';
-$fh       = fopen($data_src, 'r');
+$fh       = new SplFileObject($data_src, 'r');
 $pattern  = "%30s : %20s\n";
 $target   = 10000000;
-$data     = [];
-while ($line = fgetcsv($fh, '', "\t")) {
+$data     = new ArrayIterator();
+while ($line = $fh->fgetcsv("\t")) {
     $popNum = $line[14] ?? 0;
     if ($popNum > $target) {
         // add lat/lon info to city
         $city = $line[1]  ?? 'Unknown';
-        $data[$city] = $line[4]. ',' . $line[5];
+        $data->offsetSet($city, $line[4]. ',' . $line[5]);
     }
 }
-fclose($fh);
-ksort($data);
+$data->ksort();
+$data->rewind();
 printf($pattern, 'City', 'Latitude/Longitude');
 printf($pattern, '----', '--------------------');
-while ([$city, $latLon] = each($data)) {
-    $city = str_pad($city, 30, ' ', STR_PAD_LEFT);
-    printf($pattern, $city, $latLon);
+while ($data->valid()) {
+    $city = str_pad($data->key(), 30, ' ', STR_PAD_LEFT);
+    printf($pattern, $city, $data->current());
+    $data->next();
 }
