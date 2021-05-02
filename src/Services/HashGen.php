@@ -1,4 +1,5 @@
 <?php
+// /repo/src/Services/HashGen.php
 namespace Services;
 use Closure;
 class HashGen

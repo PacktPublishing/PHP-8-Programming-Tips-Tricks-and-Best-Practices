@@ -4,15 +4,13 @@
 require __DIR__ . '/../src/Services/HashGen.php';
 use Services\HashGen;
 $hashGen = new HashGen();
+
 $doMd5 = $hashGen->makeHash('md5');
-$doSha = $hashGen->makeHash('sha256');
 $text  = 'The quick brown fox jumped over the fence';
 echo $doMd5($text) . "\n";
-echo $doSha($text) . "\n";
+var_dump($doMd5);
 
-$temp = new class() extends HashGen {
-    public $class = 'Anonymous: ';
-};
-
+$temp = new class() { public $class = 'Anonymous: '; };
 $doMd5->bindTo($temp);
 echo $doMd5($text) . "\n";
+var_dump($doMd5);
