@@ -1,5 +1,5 @@
 <?php
-// /repo/ch08/php8_pdo_signature_change.php
+// /repo/ch09/php8_pdo_signature_change.php
 
 $config = include __DIR__ . '/../src/config/config.php';
 $db_cfg = $config['db-config'];

@@ -1,5 +1,5 @@
 <?php
-// /repo/ch07/php7_pdo_err_mode.php
+// /repo/ch08/php7_pdo_err_mode.php
 
 $dsn = 'mysql:host=localhost;dbname=php8_tips';
 $usr = 'php8';
