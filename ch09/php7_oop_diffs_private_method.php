@@ -1,5 +1,5 @@
 <?php
-// /repo/ch05/php7_oop_diffs_private_method.php
+// /repo/ch09/php7_oop_diffs_private_method.php
 include __DIR__ . '/../src/Server/Autoload/Loader.php';
 $loader = new \Server\Autoload\Loader();
 use Php7\Encrypt\{Cipher,OpenCipher};
