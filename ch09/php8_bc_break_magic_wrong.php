@@ -1,5 +1,5 @@
 <?php
-// /repo/ch05/php8_bc_break_magic_wrong.php
+// /repo/ch09/php8_bc_break_magic_wrong.php
 
 class WrongType
 {

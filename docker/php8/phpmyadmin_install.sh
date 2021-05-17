@@ -11,6 +11,7 @@ tar -xvf phpMyAdmin-$VER-all-languages.tar.gz
 mkdir -p /srv/phpmyadmin
 cp -rf phpMyAdmin-$VER-all-languages/* /srv/phpmyadmin
 rm -rf phpMyAdmin-$VER-all-languages
+rm phpMyAdmin-$VER-all-languages.tar.gz
 cat >/etc/httpd/extra/httpd-phpmyadmin.conf << 'EOF'
 Alias /phpmyadmin /srv/phpmyadmin
 <Directory "/srv/phpmyadmin">

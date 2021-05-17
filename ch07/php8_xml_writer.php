@@ -1,5 +1,5 @@
 <?php
-// /repo/ch067/php8_xml_writer.php
+// /repo/ch07/php8_xml_writer.php
 
 $xml = new XMLWriter();
 $xml->openMemory();

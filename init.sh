@@ -1,6 +1,6 @@
 #!/bin/bash
 DIR=`pwd`
-export USAGE="Usage: init.sh up|down|build|restore_db|init|shell [7|8]"
+export USAGE="Usage: init.sh up|down|build|ls|init|shell [7|8]"
 export CONTAINER7="php8_tips_php7"
 export CONTAINER8="php8_tips_php8"
 export INIT=0
@@ -15,8 +15,8 @@ elif [[ "$1" = "down" ]]; then
     sudo chown -R $USER:$USER .*
 elif [[ "$1" = "build" ]]; then
     docker-compose build $2
-elif [[ "$1" = "restore_db" ]]; then
-    RESTORE_DB=1
+elif [[ "$1" = "ls" ]]; then
+    docker container ls
 elif [[ "$1" = "init" ]]; then
     INIT=1
 elif [[ "$1" = "shell" ]]; then
