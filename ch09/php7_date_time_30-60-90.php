@@ -2,13 +2,12 @@
 // /repo/ch09/php7_date_time_30-60-90.php
 
 // init vars
-$days  = [30, 60, 90];
+$days  = [0, 30, 60, 90];
 $fmt   = 'Y-m-d';
 $aging = [];
 
 // first cut: disaster
 $dti = new DateTime('now');
-$aging[0] = $dti;
 foreach ($days as $span) {
     $interval = new DateInterval('P' . $span . 'D');
     $item = $dti->add($interval);
