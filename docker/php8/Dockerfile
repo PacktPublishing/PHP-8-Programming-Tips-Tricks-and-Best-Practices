@@ -31,6 +31,11 @@ RUN \
     chmod +x /tmp/*.sh && \
     /tmp/zip_install.sh 1.19.2
 RUN \
+    echo "Enabling OpCache ..." && \
+    echo "opcache.enable=1" >> /etc/php.ini && \
+    echo "opcache.enable_cli=1" >> /etc/php.ini && \
+    echo "opcache.memory_consumption=256" >> /etc/php.ini
+RUN \
     echo "Setting up Apache ..." && \
     echo "ServerName php8_tips_php8" >> /etc/httpd/httpd.conf && \
     chmod +x /tmp/*.sh
