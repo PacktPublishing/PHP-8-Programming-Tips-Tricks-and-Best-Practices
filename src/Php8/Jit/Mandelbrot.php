@@ -7,7 +7,10 @@ class Mandelbrot
     public static $bailout    = 16;
     public static $cols       = 80;
     public static $iterations = 1000;
-    // Renders Mandelbrot
+    /**
+     * Renders Mandelbrot
+     *
+     */
     public function render()
     {
         $d1 = microtime(1);

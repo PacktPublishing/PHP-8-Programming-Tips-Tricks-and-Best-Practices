@@ -1,6 +1,14 @@
 <?php
 // /repo/ch10/php8_jit_mandelbrot.php
 
+// Be sure that OpCache is enabled!
+// From the command line inside the Docker container:
+/*
+# sed -i 's/;zend_extension=opcache/zend_extension=opcache/g' /etc/php.ini
+# sed -i 's/;opcache.enable=1/opcache.enable=1/g' /etc/php.ini
+# /etc/init.d/php-fpm restart
+*/
+
 // To enable JIT:
 // CLI: php php8_jit_mandelbrot.php [--enable-jit]
 // Web: /php8_jit_mandelbrot.php?enable=1
