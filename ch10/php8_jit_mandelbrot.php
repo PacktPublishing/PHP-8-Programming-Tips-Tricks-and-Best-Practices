@@ -4,29 +4,37 @@
 // https://gist.github.com/dstogov/12323ad13d3240aee8f1
 
 /*
-To test JIT, you need to enable OpCache:
-# sed -i 's/;zend_extension=opcache/zend_extension=opcache/g' /etc/php.ini
-# sed -i 's/;opcache.enable=0/opcache.enable=1/g' /etc/php.ini
-# sed -i 's/;opcache.enable_cli=0/opcache.enable_cli=1/g' /etc/php.ini
-# /etc/init.d/php-fpm restart
+Make sure OpCache is enabled (should be done already!).
+Look for these settings in the /etc/php.ini file:
+zend_extension=opcache
+opcache.enable=1
+opcache.enable_cli=1
+opcache.jit=off
+opcache.jit_buffer_size=64M
 */
 
-// To enable JIT:
-// CLI: php php8_jit_mandelbrot.php 32M
-// HTTP: http://php php8_jit_mandelbrot.php?jit=32M
-
-// To disable JIT:
-// CLI: php php8_jit_mandelbrot.php 0
-// HTTP: http://php php8_jit_mandelbrot.php?jit=0
+/*
+CLI usage :
+php php8_jit_reset.php on|off|tracing|function|NNNN [debug=NNN]\n"
+php php8_jit_mandelbrot.php [on|off|tracing|function|NNNN]
+*
+HTTP usage: /php8_jit_mandelbrot.php?mode=on|off|tracing|function|NNNN
+*/
 
 define('BAILOUT',   16);
-define('MAX_LOOPS', 1000000);
+define('MAX_LOOPS', 10000);
 define('EDGE',      40.0);
 
-$cli = empty($_SERVER['REQUEST_URI']);
-$mem = $_GET['jit'] ?? $argv[1] ?? 0;
-$mem = strip_tags($mem);
-ini_set('opcache.jit_buffer_size', $mem);
+// grab tracer settings (if any)
+$allowed = ['off', 'on', 'tracing', 'function'];
+$mode = $_GET['mode'] ?? $argv[1] ?? 'off';
+$http = !empty($_SERVER['REQUEST_URI']);
+
+// validate $mode
+if (!in_array($mode, $allowed)) $mode = (int) $mode;
+
+// ini_set() doesn't work from the command line
+if ($mode !== 0 && $http) ini_set('opcache.jit', $mode);
 
 function iterate($x,$y)
 {
@@ -65,7 +73,7 @@ for ($y = -$f; $y < $f; $y++) {
 }
 
 // wrap in HTML if running from web server
-if (!$cli) {
+if (!empty($_SERVER['REQUEST_URI'])) {
     $out = '<pre>' . $out . '</pre>';
 }
 echo $out;
