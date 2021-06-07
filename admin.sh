@@ -7,9 +7,9 @@ export INIT=0
 if [[ -z "$1" ]]; then
     echo $USAGE
     exit 1
-elif [[ "$1" = "up" ]]; then
+elif [[ "$1" = "up" ||  "$1" = "start" ]]; then
     docker-compose up -d $2
-elif [[ "$1" = "down" ]]; then
+elif [[ "$1" = "down" ||  "$1" = "stop" ]]; then
     docker-compose down
     sudo chown -R $USER:$USER *
     sudo chown -R $USER:$USER .*
