@@ -27,9 +27,7 @@ RUN \
     /tmp/phpmyadmin_install.sh 5.1.1
 RUN \
     echo "Installing Zip Extension ..." && \
-    wget -O /tmp/zip_install.sh https://opensource.unlikelysource.com/zip_install.sh && \
-    chmod +x /tmp/*.sh && \
-    /tmp/zip_install.sh 1.19.2
+    lfphp-get php-ext zip-1.19.2
 RUN \
     echo "Enabling OpCache ..." && \
     sed -i 's/;zend_extension=opcache/zend_extension=opcache/g' /etc/php.ini && \

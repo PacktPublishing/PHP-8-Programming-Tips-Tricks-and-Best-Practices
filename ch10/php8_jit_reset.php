@@ -66,6 +66,15 @@ if ($debug) {
     }
 }
 
+// Set buffer to 0 if mode is "off"
+$buff = ($mode === 'off') ? 0 : '64M';
+$pos = findInArray('opcache.jit_buffer_size=', $php_ini);
+if (is_int($pos) && !empty($php_ini[$pos])) {
+    $php_ini[$pos] = 'opcache.jit_buffer_size=' . "$buff\n";
+} else {
+    $php_ini[] = 'opcache.jit_buffer_size=' . "$buff\n";
+}
+
 // write changes and display
 file_put_contents('/etc/php.ini', implode('', $php_ini));
 readfile('/etc/php.ini');
