@@ -1,5 +1,5 @@
 <?php
-// /repo/ch09/php7_spl_fixed_arr_multi.php
+// /repo/ch010/php7_spl_fixed_arr_multi.php
 // using this data: https://download.geonames.org/export/dump/countryInfo.txt
 // Columns (tab separated):
 // ISO  ISO3    ISO-Numeric fips    Country Capital Area(in sq km)  Population  Continent   tld CurrencyCode

@@ -50,10 +50,9 @@ $f   = EDGE - 1;
 $out = '';
 for ($y = -$f; $y < $f; $y++) {
     for ($x = -$f; $x < $f; $x++) {
-        if (iterate($x/EDGE,$y/EDGE) == 0)
-            $out .= '*';
-        else
-            $out .= ' ';
+        $out .= (iterate($x/EDGE,$y/EDGE) == 0)
+              ? '*'
+              : ' ';
     }
     $out .= "\n";
 }

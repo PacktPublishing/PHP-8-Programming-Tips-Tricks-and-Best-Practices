@@ -1,8 +1,8 @@
 <?php
-// /repo/ch09/php7_spl_fixed_arr_iter.php
-
+// /repo/ch010/php8_spl_fixed_arr_iter.php
 $arr   = ['Person', 'Woman', 'Man', 'Camera', 'TV'];
-$fixed = SplFixedArray::fromArray($arr);
+$obj   = SplFixedArray::fromArray($arr);
+$fixed = $obj->getIterator();
 while ($fixed->valid()) {
     echo $fixed->current() . '. ';
     $fixed->next();

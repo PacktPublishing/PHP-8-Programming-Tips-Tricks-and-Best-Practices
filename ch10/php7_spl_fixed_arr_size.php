@@ -1,5 +1,5 @@
 <?php
-// /repo/ch09/php7_spl_fixed_arr_size.php
+// /repo/ch010/php7_spl_fixed_arr_size.php
 
 define('MAX_SIZE', 1000000);
 define('PATTERN', "%14s : %8.8f : %12s\n");
