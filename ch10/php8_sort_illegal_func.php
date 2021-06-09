@@ -1,5 +1,5 @@
 <?php
-// /repo/ch010/php8_sort_stable_simple.php
+// /repo/ch010/php8_sort_illegal_func.php
 require __DIR__ . '/../src/Server/Autoload/Loader.php';
 $loader = new \Server\Autoload\Loader();
 use Php8\Sort\Access;
@@ -21,7 +21,13 @@ echo "Before\n";
 foreach ($access as $entry)
     echo $entry->time . "\t" . $entry->name . "\n";
 
-usort($access, function($a, $b) { return $a->time <=> $b->time; });
+// NOTE: this is illegal in PHP 8:
+$illegal = function($a, $b) { return $a->time > $b->time; };
+
+// Here is the proper usort() callback:
+// $legal = function($a, $b) { return $a->time <=> $b->time; };
+
+usort($access, $illegal);
 echo "\nAfter\n";
 foreach ($access as $entry)
     echo $entry->time . "\t" . $entry->name . "\n";
