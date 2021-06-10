@@ -14,9 +14,11 @@ class ResponseStrategy
     }
     public function get(string $key)
     {
-        $found = FALSE;
-        foreach ($this->container as $hash => $obj) {
-            if ($obj instanceof $key) return $obj;
+        while ($this->container->valid()) {
+            if ($this->container->current() instanceof $key) {
+                return $this->container->current();
+            }
+            $this->container->next();
         }
         $obj = new $key();
         $this->container->attach($obj);

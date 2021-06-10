@@ -15,10 +15,13 @@ class SampleAccess
     {
         // define sample data
         $data = [];
-        $today = new DateTime('now');
-        for ($x = 0; $x < $max; $x++)
-            $data[] = ['name' => self::randName(),
-                       'access' => self::randDate($today)];
+        foreach (self::$names as $idx => $name) {
+            $entries = rand(1, self::MAX_ENTRIES);
+            $today = new DateTime('now');
+            $data['name_' . $idx]['name'] = $name;
+            for ($x = 0; $x < $entries; $x++)
+                $data['name_' . $idx]['time_' . $x] = ['time' => self::randDate($today)];
+        }
         return new ArrayIterator($data);
     }
     public static function randDate(DateTime $date) : string

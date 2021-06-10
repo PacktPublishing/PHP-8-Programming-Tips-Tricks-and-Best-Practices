@@ -9,24 +9,25 @@ use Services\ {SampleAccess,CountryInfo};
 use Php7\Container\ResponseStrategy;
 use Response\ {HtmlStrategy,JsonStrategy,XmlStrategy,TextStrategy};
 
-// init strategies
-$strategies = [
-    'html' => HtmlStrategy::class,
-    'json' => JsonStrategy::class,
-    'xml'  => XmlStrategy::class,
-    'text' => TextStrategy::class
-];
-
 // create strategy container based upon SplObjectStorage
-$container = new ResponseStrategy($strategies);
+$container = new ResponseStrategy();
 
-// get sample data
-$iter = SampleAccess::getData(6);
+// retrieve strategy instances
+$html = $container->get(HtmlStrategy::class);
+$json = $container->get(JsonStrategy::class);
+$xml  = $container->get(XmlStrategy::class);
 
-// alternate data source:
-// $iter = (new CountryInfo())->getIterator();
+// data source: access attempts
+// $iter = SampleAccess::getData(6);
 
-echo $container->get(HtmlStrategy::class)->render($iter);
-echo $container->get(JsonStrategy::class)->render($iter);
-echo $container->get(XmlStrategy::class)->render($iter);
-var_dump($container);
+// data source: country information
+$callback = function ($row) {
+    return $row['Population'] > 300000000;
+};
+$source = new CountryInfo();
+$iter = $source->getIterator('ISO3', $callback);
+
+// render the sample data in different formats
+echo $html->render($iter);
+echo $xml->render($iter);
+echo $json->render($iter);
