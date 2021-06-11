@@ -57,7 +57,7 @@ var_dump($data);
 $mem = memory_get_usage();
 
 // get rid of filters
-//unset($filters);
+unset($filters);
 
 // force garbage collection
 gc_collect_cycles();
@@ -66,5 +66,5 @@ gc_collect_cycles();
 $end = memory_get_usage();
 echo "\nMemory Before Unset: $mem\n";
 echo "Memory After  Unset: $end\n";
-echo 'Difference         : ' . ($end - $mem) . "\n";
+echo 'Difference         : ' . ($mem - $end) . "\n";
 echo 'Peak Memory Usage  : ' . memory_get_peak_usage() . "\n";

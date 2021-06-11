@@ -17,9 +17,9 @@ define('EDGE',      40.0);
 // grab start time
 $d1  = microtime(1);
 
-// allows CLI arg to show only the elapsed time
+// allows CLI arg or $_GET param "time" to show only the elapsed time
 // USAGE: php php8_jit_mandelbrot.php [-n]
-$time_only = !empty($argv[1]);
+$time_only = (bool) ($argv[1] ?? $_GET['time'] ?? FALSE);
 
 // Mandelbrot implementation based up:
 // https://gist.github.com/dstogov/12323ad13d3240aee8f1
