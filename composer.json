@@ -1,6 +1,8 @@
 {
     "require": {
-        "composer/composer": "*"
+        "composer/composer": "*",
+        "laminas/laminas-filter": "^2.11",
+        "laminas/laminas-uri": "^2.8"
     },
     "autoload" : {
         "psr-4" : {

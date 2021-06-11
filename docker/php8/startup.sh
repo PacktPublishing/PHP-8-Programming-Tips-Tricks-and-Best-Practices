@@ -1,4 +1,9 @@
 #!/bin/bash
+echo "Installing 3rd party software ..."
+cd /repo
+rm -f composer.phar
+wget https://getcomposer.org/download/latest-stable/composer.phar
+php composer.phar update
 echo "Finishing Apache setup ..."
 mv -f /srv/www /srv/www.OLD
 ln -sfv /repo /srv/www
