@@ -8,24 +8,23 @@ namespace Migration;
  */
 class Base
 {
-    const ERR_CLASS_CONSTRUCT = 'WARNING: contains method same name as class but no __construct() method defined';
-    const ERR_CONST_EXIT      = 'WARNING: __destruct() might not get called if "die()" or "exit()" used in __construct()';
-    const ERR_SPL_FGETSS      = 'WARNING: support for SplFileObject::fgetss() has been removed: use "strip_tags(SplFileObject::fgets())" instead';
-    const ERR_MAGIC_SIGNATURE = 'WARNING: need to confirm magic method signature: ';
-    const ERR_MAGIC_SLEEP     = 'WARNING: need to confirm __sleep() return values match properties';
-    const ERR_MAGIC_AUTOLOAD  = 'WARNING: the "__autoload()" function is removed in PHP 8: replace with "spl_autoload_register()"';
-    const ERR_MATCH_KEYWORD   = 'WARNING: "match" is now a reserved key word';
-    const ERR_PHP_ERRORMSG    = 'WARNING: the "track_errors" php.ini directive is removed.  You can no longer rely upon "$php_errormsg".';
     const OK_PASSED = 'PASSED this scan: %s';
-    const WARN_BC_BREAKS      = 'WARNING: the code scanned might not be compatible with PHP 8';
-    const NO_BC_BREAKS        = 'SUCCESS: it appears that the code scanned is potentially compatible with PHP 8';
+    public $config = [];
+    public $list = [];   // list of scans to run
+    /**
+     * @param array $config : scan config
+     */
+    public function __construct(array $config, array $list = [])
+    {
+        $this->config = $config;
+    }
     /**
      * Gets the class name
      *
      * @param string $contents : PHP file contents
      * @return string $name    : classname
      */
-    public static function getClassName(string $contents) : string
+    public function getClassName(string $contents) : string
     {
         preg_match('/class (.+?)\b/', $contents, $matches);
         return $matches[1] ?? '';
@@ -34,24 +33,51 @@ class Base
      * Runs all scans on the contents of a single file
      *
      * @param string $fn    : name of file to be scanned
+     * @param array $message: messages returned by scan
+     * @param array $list   : list of selected scans to run
      * @return string $name : classname
      */
-    public static function runAllScans(string $fn, array &$messages) : array
+    public function runScans(string $fn, array &$messages, array $list = []) : array
     {
         if (!file_exists($fn) && !is_file($fn)) return FALSE;
+        // grab file contents and strip out CR/LF
         $contents = file_get_contents($fn);
-        $temp     = [];
+        $contents = str_replace(["\r","\n"], ' ', $contents);
+        $class    = $this->getClassName($contents);
         $found    = 0;
-        $methods  = get_class_methods(__CLASS__);
-        foreach ($methods as $method)
-            $found += __CLASS__::$method($contents, $temp);
-        $messages[] = 'FILENAME: ' . $fn;
+        $local_msg[] = 'FILENAME: ' . $fn;
+        if ($list) {
+            $temp = $list;
+        } else {
+            $temp = array_keys($this->config['scans']);
+        }
+        foreach ($temp as $key)
+            $found += $this->runScanKey($class, $key, $contents, $local_msg);
         if ($found) {
             $messages[] = self::WARN_BC_BREAKS;
         } else {
-            $messages[] = self::NO_BC_BREAKS);
+            $messages[] = self::NO_BC_BREAKS;
         }
-        array_merge($messages, $temp);
-        return $messages;
+        foreach ($local_msg as $msg) $messages[] = $msg;
+        return $found;
+    }
+    /**
+     * Runs a single scan key (defined in bc_break_scanner.config.php)
+     * NOTE: $messages is passed by reference
+     *
+     * @param string $class : class name of this file
+     * @param string $key : key defined in bc_break_scanner.config.php
+     * @param string $contents : contents of file to be searched
+     * @return int $found : number of potential BC breaks found
+     */
+    public function runScanKey(string $class, string $key, string $contents, array &$messages)
+    {
+        $config = $this->config[$key] ?? [];
+        if (empty($config)) return 0;
+        if (!isset($config['callback'])) return 0;
+        if ($config['callback']($class, $contents)) {
+            $message[] = $config['msg'];
+        }
+        return 1;
     }
 }
