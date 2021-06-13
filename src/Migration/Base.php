@@ -14,6 +14,8 @@ class Base
     const ERR_MAGIC_SIGNATURE = 'WARNING: need to confirm magic method signature: ';
     const ERR_MAGIC_SLEEP     = 'WARNING: need to confirm __sleep() return values match properties';
     const ERR_MAGIC_AUTOLOAD  = 'WARNING: the "__autoload()" function is removed in PHP 8: replace with "spl_autoload_register()"';
+    const ERR_MATCH_KEYWORD   = 'WARNING: "match" is now a reserved key word';
+    const ERR_PHP_ERRORMSG    = 'WARNING: the "track_errors" php.ini directive is removed.  You can no longer rely upon "$php_errormsg".';
     const OK_PASSED = 'PASSED this scan: %s';
     const WARN_BC_BREAKS      = 'WARNING: the code scanned might not be compatible with PHP 8';
     const NO_BC_BREAKS        = 'SUCCESS: it appears that the code scanned is potentially compatible with PHP 8';

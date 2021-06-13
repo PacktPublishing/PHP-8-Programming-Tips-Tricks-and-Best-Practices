@@ -189,4 +189,44 @@ class OopBreakScan extends Base
                    : sprintf(Base::OK_PASSED, __FUNCTION__);
         return (bool) $found;
     }
+    /**
+     * Looks for any functions named "match"
+     *
+     * @param string $contents : PHP file contents
+     * @param array $message   : return success or failure message
+     * @return bool $found     : TRUE if a break was found
+     */
+    public static function scanKeywordMatch(string $contents, array &$message) : bool
+    {
+        $found    = 0;
+        $possible = 2;
+        $name     = self::getClassName($contents);
+        if ($name) {
+            $found += (preg_match('/function\s+match(\s)?\(/', $contents) !== FALSE);
+        }
+        $message[] = ($found >= $possible)
+                   ? Base::ERR_MATCH_KEYWORD
+                   : sprintf(Base::OK_PASSED, __FUNCTION__);
+        return (bool) $found;
+    }
+    /**
+     * Looks for php_errormsg
+     *
+     * @param string $contents : PHP file contents
+     * @param array $message   : return success or failure message
+     * @return bool $found     : TRUE if a break was found
+     */
+    public static function scanPhpErrorMsg(string $contents, array &$message) : bool
+    {
+        $found    = 0;
+        $possible = 2;
+        $name     = self::getClassName($contents);
+        if ($name) {
+            $found += (strpos($contents, 'php_errormsg') !== FALSE);
+        }
+        $message[] = ($found >= $possible)
+                   ? Base::ERR_PHP_ERRORMSG
+                   : sprintf(Base::OK_PASSED, __FUNCTION__);
+        return (bool) $found;
+    }
 }
