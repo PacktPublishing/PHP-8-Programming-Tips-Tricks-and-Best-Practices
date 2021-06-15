@@ -7,27 +7,27 @@ return [
         'ERR_CLASS_CONSTRUCT' => [
             'callback' => function ($class, $contents) {
                 return ((stripos($contents, 'function ' . $class . '('))
-                    || (stripos($contents, 'function ' . $class . ' (')))
-                    && (stripos($contents, 'function __construct'));
+                        || (stripos($contents, 'function ' . $class . ' (')))
+                        && (stripos($contents, 'function __construct'));
             },
             'msg' => 'WARNING: contains method same name as class but no __construct() method defined.  Can no longer use method with same name as the class as a constructor.'],
         'ERR_CONST_EXIT'      => [
             'callback' => function ($class, $contents) {
-                $regex = '/__construct.*?\{.*?(die|exit).*?}/im';
-                return (preg_match($regex, $temp) && strpos('__destruct', $contents));
+                return (preg_match('/__construct.*?\{.*?(die|exit).*?}/im', $contents)
+                        && strpos('__destruct', $contents));
             },
-            'msg' => 'WARNING: __destruct() might not get called if "die()" or "exit()" used in __construct()',
+            'msg' => 'WARNING: __destruct() might not get called if "die()" or "exit()" used in __construct()'],
         'ERR_SPL_FGETSS'      => [
             'callback' => function ($class, $contents) {
                 return  (stripos($contents, 'SplFileObject'))
-                    &&  (stripos($contents, '->fgetss()'));
+                        &&  (stripos($contents, '->fgetss()'));
             },
             'msg' => 'WARNING: support for SplFileObject::fgetss() has been removed: use "strip_tags(SplFileObject::fgets())" instead'],
         'ERR_MAGIC_SLEEP'     => [
             'callback' => function ($class, $contents) {
                 return strpos($contents, 'function __sleep');
             },
-            'msg' => 'WARNING: need to confirm __sleep() return values match properties',
+            'msg' => 'WARNING: need to confirm __sleep() return values match properties'],
         'ERR_MAGIC_AUTOLOAD'  => [
             'callback' => function ($class, $contents) {
                 return stripos($contents, 'function __autoload');
@@ -79,8 +79,39 @@ return [
             },
             'msg' => 'WARNING: Reflection::export() has been removed.  Echo the Reflection object or use its "__toString()" method.'],
     ],
-    'messages' => [
-        'WARN_BC_BREAKS'  => 'WARNING: the code scanned might not be compatible with PHP 8',
-        'NO_BC_BREAKS'    => 'SUCCESS: it appears that the code scanned is potentially compatible with PHP 8',
-    ]
+    'removed' => [
+        'image2wbmp' => 'imagebmp',
+        'png2wbmp' => 'imagebmp',
+        'jpeg2wbmp' => 'imagebmp',
+        'gmp_random' => 'gmp_random_range',
+        'imap_header' => 'imap_headerinfo',
+        'ldap_sort'  => 'ldap_get_entries() combined with usort()',
+        'ldap_control_paged_result'  => 'ldap_get_entries() combined with usort()',
+        'ldap_control_paged_result_response' => 'ldap_get_entries() combined with usort()',
+        'mbregex_encoding' => 'mb_regex_encoding',
+        'mbereg' => 'mb_ereg',
+        'mberegi' => 'mb_eregi',
+        'mbereg_replace' => 'mb_ereg_replace',
+        'mberegi_replace' => 'mb_eregi_replace',
+        'mbsplit' => 'mb_split',
+        'mbereg_match' => 'mb_ereg_match',
+        'mbereg_search' => 'mb_ereg_search',
+        'mbereg_search_pos' => 'mb_ereg_search_pos',
+        'mbereg_search_regs' => 'mb_ereg_search_regs',
+        'mbereg_search_init' => 'mb_ereg_search_init',
+        'mbereg_search_getregs' => 'mb_ereg_search_getregs',
+        'mbereg_search_getpos' => 'mb_ereg_search_getpos',
+        'mbereg_search_setpos' => 'mb_ereg_search_setpos',
+        'oci_internal_debug' => 'oci_error',
+        'ociinternaldebug' => 'oci_error',
+        'hebrevc' => 'No replacement',
+        'convert_cyr_string' => 'No replacement',
+        'money_format' => 'No replacement',
+        'ezmlm_hash' => 'No replacement',
+        'restore_include_path' => 'No replacement',
+        'get_magic_quotes_gpc' => 'No replacement',
+        'get_magic_quotes_runtime' => 'No replacement',
+        'fgetss' => 'strip_tags(fgets($fh))',
+        'gzgetss' => 'No replacement',
+    ],
 ];

@@ -2,80 +2,79 @@
 // /repo/src/Migration/OopBreakScan.php
 declare(strict_types=1);
 namespace Migration;
+use Exception;
 use ArrayIterator;
 /**
  * Designed to run on PHP 7 or below
  * Looks for things that might break OOP code
  */
-class OopBreakScan extends Base
+class OopBreakScan
 {
     const ERR_MAGIC_SIGNATURE = 'WARNING: need to confirm magic method signature: ';
     const ERR_NAMESPACE       = 'WARNING: namespaces can no longer contain spaces in PHP 8.';
     const ERR_REMOVED         = 'WARNING: the following function has been removed: %s.  Use this instead: %s';
-
-    const REMOVED_FUNCS = [
-        'image2wbmp' => 'imagebmp',
-        'png2wbmp' => 'imagebmp',
-        'jpeg2wbmp' => 'imagebmp',
-        'gmp_random', => 'gmp_random_range',
-        'imap_header' => 'imap_headerinfo',
-        'ldap_sort'  => 'ldap_get_entries() combined with usort()',
-        'ldap_control_paged_result'  => 'ldap_get_entries() combined with usort()',
-        'ldap_control_paged_result_response' => 'ldap_get_entries() combined with usort()',
-        'mbregex_encoding' => 'mb_regex_encoding',
-        'mbereg' => 'mb_ereg',
-        'mberegi' => 'mb_eregi',
-        'mbereg_replace' => 'mb_ereg_replace',
-        'mberegi_replace' => 'mb_eregi_replace',
-        'mbsplit' => 'mb_split',
-        'mbereg_match' => 'mb_ereg_match',
-        'mbereg_search' => 'mb_ereg_search',
-        'mbereg_search_pos' => 'mb_ereg_search_pos',
-        'mbereg_search_regs' => 'mb_ereg_search_regs',
-        'mbereg_search_init' => 'mb_ereg_search_init',
-        'mbereg_search_getregs' => 'mb_ereg_search_getregs',
-        'mbereg_search_getpos' => 'mb_ereg_search_getpos',
-        'mbereg_search_setpos' => 'mb_ereg_search_setpos',
-        'oci_internal_debug' => 'oci_error',
-        'ociinternaldebug' => 'oci_error',
-        'hebrevc' => 'No replacement',
-        'convert_cyr_string' => 'No replacement',
-        'money_format' => 'No replacement',
-        'ezmlm_hash' => 'No replacement',
-        'restore_include_path' => 'No replacement',
-        'get_magic_quotes_gpc' => 'No replacement',
-        'get_magic_quotes_runtime' => 'No replacement',
-        'fgetss' => 'strip_tags(fgets($fh))',
-        'gzgetss' => 'No replacement',
-    ];
+    const ERR_MISSING_KEY     = 'ERROR: missing configuration key %s';
+    const WARN_BC_BREAKS      = 'WARNING: the code in this file might not be compatible with PHP 8';
+    const NO_BC_BREAKS        = 'SUCCESS: the code scanned in this file is potentially compatible with PHP 8';
+    const OK_PASSED = 'PASSED this scan: %s';
+    public $config = [];
+    /**
+     * @param array $config : scan config
+     */
+    public function __construct(array $config)
+    {
+        $this->config = $config;
+    }
+    /**
+     * Runs all scans
+     *
+     * @param string $contents : contents of file to be searched
+     * @param array $message   : return success or failure message
+     * @return int $found : number of potential BC breaks found
+     */
+    public function runAllScans(string $contents, array &$messages) : int
+    {
+        $found = 0;
+        $found += $this->scanRemovedFunctions($contents, $messages);
+        $found += $this->scanSpacesInNamespace($contents, $messages);
+        $found += $this->scanMagicSignatures($contents, $messages);
+        $found += $this->scanFromConfig($contents, $messages);
+        return $found;
+    }
     /**
      * Check for removed functions
      *
      * @param string $contents : PHP file contents
      * @param array $message   : return success or failure message
-     * @return bool $found     : TRUE if a break was found
+     * @return int $found      : number of BC breaks detected
      */
-    public function scanRemovedFunctions(string $contents, array &$message) : bool
+    public function scanRemovedFunctions(string $contents, array &$message) : int
     {
         $found = 0;
-        foreach (self::REMOVED_FUNCS as $func => $replace) {
+        $config = $this->config['removed'] ?? NULL;
+        if (empty($config)) {
+            $message = sprintf(self::ERR_MISSING_KEY, 'removed');
+            throw new Exception($message);
+        }
+        $list = array_keys($config);
+        foreach ($config as $func => $replace) {
             if ((strpos($contents, $func) !== FALSE)) {
-                $message[] = sprintf(self::ERR_REMOVED, $fund, $replace);
+                $message[] = sprintf(self::ERR_REMOVED, $func, $replace);
                 $found++;
             }
         }
         if ($found === 0)
             $message[] = sprintf(Base::OK_PASSED, __FUNCTION__);
-        return (bool) $found;
+        return $found;
     }
     /**
      * Scan for spaces in namespace references
      *
      * @param string $contents : PHP file contents
      * @param array $message   : return success or failure message
-     * @return bool $found     : TRUE if a break was found
+     * @return int $found      : number of BC breaks detected
      */
-    public function scanSpacesInNamespace(string $contents, array &$message) : bool
+    public function scanSpacesInNamespace(string $contents, array &$message) : int
     {
         if ($pos = stripos($contents, 'namespace') !== FALSE) {
             $pos += 9;  // offset for "namespace"
@@ -83,23 +82,23 @@ class OopBreakScan extends Base
             $test = trim(substr($contents, $pos, $end - $pos));
             if ((strpos($test, ' ') !== FALSE)) {
                 $message[] = self::ERR_NAMESPACE;
-                return TRUE;
+                return 1;
             }
         }
         $message[] = sprintf(Base::OK_PASSED, __FUNCTION__);
-        return FALSE;
+        return 0;
     }
     /**
      * Scan for magic method signatures
      *
      * @param string $contents : PHP file contents
      * @param array $message   : return success or failure message
-     * @return bool $found     : TRUE if a break was found
+     * @return int $found      : number of BC breaks detected
      */
-    public function scanMagicSignatures(string $contents, array &$message) : bool
+    public function scanMagicSignatures(string $contents, array &$message) : int
     {
         // bail out if no magic methods defined
-        if (strpos($contents, 'function __') === FALSE) return FALSE;
+        if (strpos($contents, 'function __') === FALSE) return 0;
         // list of signature patterns
         $list = [
             '__call'       => '__call(string $name, array $arguments): mixed',
@@ -166,7 +165,63 @@ class OopBreakScan extends Base
             }
             $iter->next();
         }
-        if (!$found) $message[] = sprintf(Base::OK_PASSED, __FUNCTION__);
-        return (bool) $found;
+        if ($found === 0) $message[] = sprintf(Base::OK_PASSED, __FUNCTION__);
+        return $found;
+    }
+    /**
+     * Gets the class name
+     *
+     * @param string $contents : PHP file contents
+     * @return string $name    : classname
+     */
+    public function getClassName(string $contents) : string
+    {
+        preg_match('/class (.+?)\b/', $contents, $matches);
+        return $matches[1] ?? '';
+    }
+    /**
+     * Runs a single scan key (defined in bc_break_scanner.config.php)
+     * NOTE: $messages is passed by reference
+     *
+     * @param string $key : key defined in bc_break_scanner.config.php
+     * @param string $class : class name of this file
+     * @param string $contents : contents of file to be searched
+     * @return int $found : number of potential BC breaks found
+     */
+    public function runScanKey(string $key, string $class, string $contents, array &$messages)
+    {
+        $config = $this->config['scans'][$key] ?? [];
+        if (empty($config)) {
+            $message = sprintf(self::ERR_MISSING_KEY, 'scans => ' . $key);
+            throw new UnexpectedValueException($message);
+        }
+        if (!isset($config['callback'])) return 0;
+        $result = $config['callback']($class, $contents);
+        if ($result) {
+            $messages[] = $config['msg'];
+        }
+        return (int) $result;
+    }
+    /**
+     * Runs all scans key as defined in $this->config (bc_break_scanner.config.php)
+     * NOTE: $messages is passed by reference
+     *
+     * @param string $contents : contents of file to be searched
+     * @return int $found : number of potential BC breaks found
+     */
+    public function scanFromConfig(string $contents, array &$messages)
+    {
+        $found = 0;
+        $class = $this->getClassName($contents);
+        $config = $this->config['scans'] ?? NULL;
+        if (empty($config)) {
+            $message = sprintf(self::ERR_MISSING_KEY, 'scans');
+            throw new Exception($message);
+        }
+        $list = array_keys($config);
+        foreach ($list as $key) {
+            $found += $this->runScanKey($key, $class, $contents, $messages);
+        }
+        return $found;
     }
 }

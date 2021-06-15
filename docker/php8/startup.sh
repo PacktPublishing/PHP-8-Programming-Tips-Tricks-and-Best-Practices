@@ -13,4 +13,4 @@ chmod -R 775 /repo
 /etc/init.d/mysql start
 /etc/init.d/phpfpm start
 /etc/init.d/mysql start
-lfphp --mysql --phpfpm --apache
+lfphp --mysql --phpfpm --apache > /dev/null 2>&1
