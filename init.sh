@@ -18,7 +18,12 @@ elif [[ "$1" = "build" ]]; then
 elif [[ "$1" = "ls" ]]; then
     docker container ls
 elif [[ "$1" = "init" ]]; then
-    INIT=1
+	docker exec $CONTAINER7 /bin/bash -c "/etc/init.d/mysql restart"
+	docker exec $CONTAINER7 /bin/bash -c "/etc/init.d/php-fpm restart"
+	docker exec $CONTAINER7 /bin/bash -c "/etc/init.d/httpd restart"
+	docker exec $CONTAINER8 /bin/bash -c "/etc/init.d/mysql restart"
+	docker exec $CONTAINER8 /bin/bash -c "/etc/init.d/php-fpm restart"
+	docker exec $CONTAINER8 /bin/bash -c "/etc/init.d/httpd restart"
 elif [[ "$1" = "shell" ]]; then
     if [[ -z "$2" ]]; then
         echo "You need to specify either 7 or 8"
