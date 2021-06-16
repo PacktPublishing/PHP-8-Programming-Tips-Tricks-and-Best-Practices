@@ -14,7 +14,7 @@ RUN \
 RUN \
     echo "Creating sample database and assigning permissions ..." && \
     /etc/init.d/mysql start && \
-    sleep 5 && \
+    sleep 7 && \
     mysql -uroot -v -e "CREATE DATABASE php8_tips;" && \
     mysql -uroot -v -e "CREATE USER 'php8'@'localhost' IDENTIFIED BY 'password';" && \
     mysql -uroot -v -e "GRANT ALL PRIVILEGES ON *.* TO 'php8'@'localhost';" && \
