@@ -3,7 +3,7 @@
 
 require __DIR__ . '/../src/Server/Autoload/Loader.php';
 $loader = new \Server\Autoload\Loader();
-use Laminas\Filter\ {StringTrim, StripNewlines, StripTags, ToInt, Whitelist, UriNormalize};
+use Zend\Filter\ {StringTrim, StripNewlines, StripTags, ToInt, Whitelist, UriNormalize};
 use Php7\Container\UsesSplObjectStorage;
 
 // simulated form posting data

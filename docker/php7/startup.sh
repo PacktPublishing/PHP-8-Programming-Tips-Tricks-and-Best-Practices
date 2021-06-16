@@ -1,8 +1,9 @@
 #!/bin/bash
 echo "Installing 3rd party software ..."
 cd /repo
-rm -f composer.phar
-wget https://getcomposer.org/download/latest-stable/composer.phar
+rm -f composer.phar*
+rm -f composer.lock
+wget -O composer.phar https://getcomposer.org/download/latest-stable/composer.phar
 php composer.phar update
 echo "Finishing Apache setup ..."
 mv -f /srv/www /srv/www.OLD
@@ -13,4 +14,4 @@ chmod -R 775 /repo
 /etc/init.d/mysql start
 /etc/init.d/phpfpm start
 /etc/init.d/mysql start
-lfphp --mysql --phpfpm --apache  </dev/null >/dev/null 2&>1 &
+lfphp --mysql --phpfpm --apache >/dev/null 2&>1
