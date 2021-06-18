@@ -12,7 +12,7 @@
 // DEMO_PATH points to phpMyAdmin 4.6.6 (2017-01-23)
 // See: https://www.phpmyadmin.net/files/
 
-define('DEMO_PATH', __DIR__ . '/../src/phpMyAdmin-4.6.6-all-languages');
+define('DEMO_PATH', __DIR__ . '/../sample_data/phpMyAdmin-4.6.6-all-languages');
 require __DIR__ . '/../src/Server/Autoload/Loader.php';
 $loader = new \Server\Autoload\Loader();
 use Migration\OopBreakScan;
@@ -43,10 +43,11 @@ if ($csv) {
     $csv_file = new SplFileObject($csv, 'w');
 }
 // scan files
+$dir   = '';
 $total = 0;
 foreach ($filter as $name => $obj) {
     $found    = 0;  // number of possible BC breaks
-    $messages = []; // messages about possible breaks
+    $scanner->clearMessages(); // resets messages
     if (dirname($name) !== $dir) {
         $dir = dirname($name);
         echo str_repeat('*', 40) . "\n";
@@ -55,16 +56,13 @@ foreach ($filter as $name => $obj) {
     }
     $fn = basename($name);
     echo "Processing: $fn\n";
-    $contents = file_get_contents($name);
-    $found += $scanner->scanRemovedFunctions($contents, $messages);
-    $found += $scanner->scanSpacesInNamespace($contents, $messages);
-    $found += $scanner->scanMagicSignatures($contents, $messages);
-    $found += $scanner->scanFromConfig($contents, $messages);
+    $scanner->getFileContents($name);
+    $found = $scanner->runAllScans();
     // display results
     echo "Number of possible BC breaks: $found\n";
     switch ($show) {
         case 1 :
-            echo implode("\n", $messages);
+            echo implode("\n", $scanner->getMessages());
             break;
         case 0 :
         default :
@@ -74,7 +72,7 @@ foreach ($filter as $name => $obj) {
     }
     // write to CSV file
     if ($csv)
-        foreach ($messages as $text)
+        foreach ($scanner->getMessages() as $text)
             $csv_file->fputcsv([$dir, $fn, $text]);
     $total += $found;
     echo "\n";

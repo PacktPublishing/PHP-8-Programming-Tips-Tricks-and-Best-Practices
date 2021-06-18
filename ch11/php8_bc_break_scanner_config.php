@@ -1,90 +1,77 @@
 <?php
 // /repo/src/config/bc_break_scanner.config.php
 // config file for Migration\OopBreakScan
-
+use Migration\OopBreakScan;
 return [
-    'scans' => [
+    OopBreakScan::KEY_CALLBACK => [
         'ERR_CLASS_CONSTRUCT' => [
-            'callback' => function ($class, $contents) {
-                return ((stripos($contents, 'function ' . $class . '('))
-                        || (stripos($contents, 'function ' . $class . ' (')))
-                        && (stripos($contents, 'function __construct'));
+            'callback' => function ($contents) {
+                $class = OopBreakScan::getClassName($contents);
+                return (stripos($contents, 'function __construct') === FALSE
+                        && (stripos($contents, 'function ' . $class . '(')
+                        || stripos($contents, 'function ' . $class . ' (')));
             },
             'msg' => 'WARNING: contains method same name as class but no __construct() method defined.  Can no longer use method with same name as the class as a constructor.'],
         'ERR_CONST_EXIT'      => [
-            'callback' => function ($class, $contents) {
+            'callback' => function ($contents) {
                 return (preg_match('/__construct.*?\{.*?(die|exit).*?}/im', $contents)
                         && strpos('__destruct', $contents));
             },
             'msg' => 'WARNING: __destruct() might not get called if "die()" or "exit()" used in __construct()'],
-        'ERR_SPL_FGETSS'      => [
-            'callback' => function ($class, $contents) {
-                return  (stripos($contents, 'SplFileObject'))
-                        &&  (stripos($contents, '->fgetss()'));
-            },
-            'msg' => 'WARNING: support for SplFileObject::fgetss() has been removed: use "strip_tags(SplFileObject::fgets())" instead'],
-        'ERR_MAGIC_SLEEP'     => [
-            'callback' => function ($class, $contents) {
-                return strpos($contents, 'function __sleep');
-            },
-            'msg' => 'WARNING: need to confirm __sleep() return values match properties'],
-        'ERR_MAGIC_AUTOLOAD'  => [
-            'callback' => function ($class, $contents) {
-                return stripos($contents, 'function __autoload');
-            },
-            'msg' => 'WARNING: the "__autoload()" function is removed in PHP 8: replace with "spl_autoload_register()"'],
         'ERR_MATCH_KEYWORD'   => [
-            'callback' => function ($class, $contents) {
+            'callback' => function ($contents) {
                 return preg_match('/function\s+match(\s)?\(/', $contents);
             },
             'msg' => 'WARNING: "match" is now a reserved key word'],
-        'ERR_PHP_ERRORMSG'    => [
-            'callback' => function ($class, $contents) {
-                return strpos($contents, 'php_errormsg');
-            },
-            'msg' => 'WARNING: the "track_errors" php.ini directive is removed.  You can no longer rely upon "$php_errormsg".'],
         'ERR_DEFINE_THIRD_ARG'    => [
-            'callback' => function ($class, $contents) {
+            'callback' => function ($contents) {
                 return preg_match('/define(\s)?\(.+?,.+?,(\s)?TRUE/i', $contents);
             },
             'msg' => 'WARNING: the third argument to "define()" needs to be FALSE. Constants are now always case sensitive'],
-        'ERR_CREATE_FUNCTION'    => [
-            'callback' => function ($class, $contents) {
-                return (strpos($contents, ' create_function(') || strpos($contents, ' create_function ('));
-            },
-            'msg' => 'WARNING: "create_function()" has been removed.  Use anonymous functions instead.'],
-        'ERR_EACH'    => [
-            'callback' => function ($class, $contents) {
-                return (strpos($contents, ' each(') || strpos($contents, ' each ('));
-            },
-            'msg' => 'WARNING: "each()" has been removed.  Use "foreach()" or an ArrayIterator instead.'],
         'ERR_ATTRIBUTES'    => [
-            'callback' => function ($class, $contents) {
+            'callback' => function ($contents) {
                 return preg_match('/\s#\[/', $contents);
             },
             'msg' => 'WARNING: comments that begin with "#[" are no longer allowed.  You should convert these into Attributes instead.'],
         'ERR_LOCALE_INDEPENDENCE'    => [
-            'callback' => function ($class, $contents) {
+            'callback' => function ($contents) {
                 return (stripos($contents, ' setlocale(') || strpos($contents, ' setlocale ('));
             },
             'msg' => 'WARNING: if you have a float-to-string typecast (implicit or explicit), the output will no longer be in the set locale.  Use "printf()", "number_format()" or the NumberFormatter class instead.'],
         'ERR_ASSERT_IN_NAMESPACE'    => [
-            'callback' => function ($class, $contents) {
+            'callback' => function ($contents) {
                 return (preg_match('/namespace.*?function assert(\s)?\(/', $contents));
             },
             'msg' => 'WARNING: "assert()" is now a reserved function name, even when used inside a namespace.  You must rename this function to something else.'],
         'ERR_REFLECTION_EXPORT'    => [
-            'callback' => function ($class, $contents) {
+            'callback' => function ($contents) {
                 return (preg_match('/Reflection.*?::export(\s)?\(/', $contents));
             },
             'msg' => 'WARNING: Reflection::export() has been removed.  Echo the Reflection object or use its "__toString()" method.'],
+        'ERR_PHP_ERRORMSG'    => [
+            'callback' => function ($contents) {
+                return strpos($contents, '$php_errormsg');
+            },
+            'msg' => 'WARNING: the "track_errors" php.ini directive is removed.  You can no longer rely upon "$php_errormsg".'],
     ],
-    'removed' => [
-        'image2wbmp' => 'imagebmp',
-        'png2wbmp' => 'imagebmp',
-        'jpeg2wbmp' => 'imagebmp',
+    // key) removed function => (value) suggested replacement
+    OopBreakScan::KEY_REMOVED => [
+        'function __autoload' => 'spl_autoload_register(callable)',
+        'function __sleep' => 'Need to confirm __sleep() returns an array of existing property names.  Consider using __serialize() instead.',
+        'convert_cyr_string' => 'No replacement',
+        'create_function' => 'Use either "function () {}" or "fn () => <expression>"',
+        'each' => 'Use "foreach()" or ArrayIterator',
+        'ezmlm_hash' => 'No replacement',
+        'fgetss' => 'strip_tags(fgets($fh))',
+        'get_magic_quotes_gpc' => 'No replacement',
+        'get_magic_quotes_runtime' => 'No replacement',
         'gmp_random' => 'gmp_random_range',
+        'gzgetss' => 'No replacement',
+        'hebrevc' => 'No replacement',
+        'image2wbmp' => 'imagebmp',
         'imap_header' => 'imap_headerinfo',
+        'is_real' => 'is_float',
+        'jpeg2wbmp' => 'imagebmp',
         'ldap_sort'  => 'ldap_get_entries() combined with usort()',
         'ldap_control_paged_result'  => 'ldap_get_entries() combined with usort()',
         'ldap_control_paged_result_response' => 'ldap_get_entries() combined with usort()',
@@ -102,16 +89,66 @@ return [
         'mbereg_search_getregs' => 'mb_ereg_search_getregs',
         'mbereg_search_getpos' => 'mb_ereg_search_getpos',
         'mbereg_search_setpos' => 'mb_ereg_search_setpos',
+        'money_format' => 'NumberFormatter::formatCurrency',
         'oci_internal_debug' => 'oci_error',
         'ociinternaldebug' => 'oci_error',
-        'hebrevc' => 'No replacement',
-        'convert_cyr_string' => 'No replacement',
-        'money_format' => 'No replacement',
-        'ezmlm_hash' => 'No replacement',
-        'restore_include_path' => 'No replacement',
-        'get_magic_quotes_gpc' => 'No replacement',
-        'get_magic_quotes_runtime' => 'No replacement',
-        'fgetss' => 'strip_tags(fgets($fh))',
-        'gzgetss' => 'No replacement',
+        'pg_errormessage' =>    'pg_last_error',
+        'pg_numrows' => 'pg_num_rows',
+        'pg_numfields' =>   'pg_num_fields',
+        'pg_cmdtuples' =>   'pg_affected_rows',
+        'pg_fieldname' =>   'pg_field_name',
+        'pg_fieldsize' =>   'pg_field_size',
+        'pg_fieldtype' =>   'pg_field_type',
+        'pg_fieldnum' =>    'pg_field_num',
+        'pg_result' =>  'pg_fetch_result',
+        'pg_fieldprtlen' => 'pg_field_prtlen',
+        'pg_fieldisnull' => 'pg_field_is_null',
+        'pg_freeresult' =>  'pg_free_result',
+        'pg_getlastoid' =>  'pg_last_oid',
+        'pg_locreate' =>    'pg_lo_create',
+        'pg_lounlink' =>    'pg_lo_unlink',
+        'pg_loopen' =>  'pg_lo_open',
+        'pg_loclose' => 'pg_lo_close',
+        'pg_loread' =>  'pg_lo_read',
+        'pg_lowrite' => 'pg_lo_write',
+        'pg_loreadall' =>   'pg_lo_read_all',
+        'pg_loimport' =>    'pg_lo_import',
+        'pg_loexport' =>    'pg_lo_export',
+        'pg_setclientencoding' =>   'pg_set_client_encoding',
+        'pg_clientencoding' =>  'pg_client_encoding',
+        'png2wbmp' => 'imagebmp',
+        'read_exif_data' => 'exif_read_data',
+        'restore_include_path' => 'ini_restore("include_path")',
+    ],
+    // list of magic method signature patterns
+    OopBreakScan::KEY_MAGIC => [
+        '__call'       => ['signature' => '__call(string $name, array $arguments): mixed',
+                           'types' => ['string', 'array', 'mixed']],
+        '__callStatic' => ['signature' => '__callStatic(string $name, array $arguments): mixed',
+                           'types' => ['string', 'array', 'mixed']],
+        '__clone'      => ['signature' => '__clone(): void',
+                           'types' => ['void']],
+        '__debugInfo'  => ['signature' => '__debugInfo(): ?array',
+                           'types' => ['\?array']],
+        '__get'        => ['signature' => '__get(string $name): mixed',
+                           'types' => ['string', 'mixed']],
+        '__invoke'     => ['signature' => '__invoke(mixed $arguments): mixed',
+                           'types' => ['mixed', 'mixed']],
+        '__isset'      => ['signature' => '__isset(string $name): bool',
+                           'types' => ['string', 'bool']],
+        '__serialize'  => ['signature' => '__serialize(): array',
+                           'types' => ['array']],
+        '__set'        => ['signature' => '__set(string $name, mixed $value): void',
+                           'types' => ['string', 'mixed', 'void']],
+        '__set_state'  => ['signature' => '__set_state(array $properties): object',
+                           'types' => ['array', 'object']],
+        '__sleep'      => ['signature' => '__sleep(): array',
+                           'types' => ['array']],
+        '__unserialize'=> ['signature' => '__unserialize(array $data): void',
+                           'types' => ['array', 'void']],
+        '__unset'      => ['signature' => '__unset(string $name): void',
+                           'types' => ['string', 'void']],
+        '__wakeup'     => ['signature' => '__wakeup(): void',
+                           'types' => ['void']],
     ],
 ];
