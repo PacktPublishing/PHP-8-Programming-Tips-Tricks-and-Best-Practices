@@ -2,104 +2,103 @@
 // /repo/src/Migration/OopBreakScan.php
 declare(strict_types=1);
 namespace Migration;
+use Exception;
 use ArrayIterator;
 /**
  * Designed to run on PHP 7 or below
  * Looks for things that might break OOP code
  */
-class OopBreakScan extends Base
+class OopBreakScan
 {
+    const ERR_MAGIC_SIGNATURE = 'WARNING: need to confirm magic method signature: ';
+    const ERR_NAMESPACE       = 'WARNING: namespaces can no longer contain spaces in PHP 8.';
+    const ERR_REMOVED         = 'WARNING: the following function has been removed: %s.  Use this instead: %s';
+    const ERR_MISSING_KEY     = 'ERROR: missing configuration key %s';
+    const WARN_BC_BREAKS      = 'WARNING: the code in this file might not be compatible with PHP 8';
+    const NO_BC_BREAKS        = 'SUCCESS: the code scanned in this file is potentially compatible with PHP 8';
+    const OK_PASSED = 'PASSED this scan: %s';
+    public $config = [];
     /**
-     * Searches for __autoload() function (remove in PHP 8)
-     *
-     * @param string $contents : PHP file contents
-     * @param array $message   : return success or failure message
-     * @return bool $found     : TRUE if a break was found
+     * @param array $config : scan config
      */
-    public static function scanMagicAutoloadFunction(string $contents, array &$message) : bool
+    public function __construct(array $config)
     {
-        // look for __autoload()
-        $found  = 0;
-        $found += (stripos($contents, 'function __autoload(') !== FALSE);
-        $message[] = ($found)
-                   ? Base::ERR_MAGIC_AUTOLOAD
-                   : sprintf(Base::OK_PASSED, __FUNCTION__);
-        return (bool) $found;
+        $this->config = $config;
     }
     /**
-     * Looks for usage involving SplFileObject::fgetss()
+     * Runs all scans
      *
-     * @param string $contents : PHP file contents
+     * @param string $contents : contents of file to be searched
      * @param array $message   : return success or failure message
-     * @return bool $found     : TRUE if a break was found
+     * @return int $found : number of potential BC breaks found
      */
-    public static function scanSplFileObjectFgetss(string $contents, array &$message) : bool
+    public function runAllScans(string $contents, array &$messages) : int
     {
-        $found  = 0;
-        $name   = self::getClassName($contents);
-        if ($name) {
-            $found += (stripos($contents, 'SplFileObject') !== FALSE);
-            $found += (stripos($contents, 'fgetss()') !== FALSE);
-        }
-        $message[] = ($found === 2)
-                   ? Base::ERR_SPL_FGETSS
-                   : sprintf(Base::OK_PASSED, __FUNCTION__);
-        return (bool) $found;
+        $found = 0;
+        $found += $this->scanRemovedFunctions($contents, $messages);
+        $found += $this->scanSpacesInNamespace($contents, $messages);
+        $found += $this->scanMagicSignatures($contents, $messages);
+        $found += $this->scanFromConfig($contents, $messages);
+        return $found;
     }
     /**
-     * Case insensitive search for methods the same name as the class
+     * Check for removed functions
      *
      * @param string $contents : PHP file contents
      * @param array $message   : return success or failure message
-     * @return bool $found     : TRUE if a break was found
+     * @return int $found      : number of BC breaks detected
      */
-    public static function scanClassnameConstructor(string $contents, array &$message) : bool
+    public function scanRemovedFunctions(string $contents, array &$message) : int
     {
-        $found  = 0;
-        $name   = self::getClassName($contents);
-        if ($name) {
-            $found += (stripos($contents, 'function ' . $name . '(') !== FALSE);
-            $found += (stripos($contents, 'function ' . $name . ' (') !== FALSE);
-            $found -= (stripos($contents, 'function __construct') !== FALSE);
+        $found = 0;
+        $config = $this->config['removed'] ?? NULL;
+        if (empty($config)) {
+            $message = sprintf(self::ERR_MISSING_KEY, 'removed');
+            throw new Exception($message);
         }
-        $message[] = ($found)
-                   ? Base::ERR_CLASS_CONSTRUCT
-                   : sprintf(Base::OK_PASSED, __FUNCTION__);
-        return (bool) $found;
+        $list = array_keys($config);
+        foreach ($config as $func => $replace) {
+            if ((strpos($contents, $func) !== FALSE)) {
+                $message[] = sprintf(self::ERR_REMOVED, $func, $replace);
+                $found++;
+            }
+        }
+        if ($found === 0)
+            $message[] = sprintf(Base::OK_PASSED, __FUNCTION__);
+        return $found;
     }
     /**
-     * Looks for "die()" or "exit()" in __construct() + __destruct()
+     * Scan for spaces in namespace references
      *
      * @param string $contents : PHP file contents
      * @param array $message   : return success or failure message
-     * @return bool $found     : TRUE if a break was found
+     * @return int $found      : number of BC breaks detected
      */
-    public static function scanConstructorExit(string $contents, array &$message) : bool
+    public function scanSpacesInNamespace(string $contents, array &$message) : int
     {
-        $found    = 0;
-        $possible = 2;
-        $name     = self::getClassName($contents);
-        if ($name) {
-            $found += (strpos($contents, 'function __destruct') !== FALSE);
-            $found += (strpos($contents, 'exit(') !== FALSE);
-            $found += (strpos($contents, 'die(') !== FALSE);
+        if ($pos = stripos($contents, 'namespace') !== FALSE) {
+            $pos += 9;  // offset for "namespace"
+            $end = strpos($contents, ';', $pos);
+            $test = trim(substr($contents, $pos, $end - $pos));
+            if ((strpos($test, ' ') !== FALSE)) {
+                $message[] = self::ERR_NAMESPACE;
+                return 1;
+            }
         }
-        $message[] = ($found >= $possible)
-                   ? Base::ERR_CONST_EXIT
-                   : sprintf(Base::OK_PASSED, __FUNCTION__);
-        return (bool) $found;
+        $message[] = sprintf(Base::OK_PASSED, __FUNCTION__);
+        return 0;
     }
     /**
      * Scan for magic method signatures
      *
      * @param string $contents : PHP file contents
      * @param array $message   : return success or failure message
-     * @return bool $found     : TRUE if a break was found
+     * @return int $found      : number of BC breaks detected
      */
-    public static function scanMagicSignatures(string $contents, array &$message) : bool
+    public function scanMagicSignatures(string $contents, array &$message) : int
     {
         // bail out if no magic methods defined
-        if (strpos($contents, 'function __') === FALSE) return FALSE;
+        if (strpos($contents, 'function __') === FALSE) return 0;
         // list of signature patterns
         $list = [
             '__call'       => '__call(string $name, array $arguments): mixed',
@@ -137,14 +136,14 @@ class OopBreakScan extends Base
                     if (strpos($line, '($') === FALSE
                         && strpos($confirm, '(string')
                         &&strpos($line, '(string') === FALSE) {
-                        $message[] = Base::ERR_MAGIC_SIGNATURE . $list[$name];
+                        $message[] = self::ERR_MAGIC_SIGNATURE . $list[$name];
                         $found++;
                     }
                     // check 2nd arg (if any)
                     if (strpos($confirm, ', array')
                         && strpos($line, ', $') === FALSE
                         && strpos($line, ', array') !== FALSE) {
-                        $message[] = Base::ERR_MAGIC_SIGNATURE . $list[$name];
+                        $message[] = self::ERR_MAGIC_SIGNATURE . $list[$name];
                         $found++;
                     }
                     // check return data type (if any)
@@ -158,7 +157,7 @@ class OopBreakScan extends Base
                         $check = str_replace('{', '', $check);
                         $check = trim($check);
                         if ($type !== $check) {
-                            $message[] = Base::ERR_MAGIC_SIGNATURE . $list[$name];
+                            $message[] = self::ERR_MAGIC_SIGNATURE . $list[$name];
                             $found++;
                         }
                     }
@@ -166,27 +165,63 @@ class OopBreakScan extends Base
             }
             $iter->next();
         }
-        if (!$found) $message[] = sprintf(Base::OK_PASSED, __FUNCTION__);
-        return (bool) $found;
+        if ($found === 0) $message[] = sprintf(Base::OK_PASSED, __FUNCTION__);
+        return $found;
     }
     /**
-     * Looks for __sleep()
+     * Gets the class name
      *
      * @param string $contents : PHP file contents
-     * @param array $message   : return success or failure message
-     * @return bool $found     : TRUE if a break was found
+     * @return string $name    : classname
      */
-    public static function scanMagicSleep(string $contents, array &$message) : bool
+    public function getClassName(string $contents) : string
     {
-        $found    = 0;
-        $possible = 2;
-        $name     = self::getClassName($contents);
-        if ($name) {
-            $found += (strpos($contents, 'function __sleep') !== FALSE);
+        preg_match('/class (.+?)\b/', $contents, $matches);
+        return $matches[1] ?? '';
+    }
+    /**
+     * Runs a single scan key (defined in bc_break_scanner.config.php)
+     * NOTE: $messages is passed by reference
+     *
+     * @param string $key : key defined in bc_break_scanner.config.php
+     * @param string $class : class name of this file
+     * @param string $contents : contents of file to be searched
+     * @return int $found : number of potential BC breaks found
+     */
+    public function runScanKey(string $key, string $class, string $contents, array &$messages)
+    {
+        $config = $this->config['scans'][$key] ?? [];
+        if (empty($config)) {
+            $message = sprintf(self::ERR_MISSING_KEY, 'scans => ' . $key);
+            throw new UnexpectedValueException($message);
         }
-        $message[] = ($found >= $possible)
-                   ? Base::ERR_MAGIC_SLEEP
-                   : sprintf(Base::OK_PASSED, __FUNCTION__);
-        return (bool) $found;
+        if (!isset($config['callback'])) return 0;
+        $result = $config['callback']($class, $contents);
+        if ($result) {
+            $messages[] = $config['msg'];
+        }
+        return (int) $result;
+    }
+    /**
+     * Runs all scans key as defined in $this->config (bc_break_scanner.config.php)
+     * NOTE: $messages is passed by reference
+     *
+     * @param string $contents : contents of file to be searched
+     * @return int $found : number of potential BC breaks found
+     */
+    public function scanFromConfig(string $contents, array &$messages)
+    {
+        $found = 0;
+        $class = $this->getClassName($contents);
+        $config = $this->config['scans'] ?? NULL;
+        if (empty($config)) {
+            $message = sprintf(self::ERR_MISSING_KEY, 'scans');
+            throw new Exception($message);
+        }
+        $list = array_keys($config);
+        foreach ($list as $key) {
+            $found += $this->runScanKey($key, $class, $contents, $messages);
+        }
+        return $found;
     }
 }

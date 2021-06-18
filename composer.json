@@ -1,6 +1,9 @@
 {
     "require": {
-        "composer/composer": "*"
+        "composer/composer": "*",
+        "zendframework/zend-filter": "*",
+        "zendframework/zend-validator": "*",
+        "zendframework/zend-uri": "*"
     },
     "autoload" : {
         "psr-4" : {
