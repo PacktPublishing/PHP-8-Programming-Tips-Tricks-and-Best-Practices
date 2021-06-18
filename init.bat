@@ -6,14 +6,16 @@ SET INIT=0
 
 IF "%~1"=="" GOTO :done
 
-IF "%1"=="up" OR "%1"=="start" GOTO :up
+IF "%1"=="up" GOTO :up
+IF "%1"=="start" GOTO :up
 GOTO :opt2
 :up
 docker-compose up -d %2
 GOTO:EOF
 
 :opt2
-IF "%1" =="down" OR  "%1"=="stop" GOTO :down
+IF "%1" =="down" GOTO :down
+IF "%1"=="stop" GOTO :down
 GOTO :opt3
 :down
 docker-compose down
