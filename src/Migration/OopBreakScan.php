@@ -4,26 +4,31 @@ declare(strict_types=1);
 namespace Migration;
 use InvalidArgumentException;
 use UnexpectedValueException;
-use Exception;
 use ArrayIterator;
 /**
  * Designed to run on PHP 7 or below
  * Looks for things that might break OOP code
+ *
+ * @todo: add line number of potential break (use file($fn) instead of file_get_contents($fn))
+ * @author: doug@unlikelysource.com
  */
 class OopBreakScan
 {
     const ERR_MAGIC_SIGNATURE = 'WARNING: magic method signature for %s does not appear to match required signature';
     const ERR_NAMESPACE       = 'WARNING: namespaces can no longer contain spaces in PHP 8.';
     const ERR_REMOVED         = 'WARNING: the following function has been removed: %s.  Use this instead: %s';
+    const ERR_IS_RESOURCE     = 'WARNING: this function no longer produces a resource: %s.  Usage of "is_resource($item)" should be replaced with "!empty($item)';
     const ERR_MISSING_KEY     = 'ERROR: missing configuration key %s';
     const ERR_INVALID_KEY     = 'ERROR: this configuration key is either missing or not callable: ';
     const ERR_FILE_NOT_FOUND  = 'ERROR: file not found: %s';
     const WARN_BC_BREAKS      = 'WARNING: the code in this file might not be compatible with PHP 8';
     const NO_BC_BREAKS        = 'SUCCESS: the code scanned in this file is potentially compatible with PHP 8';
-    const OK_PASSED = 'PASSED this scan: %s';
+    const OK_PASSED           = 'PASSED this scan: %s';
+    const TOTAL_BREAKS        = 'Total potential BC breaks: %d' . PHP_EOL;
     const KEY_REMOVED         = 'removed';
     const KEY_CALLBACK        = 'callbacks';
     const KEY_MAGIC           = 'magic';
+    const KEY_RESOURCE        = 'resource';
 
     public static $className = '';
     public $config = [];
@@ -35,7 +40,7 @@ class OopBreakScan
     public function __construct(array $config)
     {
         $this->config = $config;
-        $required = [self::KEY_CALLBACK, self::KEY_REMOVED, self::KEY_MAGIC];
+        $required = [self::KEY_CALLBACK, self::KEY_REMOVED, self::KEY_MAGIC, self::KEY_RESOURCE];
         foreach ($required as $key) {
             if (!isset($this->config[$key])) {
                 $message = sprintf(self::ERR_MISSING_KEY, $key);
@@ -104,15 +109,45 @@ class OopBreakScan
     {
         $found = 0;
         $found += $this->scanRemovedFunctions();
+        $found += $this->scanIsResource();
         $found += $this->scanSpacesInNamespace();
         $found += $this->scanMagicSignatures();
         $found += $this->scanFromCallbacks();
         return $found;
     }
     /**
+     * Check for is_resource usage
+     * If "is_resource" found, check against list of functions
+     * that no longer produce resources in PHP 8
+     *
+     * @return int $found : number of BC breaks detected
+     */
+    public function scanIsResource() : int
+    {
+        $found = 0;
+        $search = 'is_resource';
+        // if "is_resource" not found discontinue search
+        if (strpos($this->contents, $search) === FALSE) return 0;
+        // pull list of functions that now return objects instead of resources
+        $config = $this->config[self::KEY_RESOURCE] ?? NULL;
+        if (empty($config)) {
+            $message = sprintf(self::ERR_MISSING_KEY, self::KEY_RESOURCE);
+            throw new Exception($message);
+        }
+        foreach ($config as $func) {
+            if ((strpos($this->contents, $func) !== FALSE)) {
+                $this->messages[] = sprintf(self::ERR_IS_RESOURCE, $func);
+                $found++;
+            }
+        }
+        if ($found === 0)
+            $this->messages[] = sprintf(self::OK_PASSED, __FUNCTION__);
+        return $found;
+    }
+    /**
      * Check for removed functions
      *
-     * @return int $found      : number of BC breaks detected
+     * @return int $found : number of BC breaks detected
      */
     public function scanRemovedFunctions() : int
     {
@@ -122,9 +157,11 @@ class OopBreakScan
             $message = sprintf(self::ERR_MISSING_KEY, self::KEY_REMOVED);
             throw new Exception($message);
         }
-        $list = array_keys($config);
         foreach ($config as $func => $replace) {
-            if ((strpos($this->contents, $func) !== FALSE)) {
+            $search1 = ' ' . $func . '(';
+            $search2 = ' ' . $func . ' (';
+            if (strpos($this->contents, $search1) !== FALSE
+                || strpos($this->contents, $search2) !== FALSE) {
                 $this->messages[] = sprintf(self::ERR_REMOVED, $func, $replace);
                 $found++;
             }
@@ -136,7 +173,7 @@ class OopBreakScan
     /**
      * Scan for spaces in namespace references
      *
-     * @return int $found      : number of BC breaks detected
+     * @return int $found : number of BC breaks detected
      */
     public function scanSpacesInNamespace() : int
     {
@@ -155,7 +192,7 @@ class OopBreakScan
     /**
      * Scan for magic method signatures
      *
-     * @return int $found      : number of BC breaks detected
+     * @return int $found : number of BC breaks detected
      */
     public function scanMagicSignatures() : int
     {
