@@ -1,12 +1,14 @@
 <?php
 // /repo/src/config/bc_break_scanner.config.php
-// config file for Migration\OopBreakScan
-use Migration\OopBreakScan;
+// config file for Migration\BreakScan
+use Php8\Migration\BreakScan;
 return [
-    OopBreakScan::KEY_CALLBACK => [
+    BreakScan::KEY_CALLBACK => [
         'ERR_CLASS_CONSTRUCT' => [
             'callback' => function ($contents) {
-                $class = OopBreakScan::getClassName($contents);
+                $pos = strpos($contents, 'class ');
+                $end = strpos($contents, ' ', $pos);
+                $class = trim(substr($contents, $pos + 6, $end - $pos));
                 return (stripos($contents, 'function __construct') === FALSE
                         && (stripos($contents, 'function ' . $class . '(')
                         || stripos($contents, 'function ' . $class . ' (')));
@@ -60,7 +62,7 @@ return [
             'msg' => 'WARNING: using the "@" operator to suppress warnings no longer works in PHP 8.'],
     ],
     // key) removed function => (value) suggested replacement
-    OopBreakScan::KEY_REMOVED => [
+    BreakScan::KEY_REMOVED => [
         'function __autoload' => 'spl_autoload_register(callable)',
         'function __sleep' => 'Need to confirm __sleep() returns an array of existing property names.  Consider using __serialize() instead.',
         'convert_cyr_string' => 'No replacement',
@@ -126,7 +128,7 @@ return [
         'restore_include_path' => 'ini_restore("include_path")',
     ],
     // list of magic method signature patterns
-    OopBreakScan::KEY_MAGIC => [
+    BreakScan::KEY_MAGIC => [
         '__call'       => ['signature' => '__call(string $name, array $arguments): mixed',
                            'types' => ['string', 'array', 'mixed']],
         '__callStatic' => ['signature' => '__callStatic(string $name, array $arguments): mixed',
@@ -157,7 +159,7 @@ return [
                            'types' => ['void']],
     ],
     // scan use of is_resource
-    OopBreakScan::KEY_RESOURCE => [
+    BreakScan::KEY_RESOURCE => [
         'socket_create',
         'socket_create_listen',
         'socket_accept',

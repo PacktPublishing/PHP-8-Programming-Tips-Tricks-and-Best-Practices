@@ -1,18 +1,16 @@
 <?php
-// /repo/src/Migration/OopBreakScan.php
+// /repo/src/Php8/Migration/BreakScan.php
 declare(strict_types=1);
-namespace Migration;
+namespace Php8\Migration;
 use InvalidArgumentException;
 use UnexpectedValueException;
-use ArrayIterator;
 /**
- * Designed to run on PHP 7 or below
- * Looks for things that might break OOP code
+ * Looks for things that might your code after a PHP 8 migration
  *
  * @todo: add line number of potential break (use file($fn) instead of file_get_contents($fn))
  * @author: doug@unlikelysource.com
  */
-class OopBreakScan
+class BreakScan
 {
     const ERR_MAGIC_SIGNATURE = 'WARNING: magic method signature for %s does not appear to match required signature';
     const ERR_NAMESPACE       = 'WARNING: namespaces can no longer contain spaces in PHP 8.';
@@ -30,7 +28,6 @@ class OopBreakScan
     const KEY_MAGIC           = 'magic';
     const KEY_RESOURCE        = 'resource';
 
-    public static $className = '';
     public $config = [];
     public $contents = '';
     public $messages = [];
@@ -59,13 +56,12 @@ class OopBreakScan
     public function getFileContents(string $fn) : string
     {
         if (!file_exists($fn)) {
-            self::$className = '';
             $this->contents  = '';
             throw new InvalidArgumentException(sprintf(self::ERR_FILE_NOT_FOUND, $fn));
         }
         $this->contents = file_get_contents($fn);
         $this->contents = str_replace(["\r","\n"],['', ' '], $this->contents);
-        return self::getClassName($this->contents);
+        return $this->contents;
     }
     /**
      * Gets the class name

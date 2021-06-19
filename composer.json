@@ -3,7 +3,8 @@
         "composer/composer": "*",
         "zendframework/zend-filter": "*",
         "zendframework/zend-validator": "*",
-        "zendframework/zend-uri": "*"
+        "zendframework/zend-uri": "*",
+        "phpunit/phpunit": "^9.5"
     },
     "autoload" : {
         "psr-4" : {

@@ -19,7 +19,7 @@
 define('DEMO_PATH', __DIR__ . '/../sample_data/phpMyAdmin-4.6.6-all-languages');
 require __DIR__ . '/../src/Server/Autoload/Loader.php';
 $loader = new \Server\Autoload\Loader();
-use Migration\OopBreakScan;
+use Php8\Migration\BreakScan;
 
 // usage
 $usage = <<<EOT
@@ -54,7 +54,7 @@ if (empty($path)) {
 
 // init break scanner using config file
 $config  = include __DIR__ . '/php8_bc_break_scanner_config.php';
-$scanner = new OopBreakScan($config);
+$scanner = new BreakScan($config);
 
 // get list of files
 $iter = new RecursiveIteratorIterator(
@@ -107,8 +107,8 @@ foreach ($filter as $name => $obj) {
         case 1 :
             if ($found) {
                 echo "Processing: $fn\n";
-                echo OopBreakScan::WARN_BC_BREAKS . "\n";
-                printf(OopBreakScan::TOTAL_BREAKS, $found);
+                echo BreakScan::WARN_BC_BREAKS . "\n";
+                printf(BreakScan::TOTAL_BREAKS, $found);
                 echo "$messages\n";
                 if ($csv) $write($dir, $fn, $found, $messages);
             }
@@ -117,7 +117,7 @@ foreach ($filter as $name => $obj) {
         default :
             if ($found) {
                 echo "Processing: $fn\n";
-                echo OopBreakScan::WARN_BC_BREAKS . "\n";
+                echo BreakScan::WARN_BC_BREAKS . "\n";
                 if ($csv) $write($dir, $fn, $found, $messages);
             }
     }
