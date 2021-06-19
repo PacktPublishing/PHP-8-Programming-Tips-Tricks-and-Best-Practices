@@ -6,9 +6,7 @@ return [
     BreakScan::KEY_CALLBACK => [
         'ERR_CLASS_CONSTRUCT' => [
             'callback' => function ($contents) {
-                $pos = strpos($contents, 'class ');
-                $end = strpos($contents, ' ', $pos);
-                $class = trim(substr($contents, $pos + 6, $end - $pos));
+                $class = BreakScan::getKeyValue($contents, 'class', ';');
                 return (stripos($contents, 'function __construct') === FALSE
                         && (stripos($contents, 'function ' . $class . '(')
                         || stripos($contents, 'function ' . $class . ' (')));
@@ -45,6 +43,12 @@ return [
                 return (preg_match('/namespace.*?assert\s*\(/', $contents));
             },
             'msg' => 'WARNING: "assert()" is now a reserved function name, even when used inside a namespace.  You must rename this function to something else.'],
+        'ERR_SPACES_IN_NAMESPACE'    => [
+            'callback' => function ($contents) {
+                $namespace = BreakScan::getKeyValue($contents, 'namespace', ';');
+                return strpos($namespace, ' ');
+            },
+            'msg' => 'WARNING: namespaces can no longer contain spaces in PHP 8.'],
         'ERR_REFLECTION_EXPORT'    => [
             'callback' => function ($contents) {
                 return (preg_match('/Reflection.*?::export(\s)?\(/', $contents));

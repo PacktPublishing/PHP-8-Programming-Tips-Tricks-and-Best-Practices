@@ -13,7 +13,6 @@ use UnexpectedValueException;
 class BreakScan
 {
     const ERR_MAGIC_SIGNATURE = 'WARNING: magic method signature for %s does not appear to match required signature';
-    const ERR_NAMESPACE       = 'WARNING: namespaces can no longer contain spaces in PHP 8.';
     const ERR_REMOVED         = 'WARNING: the following function has been removed: %s.  Use this instead: %s';
     const ERR_IS_RESOURCE     = 'WARNING: this function no longer produces a resource: %s.  Usage of "is_resource($item)" should be replaced with "!empty($item)';
     const ERR_MISSING_KEY     = 'ERROR: missing configuration key %s';
@@ -64,16 +63,18 @@ class BreakScan
         return $this->contents;
     }
     /**
-     * Gets the class name
+     * Extracts the value immediately following the supplied word up until the supplied end
      *
-     * @param string $contents : PHP file contents
-     * @return string $name    : classname
+     * @param string $contents : text to search (usually $this->contents)
+     * @param string $key   : starting keyword or set of characters
+     * @param string $end   : ending delimiter
+     * @return string $name : classname
      */
-    public static function getClassName(string $contents) : string
+    public static function getKeyValue(string $contents, string $key, string $end)
     {
-        preg_match('/class (.+?)\b/', $contents, $matches);
-        self::$className = $matches[1] ?? '';
-        return self::$className;
+        $pos = strpos($contents, $key);
+        $end = strpos($contents, $end, $pos + strlen($key) + 1);
+        return trim(substr($contents, $pos + strlen($key), $end - $pos - strlen($key)));
     }
     /**
      * Clears messages
@@ -106,7 +107,6 @@ class BreakScan
         $found = 0;
         $found += $this->scanRemovedFunctions();
         $found += $this->scanIsResource();
-        $found += $this->scanSpacesInNamespace();
         $found += $this->scanMagicSignatures();
         $found += $this->scanFromCallbacks();
         return $found;
@@ -165,25 +165,6 @@ class BreakScan
         if ($found === 0)
             $this->messages[] = sprintf(self::OK_PASSED, __FUNCTION__);
         return $found;
-    }
-    /**
-     * Scan for spaces in namespace references
-     *
-     * @return int $found : number of BC breaks detected
-     */
-    public function scanSpacesInNamespace() : int
-    {
-        if ($pos = stripos($this->contents, 'namespace') !== FALSE) {
-            $pos += 9;  // offset for "namespace"
-            $end = strpos($this->contents, ';', $pos);
-            $test = trim(substr($this->contents, $pos, $end - $pos));
-            if ((strpos($test, ' ') !== FALSE)) {
-                $this->messages[] = self::ERR_NAMESPACE;
-                return 1;
-            }
-        }
-        $this->messages[] = sprintf(self::OK_PASSED, __FUNCTION__);
-        return 0;
     }
     /**
      * Scan for magic method signatures
