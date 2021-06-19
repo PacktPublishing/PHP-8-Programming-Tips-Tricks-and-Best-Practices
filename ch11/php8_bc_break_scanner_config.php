@@ -42,7 +42,7 @@ return [
             'msg' => 'WARNING: if you have a float-to-string typecast (implicit or explicit), the output will no longer be in the set locale.  Use "printf()", "number_format()" or the NumberFormatter class instead.'],
         'ERR_ASSERT_IN_NAMESPACE'    => [
             'callback' => function ($contents) {
-                return (preg_match('/namespace.*?function assert(\s)?\(/', $contents));
+                return (preg_match('/namespace.*?assert\s*\(/', $contents));
             },
             'msg' => 'WARNING: "assert()" is now a reserved function name, even when used inside a namespace.  You must rename this function to something else.'],
         'ERR_REFLECTION_EXPORT'    => [

@@ -23,7 +23,7 @@ class Test
     }
 }
 EOT;
-        $this->contents[0] = <<<EOT
+        $this->contents[1] = <<<EOT
 <?php
 namespace Test;
 class Test
@@ -38,6 +38,11 @@ class Test
     }
 }
 EOT;
+        $this->contents[2] = <<<EOT
+<?php
+namespace Test;
+error_log(assert("xyz"));
+EOT;
         foreach ($this->contents as $key => $val)
             $this->contents[$key] = str_replace(["\r","\n"], ' ', $val);
     }
@@ -50,7 +55,7 @@ EOT;
     public function testConfig_ERR_ASSERT_IN_NAMESPACE()
     {
         $expected = TRUE;
-        $actual = (bool) $this->config[BreakScan::KEY_CALLBACK]['ERR_ASSERT_IN_NAMESPACE']['callback']($this->contents[0]);
+        $actual = (bool) $this->config[BreakScan::KEY_CALLBACK]['ERR_ASSERT_IN_NAMESPACE']['callback']($this->contents[2]);
         $this->assertEquals($expected, $actual, 'ERR_ASSERT_IN_NAMESPACE does not detect spaces in namespace properly');
     }
 }
