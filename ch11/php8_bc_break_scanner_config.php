@@ -210,6 +210,7 @@ return [
             'msg' => 'WARNING: "assert()" is now a reserved function name, even when used inside a namespace.  You must rename this function to something else.'],
         'ERR_SPACES_IN_NAMESPACE'    => [
             'callback' => function ($contents) {
+                if (strpos($contents, 'namespace') === FALSE) return 0;
                 $namespace = BreakScan::getKeyValue($contents, 'namespace', ';');
                 return strpos($namespace, ' ');
             },

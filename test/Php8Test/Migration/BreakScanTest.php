@@ -32,14 +32,46 @@ class BadTest {
     }
     public function __call(string \$name, string \$param) : Exception
     {
-        /* do nothing */
+        sleep 5;
     }
     public function __invoke(string \$name, array \$args) : bool
     {
-        /* do nothing */
+        sleep 5;
     }
 }
 EOT;
+        $this->real_class = <<<EOT
+<?php
+/* vim: set expandtab sw=4 ts=4 sts=4: */
+/**
+ * Holds the PhpMyAdmin\Controllers\Table\TableRelationController
+ *
+ * @package PhpMyAdmin\Controllers
+ */
+namespace PhpMyAdmin\Controllers\Table;
+
+use PhpMyAdmin\Controllers\TableController;
+use PhpMyAdmin\Core;
+use PhpMyAdmin\DatabaseInterface;
+use PhpMyAdmin\Index;
+use PhpMyAdmin\Relation;
+use PhpMyAdmin\Table;
+use PhpMyAdmin\Template;
+use PhpMyAdmin\Util;
+
+/**
+ * Handles table relation logic
+ *
+ * @package PhpMyAdmin\Controllers
+ */
+class TableRelationController extends TableController
+{
+    /**
+     * @var array \$options_array
+     */
+    protected \$options_array;
+EOT;
+
         $this->bad_class = str_replace(["\r","\n"], ' ', $this->bad_class);
         $this->good_class= <<<EOT
 <?php

@@ -58,6 +58,7 @@ class BreakScan
             $this->contents  = '';
             throw new InvalidArgumentException(sprintf(self::ERR_FILE_NOT_FOUND, $fn));
         }
+        $this->clearMessages();
         $this->contents = file_get_contents($fn);
         $this->contents = str_replace(["\r","\n"],['', ' '], $this->contents);
         return $this->contents;
@@ -74,7 +75,13 @@ class BreakScan
     {
         $pos = strpos($contents, $key);
         $end = strpos($contents, $end, $pos + strlen($key) + 1);
-        return trim(substr($contents, $pos + strlen($key), $end - $pos - strlen($key)));
+        $key = substr($contents, $pos + strlen($key), $end - $pos - strlen($key));
+        if (is_string($key)) {
+            $key = trim($key);
+        } else {
+            $key = '';
+        }
+        return trim($key);
     }
     /**
      * Clears messages
@@ -96,6 +103,17 @@ class BreakScan
         $messages = $this->messages;
         if ($clear) $this->clearMessages();
         return $messages;
+    }
+    /**
+     * Returns 0 and adds OK message
+     *
+     * @param string $function
+     * @return int 0
+     */
+    public function passedOK(string $function) : int
+    {
+        $this->messages[] = sprintf(self::OK_PASSED, $function);
+        return 0;
     }
     /**
      * Runs all scans
@@ -134,9 +152,7 @@ class BreakScan
                 $found++;
             }
         }
-        if ($found === 0)
-            $this->messages[] = sprintf(self::OK_PASSED, __FUNCTION__);
-        return $found;
+        return ($found === 0) ? $this->passedOK(__FUNCTION__) : $found;
     }
     /**
      * Check for is_resource usage
@@ -150,7 +166,7 @@ class BreakScan
         $found = 0;
         $search = 'is_resource';
         // if "is_resource" not found discontinue search
-        if (strpos($this->contents, $search) === FALSE) return 0;
+        if (strpos($this->contents, $search) === FALSE) return $this->passedOK(__FUNCTION__);
         // pull list of functions that now return objects instead of resources
         $config = $this->config[self::KEY_RESOURCE] ?? NULL;
         // we add this extra safety check in case this method is called separately
@@ -164,9 +180,7 @@ class BreakScan
                 $found++;
             }
         }
-        if ($found === 0)
-            $this->messages[] = sprintf(self::OK_PASSED, __FUNCTION__);
-        return $found;
+        return ($found === 0) ? $this->passedOK(__FUNCTION__) : $found;
     }
     /**
      * Scan for magic method signatures
@@ -205,46 +219,7 @@ class BreakScan
                 }
             }
         }
-        if ($found === 0)
-            $this->messages[] = sprintf(self::OK_PASSED, __FUNCTION__);
-        return $found;
-    }
-    /**
-     * Makes sure callback key exists and is callable
-     *
-     * @param string $key : key defined in bc_break_scanner.config.php::callbacks
-     * @return array $config|NULL : If everything is OK returns the config for that key; otherwise an exception is thrown
-     * @throws InvalidArgumentException | UnexpectedValueException
-     */
-    protected function validateCallbackKey(string $key) : ?array
-    {
-        $config = $this->config[self::KEY_CALLBACK][$key] ?? NULL;
-        if (empty($config)) {
-            $message = sprintf(self::ERR_MISSING_KEY, self::KEY_CALLBACK . ' => ' . $key);
-            throw new InvalidArgumentException($message);
-        } elseif (empty($config['callback']) || !is_callable($config['callback'])) {
-            $message = sprintf(self::ERR_INVALID_KEY, self::KEY_CALLBACK . ' => ' . $key . ' => callback');
-            throw new InvalidArgumentException($message);
-        }
-        return $config;
-    }
-    /**
-     * Runs a single callback key (defined in bc_break_scanner.config.php)
-     *
-     * @param string $key : key defined in bc_break_scanner.config.php::callbacks
-     * @return int $found : number of potential BC breaks found
-     * @throws UnexpectedValueException
-     */
-    public function runCallbackByKey(string $key) : int
-    {
-        // validate the callback key
-        $config = $this->validateCallbackKey($key);
-        // run the callback
-        $found = $config['callback']($this->contents);
-        if ($found) {
-            $this->messages[] = $config['msg'];
-        }
-        return (int) $found;
+        return ($found === 0) ? $this->passedOK(__FUNCTION__) : $found;
     }
     /**
      * Runs all scans key as defined in $this->config (bc_break_scanner.config.php)
@@ -256,7 +231,15 @@ class BreakScan
         $found = 0;
         $list = array_keys($this->config[self::KEY_CALLBACK]);
         foreach ($list as $key) {
-            $found += $this->runCallbackByKey($key);
+            $config = $this->config[self::KEY_CALLBACK][$key] ?? NULL;
+            if (empty($config['callback']) || !is_callable($config['callback'])) {
+                $message = sprintf(self::ERR_INVALID_KEY, self::KEY_CALLBACK . ' => ' . $key . ' => callback');
+                throw new InvalidArgumentException($message);
+            }
+            if ($config['callback']($this->contents)) {
+                $this->messages[] = $config['msg'];
+                $found++;
+            }
         }
         return $found;
     }

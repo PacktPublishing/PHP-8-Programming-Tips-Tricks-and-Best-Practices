@@ -12,11 +12,11 @@
  * CSV   : name of CSV file to write results
  */
 
-// DEMO_PATH points to phpMyAdmin 4.6.6 (2017-01-23)
+// DEMO_PATH points to phpMyAdmin 4.9.7 (2020-10-15)
 // See: https://www.phpmyadmin.net/files/
 
 // autoloading and usage
-define('DEMO_PATH', __DIR__ . '/../sample_data/phpMyAdmin-4.6.6-all-languages');
+define('DEMO_PATH', __DIR__ . '/../sample_data/phpMyAdmin-4.9.7-all-languages');
 require __DIR__ . '/../src/Server/Autoload/Loader.php';
 $loader = new \Server\Autoload\Loader();
 use Php8\Migration\BreakScan;
@@ -36,10 +36,11 @@ www usage:
 EOT;
 
 // grab params
-$path    = $_GET['path'] ?? $argv[1] ?? NULL;
-$show    = $_GET['show'] ?? $argv[2] ?? 0;  // 1 = show pass/fail; 2 = show all messages
-$show    = (int) $show;
-$csv     = $_GET['csv']  ?? $argv[3] ?? '';
+$path = $_GET['path'] ?? $argv[1] ?? NULL;
+$show = $_GET['show'] ?? $argv[2] ?? 0;  // 1= show pass/fail; 2= show all messages
+$show = (int) $show;
+$csv  = $_GET['csv']  ?? $argv[3] ?? '';
+$csv  = basename($csv);
 
 // check for path
 if (empty($path)) {
@@ -93,6 +94,7 @@ foreach ($filter as $name => $obj) {
         echo "Processing Directory: \n$name\n";
         echo str_repeat('*', 40) . "\n";
     }
+    if ($obj->isDir()) continue;
     $fn = basename($name);
     $scanner->getFileContents($name);
     $found    = $scanner->runAllScans();
