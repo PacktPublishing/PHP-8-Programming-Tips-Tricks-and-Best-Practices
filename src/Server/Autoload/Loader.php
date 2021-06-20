@@ -6,7 +6,6 @@ namespace Server\Autoload;
 class Loader
 {
     const DEFAULT_SRC = __DIR__ . '/../..';
-    const COMPOSER_AUTOLOAD = __DIR__ . '/../../../vendor/autoload.php';
     public $src_dir = '';
     public $test_dir = '';
     public function __construct(string $src_dir = NULL, string $test_dir = NULL)
@@ -15,7 +14,6 @@ class Loader
         $this->test_dir = $test_dir ?? realpath($this->src_dir . '../test');
         spl_autoload_register([$this, 'autoload']);
         spl_autoload_register([$this, 'testAutoload']);
-        require self::COMPOSER_AUTOLOAD;
     }
     public function autoload($class)
     {

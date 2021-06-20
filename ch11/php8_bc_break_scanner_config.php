@@ -1,70 +1,8 @@
 <?php
-// /repo/src/config/bc_break_scanner.config.php
+// /repo/ch11/bc_break_scanner.config.php
 // config file for Migration\BreakScan
 use Php8\Migration\BreakScan;
 return [
-    BreakScan::KEY_CALLBACK => [
-        'ERR_CLASS_CONSTRUCT' => [
-            'callback' => function ($contents) {
-                $class = BreakScan::getKeyValue($contents, 'class', ';');
-                return (stripos($contents, 'function __construct') === FALSE
-                        && (stripos($contents, 'function ' . $class . '(')
-                        || stripos($contents, 'function ' . $class . ' (')));
-            },
-            'msg' => 'WARNING: contains method same name as class but no __construct() method defined.  Can no longer use method with same name as the class as a constructor.'],
-        'ERR_CONST_EXIT'      => [
-            'callback' => function ($contents) {
-                return (preg_match('/__construct.*?\{.*?(die|exit).*?}/im', $contents)
-                        && strpos('__destruct', $contents));
-            },
-            'msg' => 'WARNING: __destruct() might not get called if "die()" or "exit()" used in __construct()'],
-        'ERR_MATCH_KEYWORD'   => [
-            'callback' => function ($contents) {
-                return preg_match('/function\s+match(\s)?\(/', $contents);
-            },
-            'msg' => 'WARNING: "match" is now a reserved key word'],
-        'ERR_DEFINE_THIRD_ARG'    => [
-            'callback' => function ($contents) {
-                return preg_match('/define(\s)?\(.+?,.+?,(\s)?TRUE/i', $contents);
-            },
-            'msg' => 'WARNING: the third argument to "define()" needs to be FALSE. Constants are now always case sensitive'],
-        'ERR_ATTRIBUTES'    => [
-            'callback' => function ($contents) {
-                return preg_match('/\s#\[/', $contents);
-            },
-            'msg' => 'WARNING: comments that begin with "#[" are no longer allowed.  You should convert these into Attributes instead.'],
-        'ERR_LOCALE_INDEPENDENCE'    => [
-            'callback' => function ($contents) {
-                return (stripos($contents, ' setlocale(') || strpos($contents, ' setlocale ('));
-            },
-            'msg' => 'WARNING: if you have a float-to-string typecast (implicit or explicit), the output will no longer be in the set locale.  Use "printf()", "number_format()" or the NumberFormatter class instead.'],
-        'ERR_ASSERT_IN_NAMESPACE'    => [
-            'callback' => function ($contents) {
-                return (preg_match('/namespace.*?assert\s*\(/', $contents));
-            },
-            'msg' => 'WARNING: "assert()" is now a reserved function name, even when used inside a namespace.  You must rename this function to something else.'],
-        'ERR_SPACES_IN_NAMESPACE'    => [
-            'callback' => function ($contents) {
-                $namespace = BreakScan::getKeyValue($contents, 'namespace', ';');
-                return strpos($namespace, ' ');
-            },
-            'msg' => 'WARNING: namespaces can no longer contain spaces in PHP 8.'],
-        'ERR_REFLECTION_EXPORT'    => [
-            'callback' => function ($contents) {
-                return (preg_match('/Reflection.*?::export(\s)?\(/', $contents));
-            },
-            'msg' => 'WARNING: Reflection::export() has been removed.  Echo the Reflection object or use its "__toString()" method.'],
-        'ERR_PHP_ERRORMSG'    => [
-            'callback' => function ($contents) {
-                return strpos($contents, '$php_errormsg');
-            },
-            'msg' => 'WARNING: the "track_errors" php.ini directive is removed.  You can no longer rely upon "$php_errormsg".'],
-        'ERR_AT_SUPPRESS'    => [
-            'callback' => function ($contents) {
-                return preg_match('/\=\s*\@\w/', $contents);
-            },
-            'msg' => 'WARNING: using the "@" operator to suppress warnings no longer works in PHP 8.'],
-    ],
     // key) removed function => (value) suggested replacement
     BreakScan::KEY_REMOVED => [
         'function __autoload' => 'spl_autoload_register(callable)',
@@ -131,37 +69,6 @@ return [
         'read_exif_data' => 'exif_read_data',
         'restore_include_path' => 'ini_restore("include_path")',
     ],
-    // list of magic method signature patterns
-    BreakScan::KEY_MAGIC => [
-        '__call'       => ['signature' => '__call(string $name, array $arguments): mixed',
-                           'types' => ['string', 'array', 'mixed']],
-        '__callStatic' => ['signature' => '__callStatic(string $name, array $arguments): mixed',
-                           'types' => ['string', 'array', 'mixed']],
-        '__clone'      => ['signature' => '__clone(): void',
-                           'types' => ['void']],
-        '__debugInfo'  => ['signature' => '__debugInfo(): ?array',
-                           'types' => ['\?array']],
-        '__get'        => ['signature' => '__get(string $name): mixed',
-                           'types' => ['string', 'mixed']],
-        '__invoke'     => ['signature' => '__invoke(mixed $arguments): mixed',
-                           'types' => ['mixed', 'mixed']],
-        '__isset'      => ['signature' => '__isset(string $name): bool',
-                           'types' => ['string', 'bool']],
-        '__serialize'  => ['signature' => '__serialize(): array',
-                           'types' => ['array']],
-        '__set'        => ['signature' => '__set(string $name, mixed $value): void',
-                           'types' => ['string', 'mixed', 'void']],
-        '__set_state'  => ['signature' => '__set_state(array $properties): object',
-                           'types' => ['array', 'object']],
-        '__sleep'      => ['signature' => '__sleep(): array',
-                           'types' => ['array']],
-        '__unserialize'=> ['signature' => '__unserialize(array $data): void',
-                           'types' => ['array', 'void']],
-        '__unset'      => ['signature' => '__unset(string $name): void',
-                           'types' => ['string', 'void']],
-        '__wakeup'     => ['signature' => '__wakeup(): void',
-                           'types' => ['void']],
-    ],
     // scan use of is_resource
     BreakScan::KEY_RESOURCE => [
         'socket_create',
@@ -178,7 +85,19 @@ return [
         'enchant_broker_init',
         'enchant_broker_request_dict',
         'enchant_broker_request_pwl_dict',
-        'imagecreate*',
+        'imagecreate',
+        'imagecreatefrombmp',
+        'imagecreatefromgd2',
+        'imagecreatefromgd2part',
+        'imagecreatefromgd',
+        'imagecreatefromgif',
+        'imagecreatefromjpeg',
+        'imagecreatefrompng',
+        'imagecreatefromstring',
+        'imagecreatefromwbmp',
+        'imagecreatefromwebp',
+        'imagecreatefromxbm',
+        'imagecreatefromxpm',
         'openssl_x509_read',
         'openssl_csr_sign',
         'openssl_csr_new',
@@ -204,4 +123,112 @@ return [
         'inflate_init',
         'deflate_init',
     ],
+    // list of magic method signature patterns
+    BreakScan::KEY_MAGIC => [
+        '__call'       => ['signature' => '__call(string $name, array $arguments): mixed',
+                           'regex' => '/__call\s*\((string\s)?\$.+?(array\s)?\$.+?\)\s*:\s*mixed/',
+                           'types' => ['string', 'array', 'mixed']],
+        '__callStatic' => ['signature' => '__callStatic(string $name, array $arguments): mixed',
+                           'regex' => '/__callStatic\s*\((string\s)?\$.+?(array\s)?\$.+?\)\s*:\s*mixed/',
+                           'types' => ['string', 'array', 'mixed']],
+        '__clone'      => ['signature' => '__clone(): void',
+                           'regex' => '/__clone\s*\(\)\s*:\s*void/',
+                           'types' => ['void']],
+        '__debugInfo'  => ['signature' => '__debugInfo(): ?array',
+                           'regex' => '/__debugInfo\s*\(\)\s*:\s*\?array/',
+                           'types' => ['\?array']],
+        '__get'        => ['signature' => '__get(string $name): mixed',
+                           'regex' => '/__get\s*\((string\s)?\$.+?\)\s*:\s*mixed/',
+                           'types' => ['string', 'mixed']],
+        '__invoke'     => ['signature' => '__invoke(mixed $arguments): mixed',
+                           'regex' => '/__invoke\s+?\((mixed\s)?(\$\w+?\,?\s?)*\)(\s*\:\s*mixed)/',
+                           'types' => ['mixed', 'mixed']],
+        '__isset'      => ['signature' => '__isset(string $name): bool',
+                           'regex' => '/__isset\s*\((string\s)?\$.+?\)\s*:\s*bool/',
+                           'types' => ['string', 'bool']],
+        '__serialize'  => ['signature' => '__serialize(): array',
+                           'regex' => '/__serialize\s*\(\)\s*:\s*array/',
+                           'types' => ['array']],
+        '__set'        => ['signature' => '__set(string $name, mixed $value): void',
+                           'regex' => '/__set\s*\((string\s)?\$.+?(mixed\s)?\$.+?\)\s*:\s*void/',
+                           'types' => ['string', 'mixed', 'void']],
+        '__set_state'  => ['signature' => '__set_state(array $properties): object',
+                           'regex' => '/__set_state\s*\((array\s)?\$.+?\)\s*:\s*object/',
+                           'types' => ['array', 'object']],
+        '__sleep'      => ['signature' => '__sleep(): array',
+                           'regex' => '/__sleep\s*\(\)\s*:\s*array/',
+                           'types' => ['array']],
+        '__unserialize'=> ['signature' => '__unserialize(array $data): void',
+                           'regex' => '/__unserialize\s*\((array\s)?\$.+?\)\s*:\s*void/',
+                           'types' => ['array', 'void']],
+        '__unset'      => ['signature' => '__unset(string $name): void',
+                           'regex' => '/__unset\s*\((string\s)?\$.+?\)\s*:\s*void/',
+                           'types' => ['string', 'void']],
+        '__wakeup'     => ['signature' => '__wakeup(): void',
+                           'regex' => '/__wakeup\s*\(\)\s*:\s*void/',
+                           'types' => ['void']],
+    ],
+    BreakScan::KEY_CALLBACK => [
+        'ERR_CLASS_CONSTRUCT' => [
+            'callback' => function ($contents) {
+                $class = BreakScan::getKeyValue($contents, 'class', '{');
+                return (stripos($contents, 'function __construct') === FALSE
+                        && (stripos($contents, 'function ' . $class . '(')
+                        || stripos($contents, 'function ' . $class . ' (')));
+            },
+            'msg' => 'WARNING: contains method same name as class but no __construct() method defined.  Can no longer use method with same name as the class as a constructor.'],
+        'ERR_CONST_EXIT'      => [
+            'callback' => function ($contents) {
+                return (preg_match('/__construct.*?\{.*?(die|exit).*?}/im', $contents)
+                        && strpos('__destruct', $contents));
+            },
+            'msg' => 'WARNING: __destruct() might not get called if "die()" or "exit()" used in __construct()'],
+        'ERR_MATCH_KEYWORD'   => [
+            'callback' => function ($contents) {
+                return preg_match('/function\s+match(\s)?\(/', $contents);
+            },
+            'msg' => 'WARNING: "match" is now a reserved key word'],
+        'ERR_DEFINE_THIRD_ARG'    => [
+            'callback' => function ($contents) {
+                return preg_match('/define(\s)?\(.+?,.+?,(\s)?TRUE/i', $contents);
+            },
+            'msg' => 'WARNING: the third argument to "define()" needs to be FALSE. Constants are now always case sensitive'],
+        'ERR_ATTRIBUTES'    => [
+            'callback' => function ($contents) {
+                return preg_match('/\s#\[/', $contents);
+            },
+            'msg' => 'WARNING: comments that begin with "#[" are no longer allowed.  You should convert these into Attributes instead.'],
+        'ERR_LOCALE_INDEPENDENCE'    => [
+            'callback' => function ($contents) {
+                return (stripos($contents, ' setlocale(') || strpos($contents, ' setlocale ('));
+            },
+            'msg' => 'WARNING: if you have a float-to-string typecast (implicit or explicit), the output will no longer be in the set locale.  Use "printf()", "number_format()" or the NumberFormatter class instead.'],
+        'ERR_ASSERT_IN_NAMESPACE'    => [
+            'callback' => function ($contents) {
+                return (preg_match('/namespace.*?assert\s*\(/', $contents));
+            },
+            'msg' => 'WARNING: "assert()" is now a reserved function name, even when used inside a namespace.  You must rename this function to something else.'],
+        'ERR_SPACES_IN_NAMESPACE'    => [
+            'callback' => function ($contents) {
+                $namespace = BreakScan::getKeyValue($contents, 'namespace', ';');
+                return strpos($namespace, ' ');
+            },
+            'msg' => 'WARNING: namespaces can no longer contain spaces in PHP 8.'],
+        'ERR_REFLECTION_EXPORT'    => [
+            'callback' => function ($contents) {
+                return (preg_match('/Reflection.*?::export(\s)?\(/', $contents));
+            },
+            'msg' => 'WARNING: Reflection::export() has been removed.  Echo the Reflection object or use its "__toString()" method.'],
+        'ERR_PHP_ERRORMSG'    => [
+            'callback' => function ($contents) {
+                return strpos($contents, '$php_errormsg');
+            },
+            'msg' => 'WARNING: the "track_errors" php.ini directive is removed.  You can no longer rely upon "$php_errormsg".'],
+        'ERR_AT_SUPPRESS'    => [
+            'callback' => function ($contents) {
+                return preg_match('/\=\s*\@\w/', $contents);
+            },
+            'msg' => 'WARNING: using the "@" operator to suppress warnings no longer works in PHP 8.'],
+    ],
 ];
+

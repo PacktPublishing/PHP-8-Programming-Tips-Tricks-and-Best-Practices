@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace Php8Test\Migration;
+require __DIR__ . '/../../../src/Php8/Migration/BreakScan.php';
 use ArrayIterator;
 use PHPUnit\Framework\TestCase;
 use Php8\Migration\BreakScan;
@@ -29,6 +30,14 @@ class BadTest {
         if (!is_resource(\$ch))
             throw new Exception('Did not work');
     }
+    public function __call(string \$name, string \$param) : Exception
+    {
+        /* do nothing */
+    }
+    public function __invoke(string \$name, array \$args) : bool
+    {
+        /* do nothing */
+    }
 }
 EOT;
         $this->bad_class = str_replace(["\r","\n"], ' ', $this->bad_class);
@@ -41,6 +50,10 @@ class Test {
     }
     public function test(string \$test = '') {
         return TRUE;
+    }
+    public function __invoke(\$name, \$args, \$code)
+    {
+        /* do nothing */
     }
 }
 EOT;
@@ -83,5 +96,23 @@ EOT;
         $expected = TRUE;
         $actual = $this->config[BreakScan::KEY_CALLBACK]['ERR_SPACES_IN_NAMESPACE']['callback']($this->bad_class);
         $this->assertEquals($expected, $actual);
+    }
+    public function test_scanMagicSignatures()
+    {
+        $expected = TRUE;
+        $this->scanner->contents = $this->bad_class;
+        $actual = (bool) $this->scanner->scanMagicSignatures();
+        $this->assertEquals($expected, $actual);
+    }
+    public function test_WeGetMessagesForAllBadMagicMethodSignatures()
+    {
+        $this->scanner->contents = $this->bad_class;
+        $this->scanner->scanMagicSignatures();
+        $expected = $this->config[BreakScan::KEY_MAGIC]['__call']['signature'];
+        $actual   = $this->scanner->getMessages()[1];
+        $this->assertEquals($expected, $actual, '__call signature did not appear');
+        $expected = $this->config[BreakScan::KEY_MAGIC]['__invoke']['signature'];
+        $actual   = $this->scanner->getMessages()[3];
+        $this->assertEquals($expected, $actual, '__call signature did not appear');
     }
 }

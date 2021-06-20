@@ -1,5 +1,5 @@
 <?php
-// /repo/ch010/php7_bc_break_scanner.php
+// /repo/ch11/php7_bc_break_scanner.php
 // WARNING: only use this in CLI mode on a production server!!!
 
 /**

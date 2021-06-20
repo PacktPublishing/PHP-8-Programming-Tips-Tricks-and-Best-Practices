@@ -1,0 +1,8 @@
+{
+    "require": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "Php8Test\\": "../../src/"
+    }
+}

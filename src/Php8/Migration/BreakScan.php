@@ -112,6 +112,33 @@ class BreakScan
         return $found;
     }
     /**
+     * Check for removed functions
+     *
+     * @return int $found : number of BC breaks detected
+     */
+    public function scanRemovedFunctions() : int
+    {
+        $found = 0;
+        $config = $this->config[self::KEY_REMOVED] ?? NULL;
+        // we add this extra safety check in case this method is called separately
+        if (empty($config)) {
+            $message = sprintf(self::ERR_MISSING_KEY, self::KEY_REMOVED);
+            throw new Exception($message);
+        }
+        foreach ($config as $func => $replace) {
+            $search1 = ' ' . $func . '(';
+            $search2 = ' ' . $func . ' (';
+            if (strpos($this->contents, $search1) !== FALSE
+                || strpos($this->contents, $search2) !== FALSE) {
+                $this->messages[] = sprintf(self::ERR_REMOVED, $func, $replace);
+                $found++;
+            }
+        }
+        if ($found === 0)
+            $this->messages[] = sprintf(self::OK_PASSED, __FUNCTION__);
+        return $found;
+    }
+    /**
      * Check for is_resource usage
      * If "is_resource" found, check against list of functions
      * that no longer produce resources in PHP 8
@@ -126,6 +153,7 @@ class BreakScan
         if (strpos($this->contents, $search) === FALSE) return 0;
         // pull list of functions that now return objects instead of resources
         $config = $this->config[self::KEY_RESOURCE] ?? NULL;
+        // we add this extra safety check in case this method is called separately
         if (empty($config)) {
             $message = sprintf(self::ERR_MISSING_KEY, self::KEY_RESOURCE);
             throw new Exception($message);
@@ -133,32 +161,6 @@ class BreakScan
         foreach ($config as $func) {
             if ((strpos($this->contents, $func) !== FALSE)) {
                 $this->messages[] = sprintf(self::ERR_IS_RESOURCE, $func);
-                $found++;
-            }
-        }
-        if ($found === 0)
-            $this->messages[] = sprintf(self::OK_PASSED, __FUNCTION__);
-        return $found;
-    }
-    /**
-     * Check for removed functions
-     *
-     * @return int $found : number of BC breaks detected
-     */
-    public function scanRemovedFunctions() : int
-    {
-        $found = 0;
-        $config = $this->config[self::KEY_REMOVED] ?? NULL;
-        if (empty($config)) {
-            $message = sprintf(self::ERR_MISSING_KEY, self::KEY_REMOVED);
-            throw new Exception($message);
-        }
-        foreach ($config as $func => $replace) {
-            $search1 = ' ' . $func . '(';
-            $search2 = ' ' . $func . ' (';
-            if (strpos($this->contents, $search1) !== FALSE
-                || strpos($this->contents, $search2) !== FALSE) {
-                $this->messages[] = sprintf(self::ERR_REMOVED, $func, $replace);
                 $found++;
             }
         }
@@ -178,30 +180,26 @@ class BreakScan
         $matches = [];
         $result  = preg_match_all('/function __(.+?)\b/', $this->contents, $matches);
         if (!empty($matches[1])) {
+            $config = $this->config[self::KEY_MAGIC] ?? NULL;
+            // we add this extra safety check in case this method is called separately
+            if (empty($config)) {
+                $message = sprintf(self::ERR_MISSING_KEY, self::KEY_MAGIC);
+                throw new Exception($message);
+            }
             foreach ($matches[1] as $name) {
                 $key = '__' . $name;
                 // skip if key not found.  must not be a defined magic method
-                if (empty($this->config[self::KEY_MAGIC][$key])) continue;
+                if (empty($config[$key])) continue;
                 if ($pos = strpos($this->contents, $key)) {
-                    // build the regex
-                    $key = '__call';
-                    $typ = $this->config[self::KEY_MAGIC][$key]['types'] ?? [];
+                    // extract the substring
                     $end = strpos($this->contents, '{', $pos);
-                    $sub = substr($this->contents, $pos, $end - $pos);
-                    $ret = array_pop($typ); // return value
-                    $ptn = '/' . $key . '\s*' . '\(';
-                    if (!empty($typ)) {
-                        foreach ($typ as $arg)
-                            $ptn .= '(' . $arg . '\s)?\$.+?';
-                    }
-                    $ptn .= '\)';
-                    if (strpos($sub, ':'))
-                        $ptn .= '\s*:\s*' . $ret;
-                    $ptn .= '/';
+                    $sub = trim(substr($this->contents, $pos, $end - $pos));
+                    // pull up the regex
+                    $ptn = $config[$key]['regex'] ?? '/.*/';
                     // test for a match
                     if (!preg_match($ptn, $sub)) {
                         $this->messages[] = sprintf(self::ERR_MAGIC_SIGNATURE, $key);
-                        $this->messages[] = $this->config[self::KEY_MAGIC][$key]['signature'] ?? 'Check signature';
+                        $this->messages[] = $config[$key]['signature'] ?? 'Check signature';
                         $found++;
                     }
                 }

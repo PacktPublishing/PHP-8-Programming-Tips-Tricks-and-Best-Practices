@@ -1,5 +1,5 @@
 FROM asclinux/linuxforphp-8.2-ultimate:7.1-nts
-MAINTAINER doug.bierer@etista.com
+MAINTAINER doug@unlikelysource.com
 COPY php8_tips.sql /tmp/php8_tips.sql
 COPY startup.sh /tmp/startup.sh
 RUN \
@@ -24,7 +24,7 @@ RUN \
     echo "Installing phpMyAdmin ..." && \
     wget -O /tmp/phpmyadmin_install.sh https://opensource.unlikelysource.com/phpmyadmin_install.sh && \
     chmod +x /tmp/*.sh && \
-    /tmp/phpmyadmin_install.sh 5.1.1
+    /tmp/phpmyadmin_install.sh 5.0.4
 RUN \
     echo "Installing Zip Extension ..." && \
     lfphp-get php-ext zip-1.19.2
@@ -38,6 +38,12 @@ RUN \
     echo "Setting up other links ..." && \
     ln -s /bin/lfphp-get /usr/bin/apt && \
     ln -s /bin/lfphp-get /usr/bin/apt-get
+RUN \
+    echo "Installing Composer 1.x ..." && \
+    cd /tmp && \
+    wget https://getcomposer.org/download/latest-1.x/composer.phar && \
+    cp composer.phar /usr/bin/composer && \
+    chmod +x /usr/bin/composer
 RUN \
     echo "Setting up Apache ..." && \
     echo "ServerName php8_tips_php8" >> /etc/httpd/httpd.conf && \
