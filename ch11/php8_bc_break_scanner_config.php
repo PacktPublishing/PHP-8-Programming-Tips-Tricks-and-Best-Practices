@@ -126,52 +126,39 @@ return [
     // list of magic method signature patterns
     BreakScan::KEY_MAGIC => [
         '__call'       => ['signature' => '__call(string $name, array $arguments): mixed',
-                           'regex' => '/__call\s*\((string\s)?\$.+?(array\s)?\$.+?\)\s*:\s*mixed/',
-                           'types' => ['string', 'array', 'mixed']],
+                           'return' => 'mixed'],
         '__callStatic' => ['signature' => '__callStatic(string $name, array $arguments): mixed',
-                           'regex' => '/__callStatic\s*\((string\s)?\$.+?(array\s)?\$.+?\)\s*:\s*mixed/',
-                           'types' => ['string', 'array', 'mixed']],
+                           'return' => 'mixed'],
         '__clone'      => ['signature' => '__clone(): void',
-                           'regex' => '/__clone\s*\(\)\s*:\s*void/',
-                           'types' => ['void']],
+                           'return' => 'void'],
         '__debugInfo'  => ['signature' => '__debugInfo(): ?array',
-                           'regex' => '/__debugInfo\s*\(\)\s*:\s*\?array/',
-                           'types' => ['\?array']],
+                           'return' => '\?array'],
         '__get'        => ['signature' => '__get(string $name): mixed',
-                           'regex' => '/__get\s*\((string\s)?\$.+?\)\s*:\s*mixed/',
-                           'types' => ['string', 'mixed']],
+                           'return' => 'mixed'],
         '__invoke'     => ['signature' => '__invoke(mixed $arguments): mixed',
-                           'regex' => '/__invoke\s+?\((mixed\s)?(\$\w+?\,?\s?)*\)(\s*\:\s*mixed)/',
-                           'types' => ['mixed', 'mixed']],
+                           'return' => 'mixed'],
         '__isset'      => ['signature' => '__isset(string $name): bool',
-                           'regex' => '/__isset\s*\((string\s)?\$.+?\)\s*:\s*bool/',
-                           'types' => ['string', 'bool']],
+                           'return' => 'bool'],
         '__serialize'  => ['signature' => '__serialize(): array',
-                           'regex' => '/__serialize\s*\(\)\s*:\s*array/',
-                           'types' => ['array']],
+                           'return' => 'array'],
         '__set'        => ['signature' => '__set(string $name, mixed $value): void',
-                           'regex' => '/__set\s*\((string\s)?\$.+?(mixed\s)?\$.+?\)\s*:\s*void/',
-                           'types' => ['string', 'mixed', 'void']],
+                           'return' => 'void'],
         '__set_state'  => ['signature' => '__set_state(array $properties): object',
-                           'regex' => '/__set_state\s*\((array\s)?\$.+?\)\s*:\s*object/',
-                           'types' => ['array', 'object']],
+                           'return' => 'object'],
         '__sleep'      => ['signature' => '__sleep(): array',
-                           'regex' => '/__sleep\s*\(\)\s*:\s*array/',
-                           'types' => ['array']],
+                           'return' => 'array'],
         '__unserialize'=> ['signature' => '__unserialize(array $data): void',
-                           'regex' => '/__unserialize\s*\((array\s)?\$.+?\)\s*:\s*void/',
-                           'types' => ['array', 'void']],
+                           'return' => 'void'],
         '__unset'      => ['signature' => '__unset(string $name): void',
-                           'regex' => '/__unset\s*\((string\s)?\$.+?\)\s*:\s*void/',
-                           'types' => ['string', 'void']],
+                           'return' => 'void'],
         '__wakeup'     => ['signature' => '__wakeup(): void',
-                           'regex' => '/__wakeup\s*\(\)\s*:\s*void/',
-                           'types' => ['void']],
+                           'return' => 'void'],
     ],
     BreakScan::KEY_CALLBACK => [
         'ERR_CLASS_CONSTRUCT' => [
             'callback' => function ($contents) {
                 $class = BreakScan::getKeyValue($contents, 'class', '{');
+                if (empty($class)) return FALSE;
                 return (stripos($contents, 'function __construct') === FALSE
                         && (stripos($contents, 'function ' . $class . '(')
                         || stripos($contents, 'function ' . $class . ' (')));
@@ -190,7 +177,8 @@ return [
             'msg' => 'WARNING: "match" is now a reserved key word'],
         'ERR_DEFINE_THIRD_ARG'    => [
             'callback' => function ($contents) {
-                return preg_match('/define(\s)?\(.+?,.+?,(\s)?TRUE/i', $contents);
+                $item = BreakScan::getKeyValue($contents, 'define(', ';');
+                return (empty($item)) ? FALSE : stripos($item, 'TRUE');
             },
             'msg' => 'WARNING: the third argument to "define()" needs to be FALSE. Constants are now always case sensitive'],
         'ERR_ATTRIBUTES'    => [
@@ -212,7 +200,7 @@ return [
             'callback' => function ($contents) {
                 if (strpos($contents, 'namespace') === FALSE) return 0;
                 $namespace = BreakScan::getKeyValue($contents, 'namespace', ';');
-                return strpos($namespace, ' ');
+                return (empty($namespace)) ? FALSE : strpos($namespace, ' ');
             },
             'msg' => 'WARNING: namespaces can no longer contain spaces in PHP 8.'],
         'ERR_REFLECTION_EXPORT'    => [
@@ -232,4 +220,3 @@ return [
             'msg' => 'WARNING: using the "@" operator to suppress warnings no longer works in PHP 8.'],
     ],
 ];
-

@@ -71,6 +71,7 @@ $filter = new class ($iter) extends FilterIterator {
 };
 
 // if CSV, open up CSV file to write
+$csv_file = NULL;
 if ($csv) {
     $csv_file = new SplFileObject($csv, 'w');
     $csv_file->fputcsv(['Directory','File','OK','Messages']);
@@ -88,22 +89,20 @@ $total = 0;
 foreach ($filter as $name => $obj) {
     $found    = 0;  // number of possible BC breaks
     $scanner->clearMessages(); // resets messages
+    if ($obj->isDir()) continue;
     if (dirname($name) !== $dir) {
         $dir = dirname($name);
-        echo str_repeat('*', 40) . "\n";
-        echo "Processing Directory: \n$name\n";
-        echo str_repeat('*', 40) . "\n";
+        echo "Processing Directory: $dir\n";
     }
-    if ($obj->isDir()) continue;
     $fn = basename($name);
     $scanner->getFileContents($name);
     $found    = $scanner->runAllScans();
-    $messages = implode("\n", $scanner->getMessages());
+    $messages = implode("\n", $scanner->getMessages(TRUE));
     // determine show level
     switch ($show) {
         case 2 :
             echo "Processing: $fn\n";
-            echo "$messages\n";
+            echo trim($messages) . "\n";
             if ($csv) $write($dir, $fn, $found, $messages);
             break;
         case 1 :
@@ -111,7 +110,7 @@ foreach ($filter as $name => $obj) {
                 echo "Processing: $fn\n";
                 echo BreakScan::WARN_BC_BREAKS . "\n";
                 printf(BreakScan::TOTAL_BREAKS, $found);
-                echo "$messages\n";
+                echo trim($messages) . "\n";
                 if ($csv) $write($dir, $fn, $found, $messages);
             }
             break;
@@ -124,7 +123,6 @@ foreach ($filter as $name => $obj) {
             }
     }
     $total += $found;
-    echo "\n";
 }
-echo str_repeat('-', 40) . "\n";
+echo "\n" . str_repeat('-', 40) . "\n";
 echo "\nTotal number of possible BC breaks: $total\n";

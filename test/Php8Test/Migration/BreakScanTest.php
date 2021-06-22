@@ -34,7 +34,11 @@ class BadTest {
     {
         sleep 5;
     }
-    public function __invoke(string \$name, array \$args) : bool
+    public function __invoke(\$name, \$args)
+    {
+        sleep 5;
+    }
+    public function __get(string \$name) : string
     {
         sleep 5;
     }
@@ -83,13 +87,25 @@ class Test {
     public function test(string \$test = '') {
         return TRUE;
     }
+    public function __call(string \$name, array \$param) : mixed
+    {
+        sleep 5;
+    }
     public function __invoke(\$name, \$args, \$code)
+    {
+        /* do nothing */
+    }
+    public function __get(\$name)
     {
         /* do nothing */
     }
 }
 EOT;
         $this->good_class = str_replace(["\r","\n"], ' ', $this->good_class);
+    }
+    public function tearDown()
+    {
+        $this->scanner->clearMessages();
     }
     public function test_getKeyValue()
     {
@@ -136,15 +152,34 @@ EOT;
         $actual = (bool) $this->scanner->scanMagicSignatures();
         $this->assertEquals($expected, $actual);
     }
-    public function test_WeGetMessagesForAllBadMagicMethodSignatures()
+    public function test_call_correctMessagesForBadMagicMethodSignatures()
+    {
+        $this->scanner->contents = $this->good_class;
+        $this->scanner->scanMagicSignatures();
+        $messages = $this->scanner->getMessages();
+        $signature = $this->config[BreakScan::KEY_MAGIC]['__call']['signature'];
+        $expected = TRUE;
+        $actual   = in_array($signature, $messages, TRUE);
+        $this->assertEquals($expected, $actual, '__call signature is bad but did not appear');
+    }
+    public function test_invoke_correctMessagesForAllBadMagicMethodSignatures()
     {
         $this->scanner->contents = $this->bad_class;
         $this->scanner->scanMagicSignatures();
-        $expected = $this->config[BreakScan::KEY_MAGIC]['__call']['signature'];
-        $actual   = $this->scanner->getMessages()[1];
-        $this->assertEquals($expected, $actual, '__call signature did not appear');
-        $expected = $this->config[BreakScan::KEY_MAGIC]['__invoke']['signature'];
-        $actual   = $this->scanner->getMessages()[3];
-        $this->assertEquals($expected, $actual, '__call signature did not appear');
+        $messages = $this->scanner->getMessages();
+        $signature = $this->config[BreakScan::KEY_MAGIC]['__invoke']['signature'];
+        $expected = FALSE;
+        $actual   = in_array($signature, $messages, TRUE);
+        $this->assertEquals($expected, $actual, '__invoke signature is OK and should not appear');
+    }
+    public function test_get_correctMessagesForAllBadMagicMethodSignatures()
+    {
+        $this->scanner->contents = $this->bad_class;
+        $this->scanner->scanMagicSignatures();
+        $messages = $this->scanner->getMessages();
+        $signature = $this->config[BreakScan::KEY_MAGIC]['__get']['signature'];
+        $expected = TRUE;
+        $actual   = in_array($signature, $messages, TRUE);
+        $this->assertEquals($expected, $actual, '__get signature is bad but did not appear');
     }
 }

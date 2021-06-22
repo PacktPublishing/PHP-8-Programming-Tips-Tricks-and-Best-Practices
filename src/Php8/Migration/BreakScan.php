@@ -20,6 +20,7 @@ class BreakScan
     const ERR_FILE_NOT_FOUND  = 'ERROR: file not found: %s';
     const WARN_BC_BREAKS      = 'WARNING: the code in this file might not be compatible with PHP 8';
     const NO_BC_BREAKS        = 'SUCCESS: the code scanned in this file is potentially compatible with PHP 8';
+    const MAGIC_METHODS       = 'The following magic methods were detected:';
     const OK_PASSED           = 'PASSED this scan: %s';
     const TOTAL_BREAKS        = 'Total potential BC breaks: %d' . PHP_EOL;
     const KEY_REMOVED         = 'removed';
@@ -30,6 +31,7 @@ class BreakScan
     public $config = [];
     public $contents = '';
     public $messages = [];
+    public $magic = [];
     /**
      * @param array $config : scan config
      */
@@ -74,6 +76,7 @@ class BreakScan
     public static function getKeyValue(string $contents, string $key, string $end)
     {
         $pos = strpos($contents, $key);
+        if ($pos === FALSE) return '';
         $end = strpos($contents, $end, $pos + strlen($key) + 1);
         $key = substr($contents, $pos + strlen($key), $end - $pos - strlen($key));
         if (is_string($key)) {
@@ -81,7 +84,8 @@ class BreakScan
         } else {
             $key = '';
         }
-        return trim($key);
+        $key = trim($key);
+        return $key;
     }
     /**
      * Clears messages
@@ -91,6 +95,7 @@ class BreakScan
     public function clearMessages() : void
     {
         $this->messages = [];
+        $this->magic    = [];
     }
     /**
      * Returns messages
@@ -184,14 +189,18 @@ class BreakScan
     }
     /**
      * Scan for magic method signatures
+     * NOTE: doesn't check inside parentheses.
+     *       only checks for return data type + displays found and correct signatures for manual comparison
      *
-     * @return int $found : number of BC breaks detected
+     * @return int $found : number of invalid return data types
      */
     public function scanMagicSignatures() : int
     {
         // locate all magic methods
         $found   = 0;
         $matches = [];
+        $messages = [];
+        $magic    = [];
         $result  = preg_match_all('/function __(.+?)\b/', $this->contents, $matches);
         if (!empty($matches[1])) {
             $config = $this->config[self::KEY_MAGIC] ?? NULL;
@@ -204,20 +213,25 @@ class BreakScan
                 $key = '__' . $name;
                 // skip if key not found.  must not be a defined magic method
                 if (empty($config[$key])) continue;
-                if ($pos = strpos($this->contents, $key)) {
-                    // extract the substring
-                    $end = strpos($this->contents, '{', $pos);
-                    $sub = trim(substr($this->contents, $pos, $end - $pos));
-                    // pull up the regex
-                    $ptn = $config[$key]['regex'] ?? '/.*/';
-                    // test for a match
-                    if (!preg_match($ptn, $sub)) {
-                        $this->messages[] = sprintf(self::ERR_MAGIC_SIGNATURE, $key);
-                        $this->messages[] = $config[$key]['signature'] ?? 'Check signature';
-                        $found++;
+                if ($sub = $this->getKeyValue($this->contents, $key, '{')) {
+                    $sub = $key . $sub;
+                    // record official and found signatures
+                    $magic[] = 'Signature: ' . ($config[$key]['signature'] ?? 'Signature not found');
+                    $magic[] = 'Actual   : ' . $sub;
+                    // look for return type
+                    if (strpos($sub, ':')) {
+                        $ptn = '/.*?\(.*?\)\s*:\s*' . $config[$key]['return'] . '/';
+                        // test for a match
+                        if (!preg_match($ptn, $sub)) {
+                            $this->messages[] = sprintf(self::ERR_MAGIC_SIGNATURE, $key);
+                            $found++;
+                        }
                     }
                 }
             }
+            $this->messages[] = self::MAGIC_METHODS;
+            foreach ($magic as $sig)
+                $this->messages[] = $sig;
         }
         return ($found === 0) ? $this->passedOK(__FUNCTION__) : $found;
     }
