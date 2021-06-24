@@ -70,14 +70,14 @@ class BreakScan
      *
      * @param string $contents : text to search (usually $this->contents)
      * @param string $key   : starting keyword or set of characters
-     * @param string $end   : ending delimiter
+     * @param string $delim : ending delimiter
      * @return string $name : classname
      */
-    public static function getKeyValue(string $contents, string $key, string $end)
+    public static function getKeyValue(string $contents, string $key, string $delim)
     {
         $pos = strpos($contents, $key);
         if ($pos === FALSE) return '';
-        $end = strpos($contents, $end, $pos + strlen($key) + 1);
+        $end = strpos($contents, $delim, $pos + strlen($key) + 1);
         $key = substr($contents, $pos + strlen($key), $end - $pos - strlen($key));
         if (is_string($key)) {
             $key = trim($key);
