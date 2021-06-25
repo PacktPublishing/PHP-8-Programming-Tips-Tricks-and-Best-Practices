@@ -2,9 +2,9 @@
 If you want to run tests, proceed as follows:
 
 ## Inside the PHP 7 Docker Container
-First install PHP Unit 7:
+First install PHP Unit 5:
 ```
-cd /repo/test/phpunit7
+cd /repo/test/phpunit5
 composer update
 ```
 Then you can run tests:

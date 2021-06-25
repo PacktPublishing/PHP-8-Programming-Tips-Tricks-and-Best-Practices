@@ -95,7 +95,7 @@ class Test {
     {
         /* do nothing */
     }
-    public function __get(\$name)
+    public function __get(\$name) : int
     {
         /* do nothing */
     }
@@ -103,7 +103,7 @@ class Test {
 EOT;
         $this->good_class = str_replace(["\r","\n"], ' ', $this->good_class);
     }
-    public function tearDown()
+    public function tearDown() : void
     {
         $this->scanner->clearMessages();
     }
@@ -152,16 +152,6 @@ EOT;
         $actual = (bool) $this->scanner->scanMagicSignatures();
         $this->assertEquals($expected, $actual);
     }
-    public function test_call_correctMessagesForBadMagicMethodSignatures()
-    {
-        $this->scanner->contents = $this->good_class;
-        $this->scanner->scanMagicSignatures();
-        $messages = $this->scanner->getMessages();
-        $signature = $this->config[BreakScan::KEY_MAGIC]['__call']['signature'];
-        $expected = TRUE;
-        $actual   = in_array($signature, $messages, TRUE);
-        $this->assertEquals($expected, $actual, '__call signature is bad but did not appear');
-    }
     public function test_invoke_correctMessagesForAllBadMagicMethodSignatures()
     {
         $this->scanner->contents = $this->bad_class;
@@ -172,14 +162,34 @@ EOT;
         $actual   = in_array($signature, $messages, TRUE);
         $this->assertEquals($expected, $actual, '__invoke signature is OK and should not appear');
     }
-    public function test_get_correctMessagesForAllBadMagicMethodSignatures()
+    /*
+    public function test_call_correctMessagesForBadMagicMethodSignatures()
+    {
+        $this->scanner->contents = $this->good_class;
+        $this->scanner->scanMagicSignatures();
+        $messages = $this->scanner->getMessages();
+        $signature = $this->config[BreakScan::KEY_MAGIC]['__call']['signature'];
+        $expected = TRUE;
+        $actual   = in_array($signature, $messages, TRUE);
+        $this->assertEquals($expected, $actual, '__call return type is incorrect but did not appear in messages');
+    }
+    public function test_confirmAllMagicMethodsAreDetected()
     {
         $this->scanner->contents = $this->bad_class;
         $this->scanner->scanMagicSignatures();
-        $messages = $this->scanner->getMessages();
-        $signature = $this->config[BreakScan::KEY_MAGIC]['__get']['signature'];
-        $expected = TRUE;
-        $actual   = in_array($signature, $messages, TRUE);
-        $this->assertEquals($expected, $actual, '__get signature is bad but did not appear');
+        $str   = implode(' ', $this->scanner->getMessages());
+        $methods = ['__call', '__invoke', '__get'];
+        $error = 'The following magic methods did not appear in messages: ';
+        $expected = 3;
+        $actual   = 0;
+        foreach ($methods as $item) {
+            if (strpos($str, $item) !== FALSE) {
+                $error .= ' '. $item;
+            } else {
+                $actual++;
+            }
+        }
+        $this->assertEquals($expected, $actual, $error);
     }
+    */
 }

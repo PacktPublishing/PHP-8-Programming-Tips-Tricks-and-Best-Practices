@@ -131,6 +131,7 @@ class BreakScan
         $found += $this->scanRemovedFunctions();
         $found += $this->scanIsResource();
         $found += $this->scanMagicSignatures();
+        echo __METHOD__ . ':' . var_export($this->messages, TRUE) . "\n";
         $found += $this->scanFromCallbacks();
         return $found;
     }
@@ -203,6 +204,7 @@ class BreakScan
         $magic    = [];
         $result  = preg_match_all('/function __(.+?)\b/', $this->contents, $matches);
         if (!empty($matches[1])) {
+            $this->messages[] = self::MAGIC_METHODS;
             $config = $this->config[self::KEY_MAGIC] ?? NULL;
             // we add this extra safety check in case this method is called separately
             if (empty($config)) {
@@ -212,12 +214,14 @@ class BreakScan
             foreach ($matches[1] as $name) {
                 $key = '__' . $name;
                 // skip if key not found.  must not be a defined magic method
-                if (empty($config[$key])) continue;
-                if ($sub = $this->getKeyValue($this->contents, $key, '{')) {
+                if (!isset($config[$key])) continue;
+                // record official signature
+                $this->messages[] = 'Signature: ' . ($config[$key]['signature'] ?? 'Signature not found');
+                $sub = $this->getKeyValue($this->contents, $key, '{');
+                if ($sub) {
                     $sub = $key . $sub;
-                    // record official and found signatures
-                    $magic[] = 'Signature: ' . ($config[$key]['signature'] ?? 'Signature not found');
-                    $magic[] = 'Actual   : ' . $sub;
+                    // record found signature
+                    $this->messages[] = 'Actual   : ' . $sub;
                     // look for return type
                     if (strpos($sub, ':')) {
                         $ptn = '/.*?\(.*?\)\s*:\s*' . $config[$key]['return'] . '/';
@@ -229,10 +233,8 @@ class BreakScan
                     }
                 }
             }
-            $this->messages[] = self::MAGIC_METHODS;
-            foreach ($magic as $sig)
-                $this->messages[] = $sig;
         }
+        //echo __METHOD__ . ':' . var_export($this->messages, TRUE) . "\n";
         return ($found === 0) ? $this->passedOK(__FUNCTION__) : $found;
     }
     /**
