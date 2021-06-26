@@ -8,7 +8,7 @@ $char = FFI::new("char[6]");
 for ($x = 0; $x < 6; $x++)
     $char[$x] = chr(65 + $x);
 
-// Fatal Error: strlen() expects parameter 1 to be string, object given
+// TypeError:strlen(): Argument #1 ($str) must be of type string, FFI\CData given
 try {
     echo 'Length of $char is ' . strlen($char);
 } catch (Throwable $t) {

@@ -1,6 +1,7 @@
 <?php
 // /repo/ch05/php8_bc_break_destruct.php
-include __DIR__ . '/../vendor/autoload.php';
+include __DIR__ . '/../src/Server/Autoload/Loader.php';
+$loader = new \Server\Autoload\Loader();
 use Php7\Connector\ {ConnectPdo,ConnectMysqli};
 $db  = 'test';
 $usr = 'fake';

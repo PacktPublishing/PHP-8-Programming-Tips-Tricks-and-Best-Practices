@@ -1,4 +1,4 @@
-FROM asclinux/linuxforphp-8.2-ultimate:8.1dev-nts
+FROM asclinux/linuxforphp-8.2-ultimate:8.0-nts
 MAINTAINER doug@unlikelysource.com
 COPY php8_tips.sql /tmp/php8_tips.sql
 COPY startup.sh /tmp/startup.sh

@@ -1,5 +1,6 @@
 <?php
 // /repo/ch05/php8_oop_bc_break_construct.php
+// does not work in PHP 8
 
 class Text
 {

@@ -1,5 +1,6 @@
 <?php
 // /repo/ch05/php7_spl_splheap.php
+// works both PHP 7 and PHP 8
 
 // data drawn from https://www.forbes.com/real-time-billionaires/
 define('SRC_FILE', __DIR__ . '/../sample_data/billionaires.txt');
@@ -14,7 +15,7 @@ $list = $tracker->extract(SRC_FILE);
 // create the heap + define its "compare()" method
 $heap = new class () extends SplHeap {
     public function compare($arr1, $arr2) : int {
-        $cmp1 = array_values($arr2)[0];
+            $cmp1 = array_values($arr2)[0];
         $cmp2 = array_values($arr1)[0];
         return $cmp1 <=> $cmp2;
     }

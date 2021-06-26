@@ -5,6 +5,7 @@ abstract class Base {
     public abstract function stringify(IterObj $it);
 }
 class IterTest extends Base  {
+    // going to a "wider" type hint is allowed
     public function stringify(iterable $it) {
         return implode(',', iterator_to_array($it)) . "\n";
     }

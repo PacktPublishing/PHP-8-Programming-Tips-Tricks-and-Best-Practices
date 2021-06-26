@@ -24,5 +24,11 @@ for ($y = 0; $y < $y_max; $y++) {
 // use FFI::string() to display one of the rows
 echo FFI::string($arr[0], 3) . "\n";
 
-// warning: $arr is *not* an array!
-echo implode(',', $arr);
+// TypeError: implode(): Argument #2 ($array) must be of type ?array, FFI\CData given in /repo/ch04/php8_ffi_array.php:29
+try {
+    // NOTE: $arr is *not* an array!
+    echo implode(',', $arr);
+} catch (Throwable $t) {
+    echo $t;
+}
+echo "\n";
