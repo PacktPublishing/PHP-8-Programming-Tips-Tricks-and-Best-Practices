@@ -1,5 +1,6 @@
 <?php
 // /repo/ch05/php7_spl_splheap.php
+// works in PHP 7 but not PHP 8
 
 // data drawn from https://www.forbes.com/real-time-billionaires/
 define('SRC_FILE', __DIR__ . '/../sample_data/billionaires.txt');

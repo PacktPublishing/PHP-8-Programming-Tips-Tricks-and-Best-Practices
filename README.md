@@ -1,5 +1,6 @@
 # PHP-8-Programming-Tips-Tricks-and-Best-Practices
-PHP 8 Programming Tips, Tricks and Best Practices, published by Packt
+Help support a starving developer: please buy the book!!!
+[PHP 8 Programming Tips, Tricks and Best Practices, published by Packt](https://www.amazon.com/Programming-Tips-Tricks-Best-Practices-ebook/dp/B0964DS7KN/ref=sr_1_1?dchild=1&keywords=9781801071871&qid=1622527379&sr=8-1)
 The source code for this chapter is located here:
 [https://github.com/PacktPublishing/PHP-8-Programming-Tips-Tricks-and-Best-Practices](https://github.com/PacktPublishing/PHP-8-Programming-Tips-Tricks-and-Best-Practices).
 
@@ -16,27 +17,117 @@ git clone https://github.com/PacktPublishing/PHP-8-Programming-Tips-Tricks-and-B
 ```
     * Otherwise, you can simply download and unzip from this URL: [https://github.com/PacktPublishing/PHP-8-Programming-Tips-Tricks-and-Best-Practices/archive/main.zip](https://github.com/PacktPublishing/PHP-8-Programming-Tips-Tricks-and-Best-Practices/archive/main.zip)
     * And then unzip into a folder you create which we refer to as `/path/to/repo` in this book.
-4. Build docker container associated with this book online:
-    * From your local computer, open a command prompt (terminal window).
-    * Change directory to `/path/to/repo`.
-    * First time only, issue this command to build  the environment:
-      * If you are running Windows: `init.bat build`
-      * If you are running Linux or Mac: `init.sh build`
-    * Please note that the initial build might take up to 15 minutes to complete!
-5. Once the container has been built, issue this command the bring the container online:
-    * From your local computer, open a command prompt (terminal window).
-    * Change directory to `/path/to/repo`.
-    * Bring the docker container online in background mode:
-      * If you are running Windows: `init.bat up`
-      * If you are running Linux or Mac: `init.sh up`
-6. To access the running docker container web server:
-    * Open the browser on your local computer
-    * Enter this URL: `http://localhost:8888`
-7. To open a command shell into the running docker container:
-    * From your local computer, open a command prompt (terminal window).
-      * If you are running Windows: `init.bat shell`
-      * If you are running Linux or Mac: `init.sh shell`
-8. When you are finished working with the container, bring it offline using the following commands:
-    * From your local computer, open a command prompt (terminal window).
-      * If you are running Windows: `init.bat down`
-      * If you are running Linux or Mac: `init.sh down`
+
+## Windows Instructions
+Please note that many of the command-line options mentioned here can also be accomplished from _Docker Desktop for Windows_
+### Install the Docker containers associated with the book
+You must first build the two docker containers associated with this book online, one that runs PHP 7.1, the other runs PHP 8.x.
+Please note that the initial build might take up to 15 minutes to complete!
+1. From your local computer, open a command prompt.
+2. Change directory to `/path/to/repo`.
+3. First time only, issue this command to build  the environment:
+```
+init build
+```
+### Bring the containers online
+Once the container has been built, proceed as follows to bring the containers online:
+1. From your local computer, open a command prompt.
+2. Change directory to `/path/to/repo`.
+3. Bring the docker container online in background mode:
+```
+init up
+```
+### Container access
+#### Browser access
+To access the docker containers from your browser, first make sure the containers are online (see previous).
+1. Open the browser on your local computer.
+2. Enter this URL to access the PHP 7 container: `http://localhost:7777`
+    * Alternate URL: `http://172.16.0.77/`
+3. Enter this URL to access the PHP 8 container: `http://localhost:8888`
+    * Alternate URL: `http://172.16.0.88/`
+#### Command line access
+To access the containers from a command shell proceed as follows:
+1. From your local computer, open a command prompt.
+2. Change to `/path/to/repo` (use the appropriate drive letter if not drive C):
+```
+cd C:\path\to\repo
+```
+3. Execute the command to open a command shell:
+* To open a shell into the PHP 7 container:
+```
+init shell 7
+```
+* To open a shell into the PHP 8 container:
+```
+init shell 8
+```
+### Bring container offline
+It's a good idea to bring the container down (offline) when you're finished working with it.
+This conserves resources.  Proceed as follows:
+1. From your local computer, open a command prompt (terminal window).
+2. Change to `/path/to/repo` (use the appropriate drive letter if not drive C):
+```
+cd C:\path\to\repo
+```
+3. Use `init.bat` to bring the containers offline:
+```
+init down
+```
+Please note that after the containers have been shut down, the ownership of all files in `/path/to/repo` are reset to the current user using the Windows `takeown` command.
+
+## Linux and Mac Instructions
+Please note that many of the command-line options mentioned here can also be accomplished from _Docker Desktop for Mac_ (Mac only!).
+### Install the Docker containers associated with the book
+You must first build the two docker containers associated with this book online, one that runs PHP 7.1, the other runs PHP 8.x.
+Please note that the initial build might take up to 10 minutes to complete!
+1. From your local computer, open a terminal window.
+2. Change directory to `/path/to/repo`.
+3. First time only, issue this command to build  the environment:
+```
+./init.sh build
+```
+### Bring the containers online
+Once the container has been built, proceed as follows to bring the containers online:
+1. From your local computer, open a terminal window.
+2. Change directory to `/path/to/repo`.
+3. Bring the docker container online in background mode:
+```
+./init.sh up
+```
+### Container access
+#### Browser access
+To access the docker containers from your browser, first make sure the containers are online (see previous).
+1. Open the browser on your local computer.
+2. Enter this URL to access the PHP 7 container: `http://localhost:7777`
+    * Alternate URL: `http://172.16.0.77/`
+3. Enter this URL to access the PHP 8 container: `http://localhost:8888`
+    * Alternate URL: `http://172.16.0.88/`
+#### Command line access
+To access the containers from a command shell proceed as follows:
+1. From your local computer, open a terminal window.
+2. Change to `/path/to/repo`:
+```
+cd /path/to/repo
+```
+3. Execute the command to open a command shell:
+* To open a shell into the PHP 7 container:
+```
+./init.sh shell 7
+```
+* To open a shell into the PHP 8 container:
+```
+./init.sh shell 8
+```
+### Bring container offline
+It's a good idea to bring the container down (offline) when you're finished working with it.
+This conserves resources.  Proceed as follows:
+1. From your local computer, open a terminal window (terminal window).
+2. Change to `/path/to/repo` (use the appropriate drive letter if not drive C):
+```
+cd /path/to/repo
+```
+3. Use `init.bat` to bring the containers offline:
+```
+./init.sh down
+```
+Please note that after the containers have been shut down, the ownership of all files in `/path/to/repo` are reset to the current user.

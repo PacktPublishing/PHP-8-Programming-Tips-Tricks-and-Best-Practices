@@ -1,5 +1,5 @@
-FROM asclinux/linuxforphp-8.2-ultimate:8.1dev-nts
-MAINTAINER doug.bierer@etista.com
+FROM asclinux/linuxforphp-8.2-ultimate:8.0-nts
+MAINTAINER doug@unlikelysource.com
 COPY php8_tips.sql /tmp/php8_tips.sql
 COPY startup.sh /tmp/startup.sh
 RUN \
@@ -38,6 +38,12 @@ RUN \
     echo "Setting up other links ..." && \
     ln -s /bin/lfphp-get /usr/bin/apt && \
     ln -s /bin/lfphp-get /usr/bin/apt-get
+RUN \
+    echo "Installing Composer 2.x ..." && \
+    cd /tmp && \
+    wget https://getcomposer.org/download/latest-2.x/composer.phar && \
+    cp composer.phar /usr/bin/composer && \
+    chmod +x /usr/bin/composer
 RUN \
     echo "Setting up Apache ..." && \
     echo "ServerName php8_tips_php8" >> /etc/httpd/httpd.conf && \

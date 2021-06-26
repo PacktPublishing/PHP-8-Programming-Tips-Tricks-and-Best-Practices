@@ -1,5 +1,6 @@
 <?php
 // /repo/ch05/php8_oop_diff_static.php
+// works in PHP 7 but not PHP 8
 
 class Test {
     public function notStatic()
@@ -7,4 +8,10 @@ class Test {
         return __CLASS__ . PHP_EOL;
     }
 }
-echo Test::notStatic();
+try {
+    echo Test::notStatic();
+} catch (Throwable $t) {
+    echo $t;
+}
+echo "\n";
+

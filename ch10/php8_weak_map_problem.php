@@ -3,6 +3,7 @@
 
 require __DIR__ . '/../src/Server/Autoload/Loader.php';
 $loader = new \Server\Autoload\Loader();
+require __DIR__ . '/vendor/autoload.php';   // composer autoloader
 use Zend\Filter\ {StringTrim, StripNewlines, StripTags, ToInt, Whitelist, UriNormalize};
 use Php8\Container\UsesWeakMap;
 
