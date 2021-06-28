@@ -22,6 +22,7 @@ services:
      - .:/repo
     ports:
      - 8888:80
+     - 9501:9501
     build: ./docker/php8
     restart: always
     command: /tmp/startup.sh

@@ -1,4 +1,4 @@
-FROM asclinux/linuxforphp-8.2-ultimate:8.0-nts
+FROM unlikelysource/lfphp_with_php_8_1:latest
 MAINTAINER doug@unlikelysource.com
 COPY php8_tips.sql /tmp/php8_tips.sql
 COPY startup.sh /tmp/startup.sh
@@ -48,12 +48,6 @@ RUN \
     echo "Setting up Apache ..." && \
     echo "ServerName php8_tips_php8" >> /etc/httpd/httpd.conf && \
     chmod +x /tmp/*.sh
-RUN \
-    echo "Installing the Swoole extension ..." && \
-    pecl channel-update pecl.php.net && \
-    pecl install -D 'enable-sockets="yes" enable-openssl="no" enable-http2="no" enable-mysqlnd="no" enable-swoole-json="yes" enable-swoole-curl="yes"' swoole && \
-    echo "extension=swoole.so" >>/etc/php.ini && \
-    /etc/init.d/php-fpm restart
 RUN \
     echo "PHP 8 only!" && \
     echo "Setting up JIT for later use (disabled right now) ..." && \
