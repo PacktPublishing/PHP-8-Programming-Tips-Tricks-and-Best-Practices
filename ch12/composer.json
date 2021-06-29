@@ -1,6 +1,7 @@
 {
     "require": {
-        "laminas/laminas-diactoros": "^2.6"
+        "laminas/laminas-diactoros": "^2.6",
+        "psr/http-server-middleware": "^1.0"
     },
     "autoload": {
         "psr-4": {

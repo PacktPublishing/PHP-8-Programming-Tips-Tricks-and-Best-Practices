@@ -7,7 +7,7 @@ use Chat\Generic\Constants;
 #[Chat\Message\Validate]
 class Validate
 {
-    public function validateFromUser(array $data, array &$message = [])
+    public static function validateFromUser(array $data, array &$message = [])
     {
         $found = TRUE;
         if (empty($data['from'])) {
@@ -23,7 +23,7 @@ class Validate
         }
         return $found;
     }
-    public function validateToUser(array $data, array &$message = [])
+    public static function validateToUser(array $data, array &$message = [])
     {
         $found = TRUE;
         if (!empty($data['to'])) {
@@ -36,7 +36,7 @@ class Validate
         }
         return $found;
     }
-    public function validateMessage(array &$data, array &$message = [])
+    public static function validateMessage(array &$data, array &$message = [])
     {
         $errors = 0;
         if (empty($data['msg'])) {
@@ -51,16 +51,16 @@ class Validate
         }
         return ($errors === 0);
     }
-    public function validatePost(array $data, array &$message = [])
+    public static function validatePost(array $data, array &$message = [])
     {
         $valid = 0;
-        $valid += (int) $this->validateFromUser($data);
-        $valid += (int) $this->validateToUser($data);
-        $valid += (int) $this->validateMessage($data);
+        $valid += (int) self::validateFromUser($data);
+        $valid += (int) self::validateToUser($data);
+        $valid += (int) self::validateMessage($data);
         return ($valid === 0);
     }
-    public function validateGet(array $data, array &$message = [])
+    public static function validateGet(array $data, array &$message = [])
     {
-        return $this->validateFromUser($data);
+        return self::validateFromUser($data);
     }
 }
