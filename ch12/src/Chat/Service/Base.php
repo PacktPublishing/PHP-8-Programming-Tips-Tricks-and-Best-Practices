@@ -49,6 +49,8 @@ class Base
     {
         if (!empty($opts['limit'])) {
             $sql['limit'] = (int) $opts['limit'];
+        } else {
+            $sql['limit'] = Constants::DEFAULT_LIMIT;
         }
         if (!empty($opts['offset'])) {
             $sql['offset'] = (int) $opts['offset'];
@@ -56,7 +58,7 @@ class Base
         if (!empty($opts['days'])) {
             $today = new DateTime();
             $today->add(new DateInterval('P' . (int) $opts['days'] . 'D'));
-            $sql['where'][] = "AND datetime >= '" . $today->format(Constants::DATE_FORMAT) . "'";
+            $sql['where'][] = "AND created >= '" . $today->format(Constants::DATE_FORMAT) . "'";
         }
         return $sql;
     }

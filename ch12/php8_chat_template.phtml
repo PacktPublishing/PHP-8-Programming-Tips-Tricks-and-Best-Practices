@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Unlikely Chat</title>
+</head>
+<body>
+<form method="post">
+<table>
+<tr><th>From</th><td><input type="text" name="from" value=<?= $user ?> /></td></tr>
+<tr><th>To</th><td><input type="text" name="to" /></td></tr>
+<tr><th>Message</th><td><textarea name="msg" rows=8 cols=80></textarea></td></tr>
+<tr><th>&nbsp;</th><td><input type="submit" value="Send" /></td></tr>
+<tr><th>Status</th><td><?= strtoupper($status) ?></td></tr>
+<tr><th>&nbsp;</th>
+    <td>
+    <?php if (empty($info)) : ?>
+    No Messages
+    <?php else : ?>
+        <table>
+        <tr><th>From</th><th>To</th><th>Date</th><th>Message</th></tr>
+        <?php foreach ($info as $msg) : ?>
+            <tr>
+            <td><?= (!empty($msg['user_from'])) ? $msg['user_from'] : '--'; ?></td>
+            <td><?= (!empty($msg['user_to']))   ? $msg['user_to']   : '--'; ?></td>
+            <td><?= (!empty($msg['created']))   ? $msg['created']   : '--'; ?></td>
+            <td><?= (!empty($msg['msg']))       ? $msg['msg']       : '--'; ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </table>
+    <?php endif; ?>
+    <pre>
+    <?php var_dump($data); ?>
+    </pre>
+    </td>
+</tr>
+</table>
+</form>
+</body>
+</html>

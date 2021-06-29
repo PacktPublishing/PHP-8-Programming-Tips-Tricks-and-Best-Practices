@@ -24,4 +24,5 @@ EOT;
     public const ERR_FROM_USER   = 'ERROR: "from" username is required';
     public const ERR_MSG_NOT     = 'ERROR: no message';
     public const ERR_MSG_LEN     = 'ERROR: message must be ' . self::DEFAULT_MSG_LEN . ' chars or less';
+    public const ERR_MSG_SEND    = 'ERROR: unable to send the message';
 }

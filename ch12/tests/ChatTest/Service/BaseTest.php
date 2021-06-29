@@ -32,7 +32,7 @@ class BaseTest extends TestCase
         $sql['table'] = 'messages';
         $sql['where'] = ['user_from=?'];
         $sql['order'] = 'created DESC';
-        $expected = 'SELECT * FROM messages WHERE user_from=? ORDER BY created DESC';
+        $expected = 'SELECT * FROM messages WHERE user_from=? ORDER BY created DESC LIMIT ' . Constants::DEFAULT_LIMIT;
         $actual = $this->base->buildSelect($sql);
         $this->assertEquals($expected, $actual);
     }
@@ -40,7 +40,7 @@ class BaseTest extends TestCase
     {
         $sql['table'] = 'users';
         $sql['cols'] = 'id,username';
-        $expected = 'SELECT id,username FROM users';
+        $expected = 'SELECT id,username FROM users LIMIT ' . Constants::DEFAULT_LIMIT;
         $actual = $this->base->buildSelect($sql);
         $this->assertEquals($expected, $actual);
     }
@@ -64,7 +64,7 @@ class BaseTest extends TestCase
         $days = new DateTime();
         $days->add(new DateInterval('P14D'));
         $str = $days->format(Constants::DATE_FORMAT);
-        $expected = "SELECT * FROM messages WHERE user_from=? AND datetime >= '$str' ORDER BY created DESC";
+        $expected = "SELECT * FROM messages WHERE user_from=? AND created >= '$str' ORDER BY created DESC LIMIT " . Constants::DEFAULT_LIMIT;
         $actual = $this->base->buildSelect($sql, $opts);
         $this->assertEquals($expected, $actual);
     }
