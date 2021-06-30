@@ -22,7 +22,7 @@ class Message extends Base
     {
         $username = preg_replace('/[^a-z]/', '', strtolower($username));
         $sql['table'] = self::TABLE;
-        $sql['where'] = ['user_from=?',' OR user_to=?',' OR user_to IS NULL'];
+        $sql['where'] = ['user_from=?',' OR user_to=?'," OR user_to='*'"];
         $sql['order'] = 'created DESC';
         return $this->do_exec([$username,$username], $sql, $opts);
     }

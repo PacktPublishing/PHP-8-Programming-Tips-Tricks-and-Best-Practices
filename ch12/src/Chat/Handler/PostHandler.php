@@ -4,6 +4,7 @@ namespace Chat\Handler;
 
 use Chat\Generic\Constants;
 use Chat\Message\Validate;
+use Chat\Service\Message as MessageService;
 use Laminas\Diactoros\ResponseFactory;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Server\RequestHandlerInterface;

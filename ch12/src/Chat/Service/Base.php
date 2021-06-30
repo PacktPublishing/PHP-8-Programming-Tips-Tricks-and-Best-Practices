@@ -77,7 +77,7 @@ class Base
         $stmt    = $connect->prepare($sql_str);
         if (!empty($stmt)) {
             $stmt->execute($data);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
         return $result;
     }

@@ -21,7 +21,7 @@ class GetHandler implements RequestHandlerInterface
             return (new JsonResponse(['status' => 'fail', 'data' => $error]))->withStatus(400);
         }
         $message = new MessageService();
-        $data = $message->findByUser($data['from']);
-        return (new JsonResponse(['status' => 'success', 'data' => $data]))->withStatus(200);
+        $result = $message->findByUser($data['from']);
+        return (new JsonResponse(['status' => 'success', 'data' => $result]))->withStatus(200);
     }
 }

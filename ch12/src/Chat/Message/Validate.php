@@ -16,20 +16,22 @@ class Validate
         } else {
             $user = new User();
             $result = $user->findByUserName($data['from']);
-            if (!$result || $data['from'] !== $result['username']) {
+            if (!$result || $data['from'] !== $result[0]['username']) {
                 $message[] = Constants::ERR_NOT_USER . ' [from]';
                 $found = FALSE;
             }
         }
         return $found;
     }
-    public static function validateToUser(array $data, array &$message = [])
+    public static function validateToUser(array &$data, array &$message = [])
     {
         $found = TRUE;
-        if (!empty($data['to'])) {
+        if (empty($data['to'])) {
+            $data['to'] = '*';
+        } else {
             $user = new User();
             $result = $user->findByUserName($data['to']);
-            if (!$result || $data['to'] !== $result['username']) {
+            if (!$result || $data['to'] !== $result[0]['username']) {
                 $message[] = Constants::ERR_NOT_USER . ' [to]';
                 $found = FALSE;
             }
@@ -53,11 +55,12 @@ class Validate
     }
     public static function validatePost(array &$data, array &$message = [])
     {
-        $valid = 0;
-        $valid += (int) self::validateFromUser($data, $message);
-        $valid += (int) self::validateToUser($data, $message);
-        $valid += (int) self::validateMessage($data, $message);
-        return ($valid === 0);
+        $expect = 3;
+        $actual = 0;
+        $actual += (int) self::validateFromUser($data, $message);
+        $actual += (int) self::validateToUser($data, $message);
+        $actual += (int) self::validateMessage($data, $message);
+        return ($expect ===  $actual);
     }
     public static function validateGet(array $data, array &$message = [])
     {
