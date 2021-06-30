@@ -16,11 +16,7 @@ class PostHandler implements RequestHandlerInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $error = [];
         $data = $request->getParsedBody();
-        if (!Validate::validatePost($data, $error)) {
-            return (new JsonResponse(['status' => 'fail', 'data' => $error]))->withStatus(400);
-        }
         $message = new MessageService();
         if (!$message->save($data)) {
             return (new JsonResponse(['status' => 'fail', 'data' => Constants::ERR_MSG_SEND]))->withStatus(500);

@@ -21,11 +21,12 @@
 
 DROP TABLE IF EXISTS `messages`;
 CREATE TABLE `messages` (
-  `id` int(8) UNSIGNED NOT NULL,
+  `id` int(8) NOT NULL AUTO_INCREMENT,
   `user_from` char(16) NOT NULL,
-  `user_to` char(16) DEFAULT NULL,
+  `user_to` char(16) DEFAULT '*',
   `msg` varchar(4096) NOT NULL,
-  `created` datetime NOT NULL DEFAULT current_timestamp()
+  `created` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --

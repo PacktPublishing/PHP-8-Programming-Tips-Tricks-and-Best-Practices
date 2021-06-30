@@ -15,13 +15,9 @@ class GetHandler implements RequestHandlerInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $error = [];
-        $data = $request->getQueryParams();
-        if (!Validate::validateGet($data, $error)) {
-            return (new JsonResponse(['status' => 'fail', 'data' => $error]))->withStatus(400);
-        }
+        $data    = $request->getQueryParams();
         $message = new MessageService();
-        $result = $message->findByUser($data['from']);
+        $result  = $message->findByUser($data['from']);
         return (new JsonResponse(['status' => 'success', 'data' => $result]))->withStatus(200);
     }
 }
