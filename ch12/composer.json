@@ -1,0 +1,19 @@
+{
+    "require": {
+        "laminas/laminas-diactoros": "^2.6",
+        "psr/http-server-middleware": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Chat\\": "src/Chat"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ChatTest\\": "tests"
+        }
+    }
+}
