@@ -36,4 +36,16 @@ class User extends Base
         $sql['where'] = ['username=?'];
         return $this->do_exec([$username], $sql);
     }
+    /**
+     * Returns a list of usernames
+     *
+     * @return array $list
+     */
+    public function findAllUserNames()
+    {
+        // sanitize
+        $sql['table'] = self::TABLE;
+        $sql['cols']  = 'id,username';
+        return $this->do_exec([], $sql);
+    }
 }

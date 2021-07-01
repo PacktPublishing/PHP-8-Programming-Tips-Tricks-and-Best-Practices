@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Chat\Message;
+namespace Chat\Middleware;
 
 use Chat\Service\User;
 use Chat\Generic\Constants;
@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Laminas\Diactoros\Response\JsonResponse;
 
-#[Chat\Message\Validate]
+#[Chat\Middleware\Validate]
 class Validate implements MiddlewareInterface
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -28,6 +28,9 @@ class Validate implements MiddlewareInterface
         if (empty($data['from'])) {
             $message[] = Constants::ERR_FROM_USER;
             $found = FALSE;
+        // this triggers a return of all usernames
+        } elseif ($data['from'] === '*') {
+            $found = TRUE;
         } else {
             $user = new User();
             $result = $user->findByUserName($data['from']);

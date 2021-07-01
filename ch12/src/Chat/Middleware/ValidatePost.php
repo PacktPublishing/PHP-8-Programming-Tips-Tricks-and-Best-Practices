@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Chat\Message;
+namespace Chat\Middleware;
 
 use Chat\Service\User;
 use Chat\Generic\Constants;
@@ -9,7 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-#[Chat\Message\ValidatePost]
+#[Chat\Middleware\ValidatePost]
 class ValidatePost extends Validate
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface

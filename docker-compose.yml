@@ -3,7 +3,7 @@ services:
   php8-tips-php7:
     container_name: php8_tips_php7
     hostname: php8_tips_php7
-    image: php8tips/php8_tips_image_php7
+    image: php8tips/php8_tips_image_php7_latest
     volumes:
      - .:/repo
     ports:
@@ -17,7 +17,7 @@ services:
   php8-tips-php8:
     container_name: php8_tips_php8
     hostname: php8_tips_php8
-    image: php8tips/php8_tips_image_php8
+    image: php8tips/php8_tips_image_php8_latest
     volumes:
      - .:/repo
     ports:
