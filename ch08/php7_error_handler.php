@@ -7,7 +7,7 @@ function handler($errno, $errstr, $errfile, $errline, $errcontext = NULL)
     echo "String : $errstr\n";
     echo "File   : $errfile\n";
     echo "Line   : $errline\n";
-    if ($errcontext)
+    if (!empty($errcontext))
         echo "Context: \n" . var_export($errcontext, TRUE);
     exit;
 }
@@ -19,3 +19,5 @@ function level1($a, $b, $c)
 
 set_error_handler('handler');
 echo level1(TRUE, 222, 'C');
+
+// $errcontext is ignored in PHP 8

@@ -1,5 +1,5 @@
 <?php
-// ch03/php8_warn_array.php
+// /repo/ch03/php8_warn_array.php
 
 $pattern = '%12s : %s' . PHP_EOL;
 
@@ -70,6 +70,32 @@ try {
     printf($pattern, get_class($e), $e->getMessage());
 }
 
-
-
-
+// output:
+/*
+Warning: Cannot add element to the array as the next element is already occupied in /repo/ch03/php7_warn_array.php on line 10
+array(1) {
+  [9223372036854775807] =>
+  string(16) "This is the end!"
+}
+       Error : Cannot unset string offsets
+Warning: array_pop() expects parameter 1 to be array, string given in /repo/ch03/php7_warn_array.php on line 30
+Warning: array_slice() expects parameter 1 to be array, string given in /repo/ch03/php7_warn_array.php on line 32
+Warning: Illegal offset type in /repo/ch03/php7_warn_array.php on line 42
+array(2) {
+  'A' =>
+  int(1)
+  'B' =>
+  int(2)
+}
+Warning: Illegal offset type in isset or empty in /repo/ch03/php7_warn_array.php on line 54
+NOT FOUND
+Warning: Illegal offset type in unset in /repo/ch03/php7_warn_array.php on line 67
+array(3) {
+  'A' =>
+  int(1)
+  'B' =>
+  int(2)
+  'C' =>
+  int(3)
+}
+ */

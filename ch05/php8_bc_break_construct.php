@@ -21,3 +21,6 @@ class Text
 $fn   = __DIR__ . '/../sample_data/gettysburg.txt';
 $text = new Text($fn);
 echo $text->getText();
+
+// output:
+// Fatal error: Uncaught Error: Call to a member function fpassthru() on string in /repo/ch05/php8_bc_break_construct.php on line 17

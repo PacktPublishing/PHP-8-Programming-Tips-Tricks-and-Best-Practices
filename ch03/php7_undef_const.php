@@ -7,3 +7,9 @@ echo UNDEFINED_CONSTANT . "\n";
 // program continues OK
 echo "Program Continues ... \n";
 
+// output:
+/*
+Notice: Use of undefined constant UNDEFINED_CONSTANT - assumed 'UNDEFINED_CONSTANT' in /repo/ch03/php7_undef_const.php on line 6
+UNDEFINED_CONSTANT
+Program Continues ...
+ */

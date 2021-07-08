@@ -24,3 +24,13 @@ echo "\n";
 // determine the type
 $type = FFI::typeOf($char);
 var_dump($type);
+
+// output:
+/*
+TypeError:strlen(): Argument #1 ($str) must be of type string, FFI\CData given
+$char is non-alpha
+/repo/ch04/php8_ffi_typeof.php:26:
+class FFI\CType#3 (0) {
+  ...
+}
+ */

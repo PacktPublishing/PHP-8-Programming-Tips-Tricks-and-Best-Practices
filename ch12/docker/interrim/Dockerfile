@@ -2,13 +2,13 @@ FROM unlikelysource/lfphp_with_php_8_1:latest
 MAINTAINER doug@unlikelysource.com
 COPY php8_tips.sql /tmp/php8_tips.sql
 COPY startup.sh /tmp/startup.sh
+COPY php.ini /etc/php.ini
 RUN \
-    echo "Enable display errors + configure php.ini for opcache ..." && \
-    cp /etc/php.ini /tmp/php.ini && \
-    sed -i 's/display_errors = Off/display_errors = On/g' /etc/php.ini && \
-    sed -i 's/display_startup_errors = Off/display_startup_errors = On/g' /etc/php.ini && \
-    sed -i 's/error_reporting =/;error_reporting =/g' /etc/php.ini && \
-    echo "error_reporting = E_ALL" >>/etc/php.ini && \
+    echo "Setting up Apache ..." && \
+    echo "ServerName php8_tips_php8_1" >> /etc/httpd/httpd.conf && \
+    chmod +x /tmp/*.sh
+RUN \
+    echo "Configuring php.ini file permissions ..." && \
     chown apache:apache /etc/php.ini &&  \
     chmod 664 /etc/php.ini
 RUN \
@@ -26,14 +26,20 @@ RUN \
     chmod +x /tmp/*.sh && \
     /tmp/phpmyadmin_install.sh 5.1.1
 RUN \
-    echo "Installing Zip Extension ..." && \
-    lfphp-get php-ext zip-1.19.2
+    echo "Installing PHP zip extension ..." && \
+    pecl channel-update pecl.php.net && \
+    pecl install zip
 RUN \
-    echo "Enabling OpCache ..." && \
-    sed -i 's/;zend_extension=opcache/zend_extension=opcache/g' /etc/php.ini && \
-    sed -i 's/;opcache.enable=1/opcache.enable=1/g' /etc/php.ini && \
-    sed -i 's/;opcache.enable_cli=0/opcache.enable_cli=1/g' /etc/php.ini && \
-    sed -i 's/;opcache.memory_consumption=128/opcache.memory_consumption=256/g' /etc/php.ini
+    echo "Installing the Swoole extension ..." && \
+    cd /tmp && \
+    git clone https://github.com/swoole/swoole-src.git && \
+    cd swoole-src && \
+    phpize && \
+    ./configure --enable-sockets --enable-swoole-json --enable-swoole-curl && \
+    make && \
+    make install && \
+    rm -rf /tmp/swoole-src && \
+    echo "extension=swoole.so" >>/etc/php.ini
 RUN \
     echo "Setting up other links ..." && \
     ln -s /bin/lfphp-get /usr/bin/apt && \
@@ -44,13 +50,4 @@ RUN \
     wget https://getcomposer.org/download/latest-2.x/composer.phar && \
     cp composer.phar /usr/bin/composer && \
     chmod +x /usr/bin/composer
-RUN \
-    echo "Setting up Apache ..." && \
-    echo "ServerName php8_tips_php8" >> /etc/httpd/httpd.conf && \
-    chmod +x /tmp/*.sh
-RUN \
-    echo "PHP 8 only!" && \
-    echo "Setting up JIT for later use (disabled right now) ..." && \
-    echo "opcache.jit=off" >>/etc/php.ini && \
-    echo "opcache.jit_buffer_size=64M" >>/etc/php.ini
 CMD /tmp/startup.sh

@@ -19,3 +19,10 @@ class Signup extends Base
         $this->user = $user;
     }
 }
+
+// Fails because child classes can go "wider" than the parent, but not "narrower"
+// output:
+/*
+Fatal error: Declaration of Signup::__construct(Guest $user) must be compatible with
+Base::__construct(User $user) in /repo/ch05/php8_variance_invariant.php on line 17
+ */

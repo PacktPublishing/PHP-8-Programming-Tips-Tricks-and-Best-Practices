@@ -6,3 +6,6 @@ echo PHP_OS . "\n";
 echo UNDEFINED_CONSTANT . "\n";
 // program DOES NOT continue OK
 echo "Program Continues ... \n";
+
+// output:
+// Fatal error: Uncaught Error: Undefined constant "UNDEFINED_CONSTANT" in /repo/ch03/php8_undef_const.php on line 6

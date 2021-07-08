@@ -13,17 +13,18 @@ elif [[ "$1" = "down" ||  "$1" = "stop" ]]; then
     docker-compose down
     sudo chown -R $USER:$USER *
     sudo chown -R $USER:$USER .*
+    rm 1
 elif [[ "$1" = "build" ]]; then
     docker-compose build $2
 elif [[ "$1" = "ls" ]]; then
     docker container ls
 elif [[ "$1" = "init" ]]; then
-	docker exec $CONTAINER7 /bin/bash -c "/etc/init.d/mysql restart"
-	docker exec $CONTAINER7 /bin/bash -c "/etc/init.d/php-fpm restart"
-	docker exec $CONTAINER7 /bin/bash -c "/etc/init.d/httpd restart"
-	docker exec $CONTAINER8 /bin/bash -c "/etc/init.d/mysql restart"
-	docker exec $CONTAINER8 /bin/bash -c "/etc/init.d/php-fpm restart"
-	docker exec $CONTAINER8 /bin/bash -c "/etc/init.d/httpd restart"
+        docker exec $CONTAINER7 /bin/bash -c "/etc/init.d/mysql restart"
+        docker exec $CONTAINER7 /bin/bash -c "/etc/init.d/php-fpm restart"
+        docker exec $CONTAINER7 /bin/bash -c "/etc/init.d/httpd restart"
+        docker exec $CONTAINER8 /bin/bash -c "/etc/init.d/mysql restart"
+        docker exec $CONTAINER8 /bin/bash -c "/etc/init.d/php-fpm restart"
+        docker exec $CONTAINER8 /bin/bash -c "/etc/init.d/httpd restart"
 elif [[ "$1" = "shell" ]]; then
     if [[ -z "$2" ]]; then
         echo "You need to specify either 7 or 8"

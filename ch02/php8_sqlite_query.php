@@ -1,6 +1,6 @@
 <?php
 // /repo/ch02/php8_sqlite_query.php
-define('DB_FILE', '/tmp/sqlite.db');
+define('DB_FILE', __DIR__ . '/../sample_data/sqlite.db');
 try {
     $sqlite = new SQLite3(DB_FILE);
     $sql = 'SELECT * FROM geonames WHERE country_code = :cc AND population > :pop';

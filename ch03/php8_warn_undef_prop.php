@@ -23,3 +23,5 @@ try {
 }
 echo "\n";
 
+// output:
+// Warning: Undefined property: Test::$does_not_exist in /repo/ch03/php8_warn_undef_prop.php on line 14
