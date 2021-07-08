@@ -32,3 +32,13 @@ try {
     echo $t;
 }
 echo "\n";
+
+// output:
+/*
+ABC
+DEF
+GHI
+ABC
+TypeError: implode(): Argument #2 ($array) must be of type ?array, FFI\CData given in /repo/ch04/php8_ffi_array.php:30
+
+ */

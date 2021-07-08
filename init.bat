@@ -20,6 +20,7 @@ GOTO :opt3
 :down
 docker-compose down
 takeown /R /F *
+del 1
 GOTO:EOF
 
 :opt3

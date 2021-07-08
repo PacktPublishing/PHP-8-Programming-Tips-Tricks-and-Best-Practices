@@ -208,15 +208,20 @@ return [
                 return (preg_match('/Reflection.*?::export(\s)?\(/', $contents));
             },
             'msg' => 'WARNING: Reflection::export() has been removed.  Echo the Reflection object or use its "__toString()" method.'],
-        'ERR_PHP_ERRORMSG'    => [
-            'callback' => function ($contents) {
-                return strpos($contents, '$php_errormsg');
-            },
-            'msg' => 'WARNING: the "track_errors" php.ini directive is removed.  You can no longer rely upon "$php_errormsg".'],
         'ERR_AT_SUPPRESS'    => [
             'callback' => function ($contents) {
                 return preg_match('/\=\s*\@\w/', $contents);
             },
             'msg' => 'WARNING: using the "@" operator to suppress warnings no longer works in PHP 8.'],
+        'ERR_PHP_ERRORMSG'    => [
+            'callback' => function ($contents) {
+                return strpos($contents, '$php_errormsg');
+            },
+            'msg' => 'WARNING: the "track_errors" php.ini directive is removed.  You can no longer rely upon "$php_errormsg".'],
+        'ERR_ERROR_CONTEXT'    => [
+            'callback' => function ($contents) {
+                return strpos($contents, '$errorcontext');
+            },
+            'msg' => 'WARNING: the 5th argument $errorcontext, formerly passed to your customer error handler, is ignored in PHP 8.'],
     ],
 ];

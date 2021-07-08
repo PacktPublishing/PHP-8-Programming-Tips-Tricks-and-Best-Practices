@@ -1,0 +1,24 @@
+version: "3"
+services:
+  php8-tips-php8_1:
+    container_name: php8_tips_php8_1
+    hostname: php8_tips_php8_1
+    image: php8tips/php8_tips_image_php8_1_latest
+    volumes:
+     - ..:/repo
+    ports:
+     - 8181:80
+     - 9501:9501
+    build: ./docker
+    restart: always
+    command: /tmp/startup.sh
+    networks:
+      app_net:
+        ipv4_address: 172.16.0.81
+
+networks:
+  app_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.16.0.0/24"

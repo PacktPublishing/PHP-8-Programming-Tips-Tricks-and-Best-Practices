@@ -1,17 +1,17 @@
 <?php
-// ch03/php8_warn_array.php
+// /repo/ch03/php8_warn_array.php
 
 $pattern = '%12s : %s' . PHP_EOL;
 
 // Cannot add element to the array as the next element is already occupied
-//try {
+try {
     $a[PHP_INT_MAX] = 'This is the end!';
     // goes off the end of the array!
     $a[] = 'Off the deep end';
     var_dump($a);
-//} catch (Error $e) {
+} catch (Error $e) {
     printf($pattern, get_class($e), $e->getMessage());
-//}
+}
 
 // Error
 try {
@@ -70,6 +70,13 @@ try {
     printf($pattern, get_class($e), $e->getMessage());
 }
 
-
-
-
+// output:
+/*
+root@php8_tips_php8 [ /repo/ch03 ]# php php8_warn_array.php
+       Error : Cannot add element to the array as the next element is already occupied
+       Error : Cannot unset string offsets
+   TypeError : array_pop(): Argument #1 ($array) must be of type array, string given
+   TypeError : Illegal offset type
+   TypeError : Illegal offset type in isset or empty
+   TypeError : Illegal offset type in unset
+ */

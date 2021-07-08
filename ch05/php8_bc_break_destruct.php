@@ -18,3 +18,10 @@ try {
 
 $conn = new ConnectMysqli($db, $usr, $pwd);
 var_dump($conn->query($sql));
+
+// output:
+/*
+16 : PDOException : SQLSTATE[28000] [1045] Access denied for user 'fake'@'localhost' (using password: YES)
+Warning: mysqli_connect(): (HY000/1045): Access denied for user 'fake'@'localhost' (using password: YES) in /repo/src/Php7/Connector/ConnectMysqli.php on line 8
+Unable to Connect
+ */

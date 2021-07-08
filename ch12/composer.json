@@ -1,11 +1,14 @@
 {
     "require": {
         "laminas/laminas-diactoros": "^2.6",
-        "psr/http-server-middleware": "^1.0"
+        "psr/http-server-middleware": "^1.0",
+        "react/event-loop": "^1.1",
+        "react/http": "^1.3",
+        "react/socket": "^1.7"
     },
     "autoload": {
         "psr-4": {
-            "Chat\\": "src/Chat"
+            "Chat\\": "../src/Chat"
         }
     },
     "require-dev": {

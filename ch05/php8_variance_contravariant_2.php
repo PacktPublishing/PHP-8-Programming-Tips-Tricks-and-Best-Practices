@@ -20,3 +20,9 @@ class Signup extends Base
         $this->user = $user;
     }
 }
+
+// output:
+/*
+Fatal error: Declaration of Signup::__construct(User $user) must be compatible with
+Base::__construct(object $user) in /repo/ch05/php8_variance_contravariant_2.php on line 18
+ */

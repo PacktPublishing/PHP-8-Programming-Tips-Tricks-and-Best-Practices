@@ -14,3 +14,6 @@ echo @bad();
 echo "\n";
 echo @worse();
 echo "\nLast Line\n";
+
+// output:
+// Fatal error: bad in /repo/ch03/php8_at_silencer.php on line 5

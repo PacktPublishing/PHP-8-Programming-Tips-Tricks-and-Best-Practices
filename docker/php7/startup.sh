@@ -1,4 +1,7 @@
 #!/bin/bash
+echo "Updating phpunit ..."
+cd /repo/test/phpunit5
+composer install
 echo "Finishing Apache setup ..."
 mv -f /srv/www /srv/www.OLD
 ln -sfv /repo /srv/www

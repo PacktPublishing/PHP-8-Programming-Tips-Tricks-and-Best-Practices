@@ -1,6 +1,6 @@
 <?php
 // /repo/ch02/includes/auth_callback.php
-define('DB_FILE', '/tmp/sqlite.db');
+define('DB_FILE', __DIR__ . '/../sample_data/sqlite.db');
 define('PATTERN', '%-8s | %4s | %-28s | %-15s');
 define('DEFAULT_TABLE', 'Unknown');
 define('DEFAULT_USER', 'guest');

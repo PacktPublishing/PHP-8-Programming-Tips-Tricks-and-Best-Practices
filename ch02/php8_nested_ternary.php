@@ -46,3 +46,7 @@ $dirIter    = new RecursiveDirectoryIterator($path);
 $itIter     = new RecursiveIteratorIterator($dirIter);
 find_using_if($itIter, $searchPath, $searchExt);
 find_using_ternary($itIter, $searchPath, $searchExt);
+
+// output:
+// Fatal error: Unparenthesized `a ? b : c ? d : e` is not supported.
+// Use either `(a ? b : c) ? d : e` or `a ? b : (c ? d : e)` in /repo/ch02/php8_nested_ternary.php on line 32

@@ -17,13 +17,13 @@ class UserTest extends TestCase
     public function testFindByUsername()
     {
         $expected = 1;
-        $actual = $this->user->findByUserName('acaya')['id'];
+        $actual = $this->user->findByUserName('acaya')['id'] ?? NULL;
         $this->assertEquals($expected, $actual);
     }
     public function testFindById()
     {
         $expected = 'acaya';
-        $actual = $this->user->findById(1)['username'];
+        $actual = $this->user->findById(1)['username'] ?? '';
         $this->assertEquals($expected, $actual);
     }
 }
