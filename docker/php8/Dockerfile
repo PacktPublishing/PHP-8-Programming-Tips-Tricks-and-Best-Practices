@@ -10,4 +10,7 @@ RUN \
 RUN \
     echo "Updating Composer 2.x ..." && \
     /usr/bin/composer self-update
+RUN \
+    echo "Enabling FFI for all operations ..." && \
+    echo "ffi.enable=on" >> /etc/php.ini
 CMD /tmp/startup.sh
