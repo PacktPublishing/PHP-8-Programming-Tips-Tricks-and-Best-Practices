@@ -1,8 +1,6 @@
 # PHP-8-Programming-Tips-Tricks-and-Best-Practices
 Help support a starving developer: please buy the book!!!
 [PHP 8 Programming Tips, Tricks and Best Practices, published by Packt](https://www.amazon.com/Programming-Tips-Tricks-Best-Practices-ebook/dp/B0964DS7KN/ref=sr_1_1?dchild=1&keywords=9781801071871&qid=1622527379&sr=8-1)
-The source code for this chapter is located here:
-[https://github.com/PacktPublishing/PHP-8-Programming-Tips-Tricks-and-Best-Practices](https://github.com/PacktPublishing/PHP-8-Programming-Tips-Tricks-and-Best-Practices).
 
 ## To set up a test environment to run the code examples, proceed as follows:
 1. Install Docker
@@ -25,6 +23,9 @@ You must first build the two docker containers associated with this book online,
 Please note that the initial build might take up to 15 minutes to complete!
 1. From your local computer, open a command prompt.
 2. Change directory to `/path/to/repo`.
+```
+cd C:\path\to\repo
+```
 3. First time only, issue this command to build  the environment:
 ```
 init build
@@ -33,6 +34,9 @@ init build
 Once the container has been built, proceed as follows to bring the containers online:
 1. From your local computer, open a command prompt.
 2. Change directory to `/path/to/repo`.
+```
+cd C:\path\to\repo
+```
 3. Bring the docker container online in background mode:
 ```
 init up
@@ -82,6 +86,9 @@ You must first build the two docker containers associated with this book online,
 Please note that the initial build might take up to 10 minutes to complete!
 1. From your local computer, open a terminal window.
 2. Change directory to `/path/to/repo`.
+```
+cd /path/to/repo
+```
 3. First time only, issue this command to build  the environment:
 ```
 ./init.sh build
@@ -90,6 +97,9 @@ Please note that the initial build might take up to 10 minutes to complete!
 Once the container has been built, proceed as follows to bring the containers online:
 1. From your local computer, open a terminal window.
 2. Change directory to `/path/to/repo`.
+```
+cd /path/to/repo
+```
 3. Bring the docker container online in background mode:
 ```
 ./init.sh up

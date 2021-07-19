@@ -21,6 +21,8 @@ class Signup extends Base
 }
 
 // Fails because child classes can go "wider" than the parent, but not "narrower"
+// but in this case the data type is invariant
+
 // output:
 /*
 Fatal error: Declaration of Signup::__construct(Guest $user) must be compatible with

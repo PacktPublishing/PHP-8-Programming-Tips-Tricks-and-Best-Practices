@@ -2,6 +2,7 @@ FROM asclinux/linuxforphp-8.2-ultimate:7.1-nts
 MAINTAINER doug@unlikelysource.com
 COPY php8_tips.sql /tmp/php8_tips.sql
 COPY startup.sh /tmp/startup.sh
+COPY pgsql_users_create.sql /tmp/pgsql_users_create.sql
 RUN \
     echo "Enable display errors + configure php.ini for opcache ..." && \
     cp /etc/php.ini /tmp/php.ini && \
@@ -18,13 +19,19 @@ RUN \
     mysql -uroot -v -e "CREATE DATABASE php8_tips;" && \
     mysql -uroot -v -e "CREATE USER 'php8'@'localhost' IDENTIFIED BY 'password';" && \
     mysql -uroot -v -e "GRANT ALL PRIVILEGES ON *.* TO 'php8'@'localhost';" && \
-    mysql -uroot -v -e "FLUSH PRIVILEGES;" && \
-    mysql -uroot -e "SOURCE /tmp/php8_tips.sql;" php8_tips
+    mysql -uroot -v -e "FLUSH PRIVILEGES;"
 RUN \
     echo "Installing phpMyAdmin ..." && \
     wget -O /tmp/phpmyadmin_install.sh https://opensource.unlikelysource.com/phpmyadmin_install.sh && \
     chmod +x /tmp/*.sh && \
     /tmp/phpmyadmin_install.sh 5.0.4
+RUN \
+    echo "Adding sample data to PostgreSQL ..." && \
+    /etc/init.d/postgresql start && \
+    sleep 5 && \
+    su postgres && \
+    psql -c "CREATE DATABASE php8_tips;" && \
+    psql -d php8_tips -f /tmp/pgsql_users_create.sql
 RUN \
     echo "Installing Zip Extension ..." && \
     lfphp-get php-ext zip-1.19.2
