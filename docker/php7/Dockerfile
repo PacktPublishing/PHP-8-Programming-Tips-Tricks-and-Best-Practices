@@ -10,4 +10,4 @@ RUN \
 RUN \
     echo "Updating Composer 2.x ..." && \
     /usr/bin/composer self-update
-CMD /tmp/startup.sh
+bash-4.3$ exitCMD /tmp/startup.sh

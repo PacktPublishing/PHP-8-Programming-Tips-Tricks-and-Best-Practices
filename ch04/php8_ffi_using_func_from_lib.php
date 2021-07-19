@@ -16,18 +16,20 @@ $bubble = FFI::cdef(
     "./libbubble.so");
 
 // create FFI\CData array
-$max   = 16;
-$arr_b = FFI::new('int[' . $max . ']');
+$max = 16;
+$arr = FFI::new('int[' . $max . ']');
 
 // populate array with random values
 for ($i = 0; $i < $max; $i++)
-    $arr_b[$i]->cdata = rand(0,9999);
+    $arr[$i]->cdata = rand(0,9999);
 
 // display before
-echo show('Before Sort', $arr_b, $max);
+echo "Before Sort\n";
+for ($x = 0; $x < $max; $x++) echo $arr[$x] . "\n";
 
 // perform bubble sort
-$bubble->bubble_sort($arr_b, $max);
+$bubble->bubble_sort($arr, $max);
 
 // display after
-echo show('After Sort', $arr_b, $max);
+echo "After Sort\n";
+for ($x = 0; $x < $max; $x++) echo $arr[$x] . "\n";

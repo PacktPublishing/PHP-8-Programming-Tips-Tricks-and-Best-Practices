@@ -61,5 +61,4 @@
     --with-pear   \
     --with-ffi   \
     --enable-opcache \
-    --enable-opcache-jit \
-    --enable-swoole
+    --enable-opcache-jit
