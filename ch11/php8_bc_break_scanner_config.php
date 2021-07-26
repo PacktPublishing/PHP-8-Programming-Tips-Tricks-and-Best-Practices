@@ -5,6 +5,8 @@ use Php8\Migration\BreakScan;
 return [
     // key) removed function => (value) suggested replacement
     BreakScan::KEY_REMOVED => [
+        '(real)' => '(float)',
+        '(unset)' => 'unset($var)',
         'function __autoload' => 'spl_autoload_register(callable)',
         'function __sleep' => 'Need to confirm __sleep() returns an array of existing property names.  Consider using __serialize() instead.',
         'convert_cyr_string' => 'No replacement',
@@ -223,5 +225,10 @@ return [
                 return strpos($contents, '$errorcontext');
             },
             'msg' => 'WARNING: the 5th argument $errorcontext, formerly passed to your customer error handler, is ignored in PHP 8.'],
+        'ERR_XML_RPC'    => [
+            'callback' => function ($contents) {
+                return strpos($contents, 'xmlrpc_');
+            },
+            'msg' => 'WARNING: the XML-RPC extension is no longer part of the core.  You will need to install this extension manually following a PHP 8 upgrade.'],
     ],
 ];
