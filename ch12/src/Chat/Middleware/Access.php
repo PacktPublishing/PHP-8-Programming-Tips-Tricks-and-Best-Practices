@@ -17,10 +17,7 @@ class Access implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $params = $request->getServerParams();
-        $message = $params['REMOTE_ADDR']
-                 . ':' . $params['REQUEST_METHOD']
-                 . ':' . $params['QUERY_STRING']
-                 . ':' . $params['HTTP_USER_AGENT'];
+        $message = var_export($params, TRUE);
         file_put_contents(self::ACCESS_LOG, $message . "\n", FILE_APPEND);
         return $handler->handle($request);
     }

@@ -11,9 +11,7 @@ class Render
 {
     public static function output(ServerRequestInterface $request, JsonResponse $response)
     {
-        $headers = $request->getHeaders();
-        error_log(__METHOD__ . ':' . var_export($headers, TRUE));
-        $accept = $headers['Accept'] ?? '';
+        $accept = $request->getHeader('accept')[0] ?? '';
         return (str_contains($accept, 'html'))
                 ? self::outText($response)
                 : self::outJson($response);

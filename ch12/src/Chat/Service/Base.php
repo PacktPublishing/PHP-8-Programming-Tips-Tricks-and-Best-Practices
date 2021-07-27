@@ -19,11 +19,10 @@ class Base
     }
     /**
      * assembles final SQL SELECT statement
-     *
-     * @param array $sql
-     * @param array $opts
-     * @return string $sql
      */
+    #[Chat\Service\Base\buildSelect\sql("array")]
+    #[Chat\Service\Base\buildSelect\opts("array")]
+    #[Chat\Service\Base\buildSelect\return("string : SQL statement")]
     public function buildSelect(array $sql, array $opts = []) : string
     {
         if (empty($sql['table'])) throw new Exception(Constants::ERR_SQL_FROM);
@@ -68,15 +67,18 @@ class Base
      * @param array $data
      * @param array $sql
      * @param array $opts [optional]
-     * @return mixed $result
+     * @return array|false $result
      */
-    public function do_exec(array $data, array $sql, array $opts = []) : mixed
+    public function do_exec(array $data, array $sql, array $opts = []) : array|false
     {
+        $result  = FALSE;
         $connect = $this->getConnection();
         $sql_str = $this->buildSelect($sql, $opts);
         $stmt    = $connect->prepare($sql_str);
         if (!empty($stmt)) {
             $stmt->execute($data);
+            // NOTE: if the default limit of 20 is raised,
+            //       might need to change this into a generator instead
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
         return $result;

@@ -3,6 +3,10 @@ MAINTAINER doug@unlikelysource.com
 COPY php8_tips.sql /tmp/php8_tips.sql
 COPY startup.sh /tmp/startup.sh
 COPY php.ini /etc/php.ini
+RUN mkdir -p /etc/php-fpm.d
+COPY www.conf /etc/php-fpm.d
+COPY www.conf.default /etc/php-fpm.d
+COPY php-fpm.conf /etc/php-fpm.conf
 RUN \
     echo "Setting up Apache ..." && \
     echo "ServerName php8_tips_php8_1" >> /etc/httpd/httpd.conf && \
@@ -50,4 +54,4 @@ RUN \
     wget https://getcomposer.org/download/latest-2.x/composer.phar && \
     cp composer.phar /usr/bin/composer && \
     chmod +x /usr/bin/composer
-CMD /tmp/startup.sh
+CMD lfphp --mysql --phpfpm --apache >/dev/null 2&>1

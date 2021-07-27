@@ -12,13 +12,14 @@ class User extends Base
      * @param int $id
      * @return array $row : user entry | FALSE
      */
-    public function findById(int $id)
+    public function findById(int $id) : array|false
     {
         $result = [];
         $sql['table'] = self::TABLE;
         $sql['cols']  = 'id,username';
         $sql['where'] = ['id=?'];
-        return $this->do_exec([$id], $sql);
+        $result = $this->do_exec([$id], $sql);
+        return (!empty($result)) ? current($result) : FALSE;
     }
     /**
      * Locates user entry by ID
@@ -26,7 +27,7 @@ class User extends Base
      * @param string $username
      * @return array $row : user entry | FALSE
      */
-    public function findByUserName(string $username)
+    public function findByUserName(string $username) : array|false
     {
         // sanitize
         $username = preg_replace('/[^a-z]/', '', strtolower($username));
@@ -34,18 +35,20 @@ class User extends Base
         $sql['table'] = self::TABLE;
         $sql['cols']  = 'id,username';
         $sql['where'] = ['username=?'];
-        return $this->do_exec([$username], $sql);
+        $result = $this->do_exec([$username], $sql);
+        return (!empty($result)) ? current($result) : FALSE;
     }
     /**
      * Returns a list of usernames
      *
-     * @return array $list
+     * @return iterable|NULL $list
      */
-    public function findAllUserNames()
+    public function findAllUserNames() : iterable|null
     {
         // sanitize
         $sql['table'] = self::TABLE;
         $sql['cols']  = 'id,username';
-        return $this->do_exec([], $sql);
+        $opts['limit'] = 500;
+        return $this->do_exec([], $sql, $opts);
     }
 }

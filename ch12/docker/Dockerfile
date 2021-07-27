@@ -2,7 +2,6 @@ FROM unlikelysource/php8_tips_8_1_interrim:latest
 MAINTAINER doug@unlikelysource.com
 COPY php8_tips.sql /tmp/php8_tips.sql
 COPY startup.sh /tmp/startup.sh
-COPY php-fpm.conf /etc/php-fpm.conf
 RUN \
     echo "Restoring sample database ..." && \
     /etc/init.d/mysql start && \
