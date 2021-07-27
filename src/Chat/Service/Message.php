@@ -14,14 +14,13 @@ class Message extends Base
      * -- user_from == $username
      * -- user_to   == $username
      * -- user_to   == NULL
-     *
-     * @param string $username
-     * @param array $opts : options [optional]
-     * @return mixed $result
      */
+    #[Chat\Service\Message\findByUser\username("string")]
+    #[Chat\Service\Message\findByUser\opts("array [optional]")]
+    #[Chat\Service\Message\findByUser\return("mixed")]
     public function findByUser(string $username, ...$opts) : array|false
     {
-        $username = preg_replace('/[^a-z]/', '', strtolower($username));
+        $username = strip_tags(strtolower($username));
         $sql['table'] = self::TABLE;
         $sql['where'] = ['user_from=?',' OR user_to=?'," OR user_to='*'"];
         $sql['order'] = 'created DESC';
@@ -29,10 +28,9 @@ class Message extends Base
     }
     /**
      * saves message
-     *
-     * @param array $data
-     * @return int $stmt->rowCount() : 0 = failure
      */
+    #[Chat\Service\Message\save\data("array")]
+    #[Chat\Service\Message\save\return("int PDOStatement::rowCount")]
     public function save(array $data) : int
     {
         // sanitize data
@@ -46,24 +44,21 @@ class Message extends Base
     }
     /**
      * removes message by user
-     *
-     * @param string $username
-     * @return int $stmt->rowCount() : 0 = failure
      */
-    public function remove(string $username) : int
+    #[Chat\Service\Message\remove\from("string : user_from")]
+    #[Chat\Service\Message\save\return("int PDOStatement::rowCount")]
+    public function remove(string $from) : int
     {
-        // sanitize data
         $sql = 'DELETE FROM ' . self::TABLE . ' WHERE user_from=?';
         $connect = $this->getConnection();
         $stmt = $connect->prepare($sql);
-        $stmt->execute([$username]);
+        $stmt->execute([$from]);
         return $stmt->rowCount();
     }
     /**
      * resets 'messages' table
-     *
-     * @return int $stmt->rowCount() : 0 = failure
      */
+    #[Chat\Service\Message\reset\return("int PDO::exec() : 0 = failure")]
     public function reset() : int
     {
         // sanitize data
@@ -72,3 +67,18 @@ class Message extends Base
         return $connect->exec($sql);
     }
 }
+
+// table structure:
+/*
+--
+-- Table structure for table `messages`
+--
+CREATE TABLE `messages` (
+  `id` int(8) NOT NULL AUTO_INCREMENT,
+  `user_from` char(16) NOT NULL,
+  `user_to` char(16) DEFAULT '*',
+  `msg` varchar(4096) NOT NULL,
+  `created` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+*/
