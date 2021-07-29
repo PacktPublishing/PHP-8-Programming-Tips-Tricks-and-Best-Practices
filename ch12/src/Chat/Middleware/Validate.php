@@ -34,7 +34,7 @@ class Validate implements MiddlewareInterface
         } else {
             $user = new User();
             $result = $user->findByUserName($data['from']);
-            if (!$result || $data['from'] !== $result[0]['username']) {
+            if (!$result || $data['from'] !== $result['username']) {
                 $message[] = Constants::ERR_NOT_USER . ' [from]';
                 $found = FALSE;
             }

@@ -31,13 +31,13 @@ class ValidatePost extends Validate
         $found = TRUE;
         if (empty($data['to'])) {
             $data['to'] = '*';
-        } else {
-            $user = new User();
-            $result = $user->findByUserName($data['to']);
-            if (!$result || $data['to'] !== $result[0]['username']) {
-                $message[] = Constants::ERR_NOT_USER . ' [to]';
-                $found = FALSE;
-            }
+        }
+        if ($data['to'] === '*') return TRUE;
+        $user = new User();
+        $result = $user->findByUserName($data['to']);
+        if (!$result || $data['to'] !== $result['username']) {
+            $message[] = Constants::ERR_NOT_USER . ' [to]';
+            $found = FALSE;
         }
         return $found;
     }

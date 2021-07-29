@@ -4,7 +4,7 @@ namespace Chat\Service;
 use PDO;
 class Connection
 {
-    const CONFIG = __DIR__ . '/../../../config/config.php';
+    const CONFIG = __DIR__ . '/../../config/config.php';
     public static $pdo = NULL;
     private function __construct() {}
     public static function getInstance(string $configFn = NULL)

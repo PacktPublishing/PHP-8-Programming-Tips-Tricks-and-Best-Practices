@@ -19,11 +19,10 @@ class Base
     }
     /**
      * assembles final SQL SELECT statement
-     *
-     * @param array $sql
-     * @param array $opts
-     * @return string $sql
      */
+    #[Chat\Service\Base\buildSelect\sql("array")]
+    #[Chat\Service\Base\buildSelect\opts("array")]
+    #[Chat\Service\Base\buildSelect\return("string : SQL statement")]
     public function buildSelect(array $sql, array $opts = []) : string
     {
         if (empty($sql['table'])) throw new Exception(Constants::ERR_SQL_FROM);

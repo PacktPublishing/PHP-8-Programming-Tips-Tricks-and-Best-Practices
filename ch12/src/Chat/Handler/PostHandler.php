@@ -16,13 +16,16 @@ class PostHandler implements RequestHandlerInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $data = $request->getParsedBody();
+        $post = $request->getParsedBody();
+        $data = [];
         $message = new MessageService();
-        if (!$message->save($data)) {
-            return (new JsonResponse(['status' => 'fail', 'data' => Constants::ERR_MSG_SEND]))->withStatus(500);
+        if (!$message->save($post)) {
+            $data[] = Constants::ERR_MSG_SEND;
+            $data[] = Constants::USAGE;
+            return (new JsonResponse(['status' => 'fail', 'data' => $data]))->withStatus(500);
+        } else {
+            $data = sprintf(Constants::SUCCESS_OK, 'message sent');
+            return (new JsonResponse(['status' => 'success', 'data' => $data]))->withStatus(200);
         }
-        $data = $message->findByUser($data['from']);
-        return (new JsonResponse(['status' => 'success', 'data' => $data]))->withStatus(200);
-
     }
 }

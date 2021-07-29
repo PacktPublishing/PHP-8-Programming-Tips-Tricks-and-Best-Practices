@@ -15,7 +15,7 @@ GET:
     "days"   : "int: returns messages more recent that this many days ago; default: 7"
 EOT;
     public const DATE_FORMAT     = 'Y-m-d H:i:s';
-    public const DEFAULT_LIMIT   = 100;
+    public const DEFAULT_LIMIT   = 20;
     public const DEFAULT_OFFSET  = 0;
     public const DEFAULT_DAYS    = 7;
     public const DEFAULT_MSG_LEN = 4096;
@@ -25,4 +25,5 @@ EOT;
     public const ERR_MSG_NOT     = 'ERROR: no message';
     public const ERR_MSG_LEN     = 'ERROR: message must be ' . self::DEFAULT_MSG_LEN . ' chars or less';
     public const ERR_MSG_SEND    = 'ERROR: unable to send the message';
+    public const SUCCESS_OK      = 'SUCCESS: %s';
 }

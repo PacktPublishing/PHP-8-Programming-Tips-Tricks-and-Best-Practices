@@ -17,7 +17,12 @@ class GetHandler implements RequestHandlerInterface
     {
         $data   = $request->getQueryParams();
         $user   = $data['from'] ?? '*';
-        $result = (new MessageService())->findByUser($user);
-        return (new JsonResponse(['status' => 'success', 'data' => $result]))->withStatus(200);
+        if (!$result = (new MessageService())->findByUser($user)) {
+            $data[] = Constants::ERR_NOT_USER;
+            $data[] = Constants::USAGE;
+            return (new JsonResponse(['status' => 'fail', 'data' => $data]))->withStatus(500);
+        } else {
+            return (new JsonResponse(['status' => 'success', 'data' => $data]))->withStatus(200);
+        }
     }
 }
