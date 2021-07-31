@@ -16,6 +16,7 @@ session_start();
 $server = new Swoole\HTTP\Server('0.0.0.0', 9501);
 
 $server->on("start", function (Server $server) {
+    echo "Swoole http server is started at http://0.0.0.0:9501\n";
     error_log('Swoole http server is started at http://0.0.0.0:9501');
 });
 
