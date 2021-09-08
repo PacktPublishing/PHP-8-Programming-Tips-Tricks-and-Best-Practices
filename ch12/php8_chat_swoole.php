@@ -1,5 +1,10 @@
 <?php
 // /repo/ch12/php8_chat_swoole.php
+
+// to test: open 2 separate command shells into the php8_tips_php8_1 Docker container
+// In the 1st shell: php php8_chat_swoole.php
+// In the 2nd shell: php php8_chat_test.php http://localhost:9501
+
 include __DIR__ . '/vendor/autoload.php';
 use Chat\Message\Pipe;
 use Chat\Http\SwooleToPsr7;
