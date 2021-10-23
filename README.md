@@ -104,7 +104,9 @@ cd /path/to/repo
 ```
 ./init.sh up
 ```
+
 ### Container access
+
 #### Browser access
 To access the docker containers from your browser, first make sure the containers are online (see previous).
 1. Open the browser on your local computer.
@@ -112,6 +114,19 @@ To access the docker containers from your browser, first make sure the container
     * Alternate URL: `http://172.16.0.77/`
 3. Enter this URL to access the PHP 8 container: `http://localhost:8888`
     * Alternate URL: `http://172.16.0.88/`
+If the web page doesn't come up right away you might need to restart the container web server:
+1. From your local computer, open a terminal window.
+2. Change to `/path/to/repo`:
+3. Use the `init` option to initialize the web server:
+* Windows
+```
+init init
+```
+* Linux/Mac
+```
+./init.sh init
+```
+
 #### Command line access
 To access the containers from a command shell proceed as follows:
 1. From your local computer, open a terminal window.
@@ -141,3 +156,11 @@ cd /path/to/repo
 ./init.sh down
 ```
 Please note that after the containers have been shut down, the ownership of all files in `/path/to/repo` are reset to the current user.
+
+## Troubleshooting
+One reader ran into this error:
+```
+standard_init_linux.go:228: exec user process caused: no such file or directory
+```
+* The suspected issue is when running under Windows, the Docker `*.sh` files might have been converted over to use CR/LF line endings instead of the expected LF only (i.e. Windows style line endings rather than Linux style).
+* Directed the reader to this article: https://stackoverflow.com/questions/51508150/standard-init-linux-go190-exec-user-process-caused-no-such-file-or-directory
