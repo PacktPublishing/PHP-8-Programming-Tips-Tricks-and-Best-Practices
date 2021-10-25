@@ -6,6 +6,6 @@ chown apache:apache /srv/www
 chown -R apache:apache /repo
 chmod -R 775 /repo
 /etc/init.d/mysql start
-/etc/init.d/phpfpm start
-/etc/init.d/mysql start
+/etc/init.d/php-fpm start
+/etc/init.d/httpd start
 lfphp --mysql --phpfpm --apache

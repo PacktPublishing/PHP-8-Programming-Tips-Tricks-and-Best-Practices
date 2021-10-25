@@ -3,6 +3,8 @@ MAINTAINER doug@unlikelysource.com
 COPY php8_tips.sql /tmp/php8_tips.sql
 COPY startup.sh /tmp/startup.sh
 COPY pgsql_users_create.sql /tmp/pgsql_users_create.sql
+COPY postgresql_setup.sh /tmp/postgresql_setup.sh
+RUN chmod +x /tmp/*.sh
 RUN \
     echo "Enable display errors + configure php.ini for opcache ..." && \
     cp /etc/php.ini /tmp/php.ini && \
@@ -25,13 +27,6 @@ RUN \
     wget -O /tmp/phpmyadmin_install.sh https://opensource.unlikelysource.com/phpmyadmin_install.sh && \
     chmod +x /tmp/*.sh && \
     /tmp/phpmyadmin_install.sh 5.1.1
-RUN \
-    echo "Adding sample data to PostgreSQL ..." && \
-    /etc/init.d/postgresql start && \
-    sleep 5 && \
-    su postgres && \
-    psql -c "CREATE DATABASE php8_tips;" && \
-    psql -d php8_tips -f /tmp/pgsql_users_create.sql
 RUN \
     echo "Installing Zip Extension ..." && \
     lfphp-get php-ext zip-1.19.2
@@ -66,4 +61,7 @@ RUN \
     echo "Setting up JIT for later use (disabled right now) ..." && \
     echo "opcache.jit=off" >>/etc/php.ini && \
     echo "opcache.jit_buffer_size=64M" >>/etc/php.ini
+RUN \
+    echo "Don't forget to populate PostgreSQL with sample data ..." && \
+    echo "Run /tmp/postgresql_setup.sh"
 CMD /tmp/startup.sh

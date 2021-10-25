@@ -3,6 +3,8 @@ MAINTAINER doug@unlikelysource.com
 COPY php8_tips.sql /tmp/php8_tips.sql
 COPY startup.sh /tmp/startup.sh
 COPY pgsql_users_create.sql /tmp/pgsql_users_create.sql
+COPY postgresql_setup.sh /tmp/postgresql_setup.sh
+RUN chmod +x /tmp/*.sh
 RUN \
     echo "Enable display errors + configure php.ini for opcache ..." && \
     cp /etc/php.ini /tmp/php.ini && \
@@ -26,13 +28,6 @@ RUN \
     chmod +x /tmp/*.sh && \
     /tmp/phpmyadmin_install.sh 5.0.4
 RUN \
-    echo "Adding sample data to PostgreSQL ..." && \
-    /etc/init.d/postgresql start && \
-    sleep 5 && \
-    su postgres && \
-    psql -c "CREATE DATABASE php8_tips;" && \
-    psql -d php8_tips -f /tmp/pgsql_users_create.sql
-RUN \
     echo "Installing Zip Extension ..." && \
     lfphp-get php-ext zip-1.19.2
 RUN \
@@ -53,6 +48,9 @@ RUN \
     chmod +x /usr/bin/composer
 RUN \
     echo "Setting up Apache ..." && \
-    echo "ServerName php8_tips_php8" >> /etc/httpd/httpd.conf && \
+    echo "ServerName php8_tips_php7" >> /etc/httpd/httpd.conf && \
     chmod +x /tmp/*.sh
+RUN \
+    echo "Don't forget to set up the PostgreSQL database ... " && \
+    echo "run: /tmp/postgresql_setup.sh"
 CMD /tmp/startup.sh
