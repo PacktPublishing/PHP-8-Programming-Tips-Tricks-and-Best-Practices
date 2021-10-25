@@ -8,6 +8,6 @@ RUN \
     sleep 7 && \
     mysql -uroot -e "SOURCE /tmp/php8_tips.sql;" php8_tips
 RUN \
-    echo "Updating Composer 2.x ..." && \
+    echo "Updating Composer 1.x ..." && \
     /usr/bin/composer self-update
 CMD /tmp/startup.sh
