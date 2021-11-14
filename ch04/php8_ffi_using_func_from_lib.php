@@ -12,8 +12,8 @@ function show($label, $arr, $max)
 
 // create definitions
 $bubble = FFI::cdef(
-    "void bubble_sort(int [], int);",
-    "./libbubble.so");
+    'void bubble_sort(int [], int);',
+    __DIR__ . '/libbubble.so');
 
 // create FFI\CData array
 $max = 16;
