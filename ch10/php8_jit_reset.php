@@ -34,9 +34,23 @@ $usage = "\nUSAGE:\n"
 // grab CLI args, etc.
 $params  = implode(' ', $argv);
 $php_ini = file('/etc/php.ini');
+$mode    = $argv[1] ?? 'on';
+
+// disable xdebug extension, otherwise JIT is disabled
+$pos = findInArray('xdebug.so', $php_ini);
+if (is_int($pos) && !empty($php_ini[$pos])) {
+    $line = &$php_ini[$pos];
+    // if mode === 'off' re-enable xdebug
+    if ($mode === 'off') {
+        if ($line[0] === ';')
+            $line = substr($line, 1);
+    } else {
+        // otherwise disable xdebug
+        $line = ';' . $line;
+    }
+}
 
 // validate $mode
-$mode    = $argv[1] ?? 'on';
 $allowed = ['off', 'on', 'tracing', 'function'];
 if (!in_array($mode, $allowed)) $mode = (int) $mode;
 if ($mode === 0) $mode='off';
