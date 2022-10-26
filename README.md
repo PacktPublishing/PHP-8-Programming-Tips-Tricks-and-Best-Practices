@@ -231,3 +231,7 @@ standard_init_linux.go:228: exec user process caused: no such file or directory
 ```
 * The suspected issue is when running under Windows, the Docker `*.sh` files might have been converted over to use CR/LF line endings instead of the expected LF only (i.e. Windows style line endings rather than Linux style).
 * Directed the reader to this article: https://stackoverflow.com/questions/51508150/standard-init-linux-go190-exec-user-process-caused-no-such-file-or-directory
+### Download a free PDF
+
+ <i>If you have already purchased a print or Kindle version of this book, you can get a DRM-free PDF version at no cost.<br>Simply click on the link to claim your free PDF.</i>
+<p align="center"> <a href="https://packt.link/free-ebook/9781801071871">https://packt.link/free-ebook/9781801071871 </a> </p>
