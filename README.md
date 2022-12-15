@@ -1,3 +1,15 @@
+
+### Get this product for $5
+
+<i>Packt is having its biggest sale of the year. Get this eBook or any other book, video, or course that you like just for $5 each</i>
+
+
+<b><p align='center'>[Buy now](https://packt.link/9781801071871)</p></b>
+
+
+<b><p align='center'>[Buy similar titles for just $5](https://subscription.packtpub.com/search)</p></b>
+
+
 # PHP 8 Programming Tips, Tricks and Best Practices
 
 <a href="https://www.packtpub.com/product/php-8-programming-tips-tricks-and-best-practices/9781801071871"><img src="https://static.packt-cdn.com/products/9781801071871/cover/smaller" alt="PHP 8 Programming Tips, Tricks and Best Practices" height="256px" align="right"></a>
